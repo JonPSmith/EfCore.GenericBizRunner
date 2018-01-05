@@ -1,5 +1,4 @@
-﻿
-namespace GenericBizRunner
+﻿namespace GenericBizRunner
 {
     /// <summary>
     /// This is an async Action that takes an input and returns a result TOut

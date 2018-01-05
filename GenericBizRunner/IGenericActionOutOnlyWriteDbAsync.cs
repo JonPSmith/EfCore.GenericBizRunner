@@ -1,10 +1,12 @@
 ﻿#region licence
+
 // =====================================================
 // GenericActions Library - Library for running business actions
 // Filename: IGenericActionOutOnlyWriteDbAsync.cs
 // Date Created: 2015/02/03
 // © Copyright Selective Analytics 2015. All rights reserved
 // =====================================================
+
 #endregion
 
 namespace GenericBizRunner

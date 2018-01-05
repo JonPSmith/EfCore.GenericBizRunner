@@ -21,6 +21,7 @@ namespace GenericBizRunner.Helpers
             {
                 return _currContext;
             }
+
             return null;
         }
     }

@@ -10,13 +10,24 @@ namespace GenericBizRunner.Internal
     [Flags]
     internal enum RequestedInOut : byte
     {
-        None = 0, In = 1, Out = 2, InOut = In | Out, InOrInOut = 4, OptionalAsync = 8, Async = 16,
+        None = 0,
+        In = 1,
+        Out = 2,
+        InOut = In | Out,
+        InOrInOut = 4,
+        OptionalAsync = 8,
+        Async = 16,
         NonAsyncFlagsMask = InOut | InOrInOut,
         AllFlagsMask = NonAsyncFlagsMask | Async
     }
 
     [Flags]
-    internal enum WriteToDbStates { DoNotWrite = 0, WriteToDb = 1, ValidateWrite = 2 }
+    internal enum WriteToDbStates
+    {
+        DoNotWrite = 0,
+        WriteToDb = 1,
+        ValidateWrite = 2
+    }
 
     internal class BizInfo
     {
@@ -47,7 +58,8 @@ namespace GenericBizRunner.Internal
 
         public override string ToString()
         {
-            return string.Format("IBizType: {0}, ExtractedActionInterface: {1}, MatchingServiceType: {2}, IsAsync: {3}, WriteStates: {4}", 
+            return string.Format(
+                "IBizType: {0}, ExtractedActionInterface: {1}, MatchingServiceType: {2}, IsAsync: {3}, WriteStates: {4}",
                 _iBizType.Name, _extractedActionInterface.Name, _matchingServiceType, IsAsync, WriteStates);
         }
 
@@ -57,7 +69,8 @@ namespace GenericBizRunner.Internal
         public dynamic GetServiceInstance()
         {
             return _bizInstance ??
-                   (_bizInstance = CreateRequiredServiceInstance(_matchingServiceType, _iBizType, _extractedActionInterface));
+                   (_bizInstance =
+                       CreateRequiredServiceInstance(_matchingServiceType, _iBizType, _extractedActionInterface));
         }
 
         public Type GetBizInType()
@@ -87,9 +100,11 @@ namespace GenericBizRunner.Internal
             var genericAgruments = _extractedActionInterface.GetGenericArguments().ToList();
             genericAgruments.Insert(0, _iBizType);
             var genericType = _matchingServiceType.ServiceHandleType.MakeGenericType(genericAgruments.ToArray());
-            var genericRunMethod = genericType.GetMethod(IsAsync ? "RunBizActionDbAndInstanceAsync" : "RunBizActionDbAndInstance");
+            var genericRunMethod =
+                genericType.GetMethod(IsAsync ? "RunBizActionDbAndInstanceAsync" : "RunBizActionDbAndInstance");
             if (genericRunMethod == null)
-                throw new NullReferenceException("Could not find a run method in the created internal service instance.");
+                throw new NullReferenceException(
+                    "Could not find a run method in the created internal service instance.");
 
             return _matchingServiceType.TypeOfService.HasFlag(RequestedInOut.Out)
                 ? genericRunMethod.MakeGenericMethod(GetBizOutType())
@@ -104,7 +119,9 @@ namespace GenericBizRunner.Internal
         {
             var genericAgruments = genericInterfacePart.GetGenericArguments().ToList();
             genericAgruments.Insert(0, iBizType);
-            return Activator.CreateInstance(serviceBaseInfo.ServiceHandleType.MakeGenericType(genericAgruments.ToArray()), new object[] { WriteStates });
+            return Activator.CreateInstance(
+                serviceBaseInfo.ServiceHandleType.MakeGenericType(genericAgruments.ToArray()),
+                new object[] {WriteStates});
         }
     }
 }

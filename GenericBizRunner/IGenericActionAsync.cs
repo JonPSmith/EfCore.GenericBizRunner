@@ -1,10 +1,12 @@
 ﻿#region licence
+
 // =====================================================
 // GenericActions Library - Library for running business actions
 // Filename: IGenericActionAsync.cs
 // Date Created: 2015/01/28
 // © Copyright Selective Analytics 2015. All rights reserved
 // =====================================================
+
 #endregion
 
 using System.Collections.Immutable;

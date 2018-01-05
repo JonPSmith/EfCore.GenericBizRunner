@@ -19,15 +19,15 @@ namespace GenericBizRunner
 
         public string Message
         {
-            get => HasErrors 
+            get => HasErrors
                 ? $"Failed with {_errors.Count} error" + (_errors.Count == 1 ? "" : "s")
                 : _successMessage;
             set => _successMessage = value;
         }
 
-        public void AddError(string errorMessage, params string[] propertyNames)           
+        public void AddError(string errorMessage, params string[] propertyNames)
         {
-            _errors.Add( new ValidationResult  
+            _errors.Add(new ValidationResult
                 (errorMessage, propertyNames));
         }
 
@@ -41,5 +41,4 @@ namespace GenericBizRunner
             _errors.AddRange(validationResults);
         }
     }
-
 }

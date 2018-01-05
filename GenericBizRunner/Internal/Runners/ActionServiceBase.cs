@@ -1,10 +1,4 @@
-﻿
-
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using GenericBizRunner.Configuration;
 using GenericBizRunner.Helpers;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +10,7 @@ namespace GenericBizRunner.Internal.Runners
         /// <summary>
         /// This contains info on whether SaveChanges (with validation) should be called after a succsessful business logic has run
         /// </summary>
-        protected WriteToDbStates WriteStates { get; }
+        private WriteToDbStates WriteStates { get; }
 
         protected IGenericBizRunnerConfig Config { get; }
 
@@ -36,7 +30,6 @@ namespace GenericBizRunner.Internal.Runners
         /// <returns></returns>
         protected void SaveChangedIfRequired(DbContext db, IBizActionStatus bizStatus)
         {
-
             if (!bizStatus.HasErrors && WriteStates.HasFlag(WriteToDbStates.WriteToDb))
             {
                 if (WriteStates.HasFlag(WriteToDbStates.ValidateWrite))
@@ -48,7 +41,6 @@ namespace GenericBizRunner.Internal.Runners
 
                 Config.UpdateSuccessMessageOnGoodWrite(bizStatus);
             }
-
         }
 
         /// <summary>
@@ -72,6 +64,13 @@ namespace GenericBizRunner.Internal.Runners
 
                 Config.UpdateSuccessMessageOnGoodWrite(bizStatus);
             }
+        }
+
+        protected static TOut ReturnDefaultAndResetInDto<TOut>(DbContext db, DtoAccessGenerator inDtoAcessor,
+            object inputdto)
+        {
+            inDtoAcessor.SetupSecondaryDataIfRequired(db, inputdto);
+            return default(TOut);
         }
     }
 }

@@ -5,28 +5,28 @@ namespace GenericBizRunner.Internal.Runners
 {
     internal class ActionServiceInOut<TBizInterface, TBizIn, TBizOut> : ActionServiceBase
     {
-        public ActionServiceInOut(WriteToDbStates writeStates, IGenericBizRunnerConfig config) : base(writeStates, config)
+        public ActionServiceInOut(WriteToDbStates writeStates, IGenericBizRunnerConfig config) : base(writeStates,
+            config)
         {
         }
 
         public TOut RunBizActionDbAndInstance<TOut>(DbContext db, TBizInterface bizInstance, object inputData)
         {
-            var toBizCopier = DtoAccessGenerator.BuildCopier(inputData.GetType(), typeof(TBizIn), true);
-            var fromBizCopier = DtoAccessGenerator.BuildCopier(typeof(TBizOut), typeof(TOut), false);
+            var toBizCopier = DtoAccessGenerator.BuildCopier(inputData.GetType(), typeof(TBizIn), true, false, Config);
+            var fromBizCopier = DtoAccessGenerator.BuildCopier(typeof(TBizOut), typeof(TOut), false, false, Config);
             var bizStatus = (IBizActionStatus) bizInstance;
 
-            var status = toBizCopier.DoCopyToBiz<TBizIn>(db, inputData);
-            if (bizStatus.HasErrors) return default(TOut);
+            var inData = toBizCopier.DoCopyToBiz<TBizIn>(db, inputData);
+            if (bizStatus.HasErrors) return ReturnDefaultAndResetInDto<TOut>(db, toBizCopier, inputData);
 
-            var result = ((IGenericAction<TBizIn, TBizOut>) bizInstance).RunAction(status.Result);
+            var result = ((IGenericAction<TBizIn, TBizOut>) bizInstance).RunAction(inData);
 
             //This handles optional call of save changes
-            SaveChangedIfRequired(db, bizStatus, inputData, toBizCopier);
-            if (bizStatus.HasErrors) return default(TOut);
+            SaveChangedIfRequired(db, bizStatus);
+            if (bizStatus.HasErrors) return ReturnDefaultAndResetInDto<TOut>(db, toBizCopier, inputData);
 
             var data = fromBizCopier.DoCopyFromBiz<TOut>(db, result);
             return data;
         }
-
     }
 }

@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -33,26 +31,27 @@ namespace GenericBizRunner.Internal
 
         public override string ToString()
         {
-            return string.Format("ServiceHandleType: {0}, TypeOfService: {1}, WriteStates: {2}", ServiceHandleType.Name, TypeOfService, WriteStates);
+            return string.Format("ServiceHandleType: {0}, TypeOfService: {1}, WriteStates: {2}", ServiceHandleType.Name,
+                TypeOfService, WriteStates);
         }
 
         internal static readonly IReadOnlyDictionary<Type, ServiceBuilderLookup> ServiceLookup =
-                    new ReadOnlyDictionary<Type, ServiceBuilderLookup>(
-                        new Dictionary<Type, ServiceBuilderLookup>()
-        {
-           //{ typeof(IGenericAction<,>), new ServiceBuilderLookup(typeof(ActionServiceInOut<,,>), RequestedInOut.InOut, false)},
-           //{ typeof(IGenericActionAsync<,>), new ServiceBuilderLookup(typeof(ActionServiceInOutAsync<,,>), RequestedInOut.InOut | RequestedInOut.Async, false)},
-           //{ typeof(IGenericActionInOnly<>), new ServiceBuilderLookup(typeof(ActionServiceInOnly<,>), RequestedInOut.In, false)},
-           //{ typeof(IGenericActionInOnlyAsync<>), new ServiceBuilderLookup(typeof(ActionServiceInOnlyAsync<,>), RequestedInOut.In| RequestedInOut.Async, false)},
-           //{ typeof(IGenericActionOutOnly<>), new ServiceBuilderLookup(typeof(ActionServiceOutOnly<,>), RequestedInOut.Out, false)},
-           //{ typeof(IGenericActionOutOnlyAsync<>), new ServiceBuilderLookup(typeof(ActionServiceOutOnlyAsync<,>), RequestedInOut.Out | RequestedInOut.Async, false)},
-           ////Now the writeDb versions
-           //{ typeof(IGenericActionWriteDb<,>), new ServiceBuilderLookup(typeof(ActionServiceInOut<,,>), RequestedInOut.InOut, true)},
-           //{ typeof(IGenericActionWriteDbAsync<,>), new ServiceBuilderLookup(typeof(ActionServiceInOutAsync<,,>), RequestedInOut.InOut | RequestedInOut.Async, true)},
-           //{ typeof(IGenericActionInOnlyWriteDb<>), new ServiceBuilderLookup(typeof(ActionServiceInOnly<,>), RequestedInOut.In, true)},
-           //{ typeof(IGenericActionInOnlyWriteDbAsync<>), new ServiceBuilderLookup(typeof(ActionServiceInOnlyAsync<,>), RequestedInOut.In| RequestedInOut.Async, true)},
-           //{ typeof(IGenericActionOutOnlyWriteDb<>), new ServiceBuilderLookup(typeof(ActionServiceOutOnly<,>), RequestedInOut.Out, true)},
-           //{ typeof(IGenericActionOutOnlyWriteDbAsync<>), new ServiceBuilderLookup(typeof(ActionServiceOutOnlyAsync<,>), RequestedInOut.Out | RequestedInOut.Async, true)},
-        });
+            new ReadOnlyDictionary<Type, ServiceBuilderLookup>(
+                new Dictionary<Type, ServiceBuilderLookup>()
+                {
+                    //{ typeof(IGenericAction<,>), new ServiceBuilderLookup(typeof(ActionServiceInOut<,,>), RequestedInOut.InOut, false)},
+                    //{ typeof(IGenericActionAsync<,>), new ServiceBuilderLookup(typeof(ActionServiceInOutAsync<,,>), RequestedInOut.InOut | RequestedInOut.Async, false)},
+                    //{ typeof(IGenericActionInOnly<>), new ServiceBuilderLookup(typeof(ActionServiceInOnly<,>), RequestedInOut.In, false)},
+                    //{ typeof(IGenericActionInOnlyAsync<>), new ServiceBuilderLookup(typeof(ActionServiceInOnlyAsync<,>), RequestedInOut.In| RequestedInOut.Async, false)},
+                    //{ typeof(IGenericActionOutOnly<>), new ServiceBuilderLookup(typeof(ActionServiceOutOnly<,>), RequestedInOut.Out, false)},
+                    //{ typeof(IGenericActionOutOnlyAsync<>), new ServiceBuilderLookup(typeof(ActionServiceOutOnlyAsync<,>), RequestedInOut.Out | RequestedInOut.Async, false)},
+                    ////Now the writeDb versions
+                    //{ typeof(IGenericActionWriteDb<,>), new ServiceBuilderLookup(typeof(ActionServiceInOut<,,>), RequestedInOut.InOut, true)},
+                    //{ typeof(IGenericActionWriteDbAsync<,>), new ServiceBuilderLookup(typeof(ActionServiceInOutAsync<,,>), RequestedInOut.InOut | RequestedInOut.Async, true)},
+                    //{ typeof(IGenericActionInOnlyWriteDb<>), new ServiceBuilderLookup(typeof(ActionServiceInOnly<,>), RequestedInOut.In, true)},
+                    //{ typeof(IGenericActionInOnlyWriteDbAsync<>), new ServiceBuilderLookup(typeof(ActionServiceInOnlyAsync<,>), RequestedInOut.In| RequestedInOut.Async, true)},
+                    //{ typeof(IGenericActionOutOnlyWriteDb<>), new ServiceBuilderLookup(typeof(ActionServiceOutOnly<,>), RequestedInOut.Out, true)},
+                    //{ typeof(IGenericActionOutOnlyWriteDbAsync<>), new ServiceBuilderLookup(typeof(ActionServiceOutOnlyAsync<,>), RequestedInOut.Out | RequestedInOut.Async, true)},
+                });
     }
 }

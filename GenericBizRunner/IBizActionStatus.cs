@@ -42,6 +42,5 @@ namespace GenericBizRunner
         /// </summary>
         /// <param name="validationResult"></param>
         void AddValidationResults(IEnumerable<ValidationResult> validationResults);
-
     }
 }

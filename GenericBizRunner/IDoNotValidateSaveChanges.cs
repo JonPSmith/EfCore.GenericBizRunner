@@ -3,9 +3,10 @@
 
 namespace GenericBizRunner
 {
-
     /// <summary>
     /// If you add this interface to the business logic then it will not validate the data when calling SaveChanges
     /// </summary>
-    public interface IDoNotValidateSaveChanges { }
+    public interface IDoNotValidateSaveChanges
+    {
+    }
 }

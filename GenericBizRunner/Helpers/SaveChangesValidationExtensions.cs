@@ -28,7 +28,8 @@ namespace GenericBizRunner.Helpers
             finally
             {
                 context.ChangeTracker.AutoDetectChangesEnabled = true;
-            }   
+            }
+
             return result;
         }
 
@@ -40,14 +41,14 @@ namespace GenericBizRunner.Helpers
             var result = context.ExecuteValidation();
             if (result.Any()) return result;
 
-            context.ChangeTracker.AutoDetectChangesEnabled = false; 
+            context.ChangeTracker.AutoDetectChangesEnabled = false;
             try
             {
                 context.SaveChanges();
             }
             finally
             {
-                context.ChangeTracker.AutoDetectChangesEnabled = true;    
+                context.ChangeTracker.AutoDetectChangesEnabled = true;
             }
 
             return result;
@@ -56,22 +57,23 @@ namespace GenericBizRunner.Helpers
         private static ImmutableList<ValidationResult> ExecuteValidation(this DbContext context)
         {
             var result = new List<ValidationResult>();
-            foreach (var entry in 
+            foreach (var entry in
                 context.ChangeTracker.Entries()
                     .Where(e =>
-                       (e.State == EntityState.Added) ||
-                       (e.State == EntityState.Modified)))
+                        (e.State == EntityState.Added) ||
+                        (e.State == EntityState.Modified)))
             {
                 var entity = entry.Entity;
                 var valProvider = new ValidationDbContextServiceProvider(context);
                 var valContext = new ValidationContext(entity, valProvider, null);
                 var entityErrors = new List<ValidationResult>();
-                if (!Validator.TryValidateObject(           
+                if (!Validator.TryValidateObject(
                     entity, valContext, entityErrors, true))
                 {
                     result.AddRange(entityErrors);
                 }
             }
+
             return result.ToImmutableList();
         }
     }

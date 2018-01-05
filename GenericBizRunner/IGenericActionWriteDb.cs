@@ -1,5 +1,4 @@
-﻿
-namespace GenericBizRunner
+﻿namespace GenericBizRunner
 {
     /// <summary>
     /// This is an Action that takes an input and returns a status with a result TOut
@@ -9,6 +8,5 @@ namespace GenericBizRunner
     /// <typeparam name="TOut">Output from the business logic</typeparam>
     public interface IGenericActionWriteDb<in TIn, out TOut> : IGenericAction<TIn, TOut>
     {
-
     }
 }
