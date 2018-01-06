@@ -43,7 +43,7 @@ namespace EfCoreInAction
 
             //Add AutoFac
             var containerBuilder = new ContainerBuilder();
-            containerBuilder.RegisterModule<ServiceLayer.Utils.MyAutoFacModule>();
+            containerBuilder.RegisterModule<ServiceLayer.ServiceLayerModule>();
             containerBuilder.Populate(services);
             var container = containerBuilder.Build();
             return new AutofacServiceProvider(container);

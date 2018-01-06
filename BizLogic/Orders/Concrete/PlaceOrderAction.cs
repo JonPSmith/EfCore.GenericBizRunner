@@ -10,9 +10,8 @@ using GenericBizRunner;
 
 namespace BizLogic.Orders.Concrete
 {
-    public class PlaceOrderAction :
-        BizActionStatus,
-        IGenericAction<PlaceOrderInDto,Order> //#B
+    public class PlaceOrderAction : BizActionStatus, IPlaceOrderAction
+ 
     {
         private readonly IPlaceOrderDbAccess _dbAccess;
 
