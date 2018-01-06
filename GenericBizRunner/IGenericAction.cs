@@ -14,6 +14,6 @@ namespace GenericBizRunner
         /// Method containing business logic that will be called
         /// </summary>
         /// <param name="inputData"></param>
-        TOut RunAction(TIn inputData);
+        TOut BizAction(TIn inputData);
     }
 }

@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="OrderServices\Concrete\PlaceOrderService.cs" />
+    <Compile Remove="OrderServices\Concrete\PlaceOrderServiceTransact.cs" />
+    <Compile Remove="OrderServices\Concrete\PlaceOrderServiceWithVal.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BizDbAccess\BizDbAccess.csproj" />
+    <ProjectReference Include="..\BizLogic\BizLogic.csproj" />
+    <ProjectReference Include="..\DataLayer\DataLayer.csproj" />
+    <ProjectReference Include="..\GenericBizRunner\GenericBizRunner.csproj" />
+  </ItemGroup>
+
+</Project>

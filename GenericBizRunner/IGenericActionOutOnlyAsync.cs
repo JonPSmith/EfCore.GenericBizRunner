@@ -12,6 +12,6 @@ namespace GenericBizRunner
         /// Async method containing business logic that will be called
         /// </summary>
         /// <returns>Task containing result, or default value if fails</returns>
-        Task<TOut> RunActionAsync();
+        Task<TOut> BizActionAsync();
     }
 }

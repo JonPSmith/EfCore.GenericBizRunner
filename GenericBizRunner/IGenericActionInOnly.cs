@@ -13,6 +13,6 @@ namespace GenericBizRunner
         /// Method containing business logic that will be called
         /// </summary>
         /// <param name="inputData"></param>
-        void RunAction(TIn inputData);
+        void BizAction(TIn inputData);
     }
 }

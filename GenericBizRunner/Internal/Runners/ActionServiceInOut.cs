@@ -19,7 +19,7 @@ namespace GenericBizRunner.Internal.Runners
             var inData = toBizCopier.DoCopyToBiz<TBizIn>(db, inputData);
             if (bizStatus.HasErrors) return ReturnDefaultAndResetInDto<TOut>(db, toBizCopier, inputData);
 
-            var result = ((IGenericAction<TBizIn, TBizOut>) bizInstance).RunAction(inData);
+            var result = ((IGenericAction<TBizIn, TBizOut>) bizInstance).BizAction(inData);
 
             //This handles optional call of save changes
             SaveChangedIfRequired(db, bizStatus);

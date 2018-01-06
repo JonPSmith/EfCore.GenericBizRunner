@@ -26,6 +26,6 @@ namespace GenericBizRunner
         /// Async method containing business logic that will be called
         /// </summary>
         /// <param name="inputData"></param>
-        Task<TOut> RunActionAsync(TIn inputData);
+        Task<TOut> BizActionAsync(TIn inputData);
     }
 }

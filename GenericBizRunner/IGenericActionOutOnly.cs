@@ -13,6 +13,6 @@ namespace GenericBizRunner
         /// Method containing business logic that will be called
         /// </summary>
         /// <returns>Returns result. if fails returns default value</returns>
-        TOut RunAction();
+        TOut BizAction();
     }
 }
