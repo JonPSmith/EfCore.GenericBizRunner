@@ -3,7 +3,9 @@
 
 using System.Linq;
 using BizLogic.Orders;
+using DataLayer.EfClasses;
 using DataLayer.EfCode;
+using GenericBizRunner;
 using Microsoft.AspNetCore.Mvc;
 using ServiceLayer.CheckoutServices.Concrete;
 using ServiceLayer.OrderServices.Concrete;
@@ -50,16 +52,20 @@ namespace EfCoreInAction.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult PlaceOrder(bool acceptTAndCs)
+        public IActionResult PlaceOrder(bool acceptTAndCs, [FromServices]IActionService<IPlaceOrderAction> service)
         {
-            var service = new PlaceOrderService(HttpContext.Request.Cookies, HttpContext.Response.Cookies, _context);
-            var orderId = service.PlaceOrder(acceptTAndCs);
+            var checkoutCookie = new CheckoutCookie(HttpContext.Request.Cookies, HttpContext.Response.Cookies);
+            var checkoutService = new CheckoutCookieService(checkoutCookie.GetValue());
 
-            if (!service.Errors.Any())
-                return RedirectToAction("ConfirmOrder", "Orders", new { orderId});
+            var inputData = new PlaceOrderInDto(acceptTAndCs, checkoutService.UserId, checkoutService.LineItems);
+            var order = service.RunBizAction<Order>(inputData);
+            var orderId = order.OrderId;
+
+            if (!service.Status.HasErrors)
+                return RedirectToAction("ConfirmOrder", "Orders", new {orderId});
 
             //Otherwise errors, so copy over and redisplay
-            foreach (var error in service.Errors)
+            foreach (var error in service.Status.Errors)
             {
                 var properties = error.MemberNames.ToList();
                 ModelState.AddModelError(properties.Any() ? properties.First() : "", error.ErrorMessage);

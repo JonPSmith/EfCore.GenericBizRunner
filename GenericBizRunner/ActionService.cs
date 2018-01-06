@@ -16,12 +16,14 @@ namespace GenericBizRunner
     }
 
 
-    public class ActionService<TContext, TBizInterface> : BizActionStatus
+    public class ActionService<TContext, TBizInterface> : BizActionStatus, IActionService<TBizInterface>
         where TContext : DbContext
     {
         private TContext _context;
         private TBizInterface _bizInterface;
         private IGenericBizRunnerConfig _config;
+
+        public IBizActionStatus Status { get; private set; }
 
         public ActionService(TContext context, TBizInterface bizInterface, IGenericBizRunnerConfig config = null)
         {
@@ -31,6 +33,26 @@ namespace GenericBizRunner
         }
 
         public TOut RunBizAction<TOut>(object inputData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public TOut RunBizAction<TOut>()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RunBizAction(object inputData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public TDto GetDto<TDto>() where TDto : class, new()
+        {
+            throw new NotImplementedException();
+        }
+
+        public TDto ResetDto<TDto>(TDto dto) where TDto : class
         {
             throw new NotImplementedException();
         }
