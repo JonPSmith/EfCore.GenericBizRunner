@@ -59,10 +59,9 @@ namespace EfCoreInAction.Controllers
 
             var inputData = new PlaceOrderInDto(acceptTAndCs, checkoutService.UserId, checkoutService.LineItems);
             var order = service.RunBizAction<Order>(inputData);
-            var orderId = order.OrderId;
 
             if (!service.Status.HasErrors)
-                return RedirectToAction("ConfirmOrder", "Orders", new {orderId});
+                return RedirectToAction("ConfirmOrder", "Orders", new { order.OrderId });
 
             //Otherwise errors, so copy over and redisplay
             foreach (var error in service.Status.Errors)

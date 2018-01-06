@@ -5,8 +5,8 @@ namespace GenericBizRunner
     /// <summary>
     /// This is the primary interface to the Async actions
     /// </summary>
-    /// <typeparam name="TBizInterface"></typeparam>
-    public interface IActionServiceAsync<TBizInterface>
+    /// <typeparam name="TBizInstance"></typeparam>
+    public interface IActionServiceAsync<TBizInstance>
     {
         /// <summary>
         /// This contains the Status after the BizAction is run

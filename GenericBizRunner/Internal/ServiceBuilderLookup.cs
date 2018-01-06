@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using GenericBizRunner.Internal.Runners;
 
 namespace GenericBizRunner.Internal
 {
@@ -39,7 +40,7 @@ namespace GenericBizRunner.Internal
             new ReadOnlyDictionary<Type, ServiceBuilderLookup>(
                 new Dictionary<Type, ServiceBuilderLookup>()
                 {
-                    //{ typeof(IGenericAction<,>), new ServiceBuilderLookup(typeof(ActionServiceInOut<,,>), RequestedInOut.InOut, false)},
+                    { typeof(IGenericAction<,>), new ServiceBuilderLookup(typeof(ActionServiceInOut<,,>), RequestedInOut.InOut, WriteToDbStates.DoNotWrite)},
                     //{ typeof(IGenericActionAsync<,>), new ServiceBuilderLookup(typeof(ActionServiceInOutAsync<,,>), RequestedInOut.InOut | RequestedInOut.Async, false)},
                     //{ typeof(IGenericActionInOnly<>), new ServiceBuilderLookup(typeof(ActionServiceInOnly<,>), RequestedInOut.In, false)},
                     //{ typeof(IGenericActionInOnlyAsync<>), new ServiceBuilderLookup(typeof(ActionServiceInOnlyAsync<,>), RequestedInOut.In| RequestedInOut.Async, false)},

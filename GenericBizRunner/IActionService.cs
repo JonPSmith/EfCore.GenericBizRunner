@@ -4,8 +4,8 @@ namespace GenericBizRunner
     /// <summary>
     /// This is the primary interface to the sync actions
     /// </summary>
-    /// <typeparam name="TBizInterface"></typeparam>
-    public interface IActionService<TBizInterface>
+    /// <typeparam name="TBizInstance"></typeparam>
+    public interface IActionService<TBizInstance>
     {
         /// <summary>
         /// This contains the Status after the BizAction is run

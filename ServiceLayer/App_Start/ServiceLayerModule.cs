@@ -15,8 +15,8 @@ namespace ServiceLayer
         protected override void Load( //#B
             ContainerBuilder builder) //#B
         {
-            //Need to register DbContext pointing to the EfCoreContext
-            builder.RegisterType<EfCoreContext>().As<DbContext>();
+            //Need to register DbContext pointing to the EfCoreContext. Note the insatncePerLifetimeScope
+            builder.RegisterType<EfCoreContext>().As<DbContext>().InstancePerLifetimeScope();
 
             //and register the GenericActions interfaces by hand as they are generic
             builder.RegisterGeneric(typeof(ActionService<>)).As(typeof(IActionService<>));
