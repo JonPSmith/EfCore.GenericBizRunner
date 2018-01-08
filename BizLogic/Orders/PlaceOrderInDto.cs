@@ -2,19 +2,21 @@
 // Licensed under MIT licence. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Immutable;
+using System.Collections.Generic;
 
 namespace BizLogic.Orders
 {
     public class PlaceOrderInDto
     {
-        public bool AcceptTAndCs { get; private set; }
+        public bool AcceptTAndCs { get; set; }
 
-        public Guid UserId { get; private set; }
+        public string UserId { get; set; }
 
-        public IImmutableList<OrderLineItem> LineItems { get; private set; }
+        public List<OrderLineItem> LineItems { get; set; }
 
-        public PlaceOrderInDto(bool acceptTAndCs, Guid userId, IImmutableList<OrderLineItem> lineItems)
+        public PlaceOrderInDto () { }
+
+        public PlaceOrderInDto(bool acceptTAndCs, string userId, List<OrderLineItem> lineItems)
         {
             AcceptTAndCs = acceptTAndCs;
             UserId = userId;

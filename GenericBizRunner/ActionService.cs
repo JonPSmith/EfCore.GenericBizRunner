@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace GenericBizRunner
 {
     public class ActionService<TBizInstance> : ActionService<DbContext, TBizInstance>
-        where TBizInstance : IBizActionStatus
+        where TBizInstance : class, IBizActionStatus
     {
         public ActionService(DbContext context, TBizInstance bizInstance, IGenericBizRunnerConfig config = null)
             : base(context, bizInstance, config)
@@ -17,10 +17,9 @@ namespace GenericBizRunner
         }
     }
 
-
     public class ActionService<TContext, TBizInstance> : BizActionStatus, IActionService<TBizInstance>
         where TContext : DbContext
-        where TBizInstance : IBizActionStatus
+        where TBizInstance : class, IBizActionStatus
     {
         private readonly TContext _context;
         private readonly TBizInstance _bizInstance;
@@ -30,8 +29,9 @@ namespace GenericBizRunner
 
         public ActionService(TContext context, TBizInstance bizInstance, IGenericBizRunnerConfig config = null)
         {
-            _context = context;
-            _bizInstance = bizInstance;
+
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _bizInstance = bizInstance ?? throw new ArgumentNullException(nameof(bizInstance));
             _config = config ?? new GenericBizRunnerConfig();
         }
 

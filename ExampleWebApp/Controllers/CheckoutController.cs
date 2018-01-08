@@ -26,10 +26,9 @@ namespace EfCoreInAction.Controllers
         // GET: /<controller>/
         public IActionResult Index()
         {
-
             var listService = new CheckoutListService(_context, HttpContext.Request.Cookies);
             SetupTraceInfo();
-            return View(listService.GetCheckoutList());
+            return View(listService.GetCheckoutInfoFromCookie());
         }
 
         public IActionResult Buy(OrderLineItem itemToBuy)
@@ -52,16 +51,24 @@ namespace EfCoreInAction.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult PlaceOrder(bool acceptTAndCs, [FromServices]IActionService<IPlaceOrderAction> service)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult PlaceOrder(PlaceOrderInDto dto, [FromServices]IActionService<IPlaceOrderAction> service)
         {
-            var checkoutCookie = new CheckoutCookie(HttpContext.Request.Cookies, HttpContext.Response.Cookies);
-            var checkoutService = new CheckoutCookieService(checkoutCookie.GetValue());
+            var listService = new CheckoutListService(_context, HttpContext.Request.Cookies);
+            if (!ModelState.IsValid)
+            {
+                //model errors so return immediately
+                return View("Index", listService.GetCheckoutInfoFromCookie());
+            }
 
-            var inputData = new PlaceOrderInDto(acceptTAndCs, checkoutService.UserId, checkoutService.LineItems);
-            var order = service.RunBizAction<Order>(inputData);
+            var order = service.RunBizAction<Order>(dto);
 
             if (!service.Status.HasErrors)
+            {
+                //todo: clear checkout cookie
                 return RedirectToAction("ConfirmOrder", "Orders", new { order.OrderId });
+            }
 
             //Otherwise errors, so copy over and redisplay
             foreach (var error in service.Status.Errors)
@@ -69,9 +76,8 @@ namespace EfCoreInAction.Controllers
                 var properties = error.MemberNames.ToList();
                 ModelState.AddModelError(properties.Any() ? properties.First() : "", error.ErrorMessage);
             }
-            var listService = new CheckoutListService(_context, HttpContext.Request.Cookies);
             SetupTraceInfo();
-            return View(listService.GetCheckoutList());
+            return View("Index", listService.GetCheckoutInfoFromCookie());
         }
     }
 }

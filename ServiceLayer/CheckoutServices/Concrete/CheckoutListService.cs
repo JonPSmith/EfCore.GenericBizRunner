@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using BizLogic.Orders;
+using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using Microsoft.AspNetCore.Http;
 
@@ -21,20 +22,20 @@ namespace ServiceLayer.CheckoutServices.Concrete
             _cookiesIn = cookiesIn;
         }
 
-        public ImmutableList<CheckoutItemDto> GetCheckoutList()
+        public CheckoutDto GetCheckoutInfoFromCookie()
         {
             var cookieHandler = new CheckoutCookie(_cookiesIn);
             var service = new CheckoutCookieService(cookieHandler.GetValue());
 
-            return GetCheckoutList(service.LineItems);
+            return GetCheckoutInfoFromCookie(service);
         }
 
-        public ImmutableList<CheckoutItemDto> GetCheckoutList(IImmutableList<OrderLineItem> lineItems)
+        public CheckoutDto GetCheckoutInfoFromCookie(CheckoutCookieService checkoutCookie)
         {
-            var result = new List<CheckoutItemDto>();
-            foreach (var lineItem in lineItems)
+            var bookList = new List<CheckoutItemDto>();
+            foreach (var lineItem in checkoutCookie.LineItems)
             {
-                result.Add(_context.Books.Select(book => new CheckoutItemDto
+                bookList.Add(_context.Books.Select(book => new CheckoutItemDto
                 {
                     BookId = book.BookId,
                     Title = book.Title,
@@ -47,7 +48,8 @@ namespace ServiceLayer.CheckoutServices.Concrete
                     NumBooks = lineItem.NumBooks
                 }).Single(y => y.BookId == lineItem.BookId));
             }
-            return result.ToImmutableList();
+
+            return new CheckoutDto(checkoutCookie.UserId.ToString(), bookList);
         }
     }
 }

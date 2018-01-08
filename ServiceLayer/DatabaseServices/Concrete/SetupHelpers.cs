@@ -20,6 +20,7 @@ namespace ServiceLayer.DatabaseServices.Concrete
 
         private const string SeedDataSearchName = "Apress books*.json";
         public const string SeedFileSubDirectory = "seedData";
+        private const decimal DefaultBookPrice = 40;    //Any book without a price is set to this value
 
         public static void DevelopmentEnsureCreated(this EfCoreContext db)
         {
@@ -37,10 +38,9 @@ namespace ServiceLayer.DatabaseServices.Concrete
                 //the database is emply so we fill it from a json file
                 var books = BookJsonLoader.LoadBooks(Path.Combine(dataDirectory, SeedFileSubDirectory),
                     SeedDataSearchName).ToList();
+                books.Where(x => x.Price == -1).ToList().ForEach(x => x.Price = DefaultBookPrice);
                 context.Books.AddRange(books);
                 context.SaveChanges();
-                //We add this separately so that it has the highest Id. That will make it appear at the top of the default list
-                context.Books.Add(SpecialBook.CreateSpecialBook());
                 context.SaveChanges();
                 numBooks = books.Count + 1;
             }

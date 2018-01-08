@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2017 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT licence. See License.txt in the project root for license information.
 
+using System.Collections.Immutable;
 using System.Linq;
 using BizDbAccess.Orders;
 using DataLayer.EfClasses;
@@ -33,7 +34,7 @@ namespace BizLogic.Orders.Concrete
             if (!HasErrors)                                
                 _dbAccess.Add(order);
 
-            return new Part1ToPart2Dto(dto.LineItems, order);
+            return new Part1ToPart2Dto(dto.LineItems.ToImmutableList(), order);
         }
     }
 }

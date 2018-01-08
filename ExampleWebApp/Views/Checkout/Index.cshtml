@@ -1,6 +1,9 @@
-﻿@model System.Collections.Immutable.ImmutableList<ServiceLayer.CheckoutServices.CheckoutItemDto>
+﻿@model ServiceLayer.CheckoutServices.CheckoutDto
 @{
     ViewData["Title"] = "Checkout";
 }
-
-@Html.Partial("ListBasketPartial", @Model)
+<form method="POST" asp-action="PlaceOrder">
+    <input name="UserId" asp-for="@Model.UserId" type="hidden" alt=""/>
+    @Html.AntiForgeryToken()
+    @Html.Partial("ListBasketPartial", @Model.LineItems)
+</form>

@@ -12,12 +12,14 @@ namespace ServiceLayer.CheckoutServices.Concrete
 {
     public class CheckoutCookieService
     {
+        public const string DefaultUserId = "me@GenericBizRunner.com";
+
         private List<OrderLineItem> _lineItems;
 
         /// <summary>
         /// Because we don't get user to log in we assign them a uniquie GUID and store it in the cookie
         /// </summary>
-        public Guid UserId { get; private set; }
+        public string UserId { get; private set; }
 
         /// <summary>
         /// This returns the line items in the order they were places
@@ -64,7 +66,7 @@ namespace ServiceLayer.CheckoutServices.Concrete
         public string EncodeForCookie()
         {
             var sb = new StringBuilder();
-            sb.Append(UserId.ToString("N"));
+            sb.Append(UserId);
             foreach (var lineItem in _lineItems)
             {
                 sb.AppendFormat(",{0},{1}", lineItem.BookId, lineItem.NumBooks);
@@ -82,13 +84,13 @@ namespace ServiceLayer.CheckoutServices.Concrete
             if (cookieContent == null)
             {
                 //No cookie exists, so create new user and no orders
-                UserId = Guid.NewGuid();
+                UserId = DefaultUserId;
                 return;
             }
 
             //Has cookie, so decode it
             var parts = cookieContent.Split(',');
-            UserId = Guid.Parse(parts[0]);
+            UserId = parts[0];
             for (int i = 0; i < (parts.Length - 1) / 2; i++)
             {
                 _lineItems.Add(new OrderLineItem

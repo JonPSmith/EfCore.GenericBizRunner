@@ -8,7 +8,7 @@ namespace ServiceLayer.CheckoutServices.Concrete
 {
     public class CheckoutCookie : CookieTemplate
     {
-        public const string CheckoutCookieName = "EfCoreInAction-Checkout";
+        public const string CheckoutCookieName = "GenericBizRunner-Checkout";
 
         public CheckoutCookie(IRequestCookieCollection cookiesIn, IResponseCookies cookiesOut = null) 
             : base(CheckoutCookieName, cookiesIn, cookiesOut)
