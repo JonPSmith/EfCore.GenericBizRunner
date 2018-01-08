@@ -17,7 +17,7 @@ namespace TestBizLayer.Actions.Concrete
             {
                 AddError("Error");
             }
-            return "Result";
+            return num.ToString();
         }
     }
 }

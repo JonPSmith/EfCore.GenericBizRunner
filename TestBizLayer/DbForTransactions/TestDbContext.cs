@@ -5,8 +5,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TestBizLayer.DbForTransactions
 {
-    public class TransactionDbContext : DbContext
+    public class TestDbContext : DbContext
     {
         public DbSet<LogEntry> LogEntries { get; set; }
+
+        public TestDbContext(
+            DbContextOptions<TestDbContext> options)
+            : base(options) { }
     }
 }
