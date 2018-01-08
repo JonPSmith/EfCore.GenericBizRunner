@@ -24,8 +24,9 @@ namespace Tests.DTOs
 
         protected internal override async Task<ServiceLayerBizOutDtoAsync> CopyFromBizDataAsync(DbContext db, IMapper mapper, BizDataOut source)
         {
-            CopyFromBizDataCalled = true;
-            return await base.CopyFromBizDataAsync(db, mapper, source);
+            var data = await base.CopyFromBizDataAsync(db, mapper, source);
+            data.CopyFromBizDataCalled = true;
+            return data;
         }
     }
 }

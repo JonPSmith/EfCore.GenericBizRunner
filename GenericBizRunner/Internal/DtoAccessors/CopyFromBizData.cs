@@ -19,7 +19,7 @@ namespace GenericBizRunner.Internal.DtoAccessors
 
         public void SetupSecondaryOutputData(DbContext db, object dto)
         {
-            ((TDtoOut) dto).SetupSecondaryOutputData(db);
+            ((TDtoOut)dto).SetupSecondaryOutputData(db);
         }
     }
 }

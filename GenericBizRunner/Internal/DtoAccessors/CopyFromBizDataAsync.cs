@@ -20,7 +20,7 @@ namespace GenericBizRunner.Internal.DtoAccessors
 
         public async Task SetupSecondaryOutputDataAsync(DbContext db, object dto)
         {
-            await ((TDtoOut) dto).SetupSecondaryOutputDataAsync(db).ConfigureAwait(false);
+            await ((TDtoOut)dto).SetupSecondaryOutputDataAsync(db).ConfigureAwait(false);
         }
     }
 }

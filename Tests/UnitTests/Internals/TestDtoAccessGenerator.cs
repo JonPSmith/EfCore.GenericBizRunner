@@ -30,7 +30,7 @@ namespace Tests.UnitTests.Internals
         }
 
         [Fact]
-        public void Test02BizInCopyOk()
+        public void TestBizInCopyOk()
         {
             //SETUP
             var config = new MapperConfiguration(cfg =>
@@ -54,7 +54,7 @@ namespace Tests.UnitTests.Internals
         //BizOut
 
         [Fact]
-        public void Test30BizOutDirectOk()
+        public void TestBizOutDirectOk()
         {
             //SETUP 
             var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataOut), typeof(BizDataOut), false, false, _noCachingConfig);
@@ -68,7 +68,7 @@ namespace Tests.UnitTests.Internals
         }
 
         [Fact]
-        public void Test31BizOutCopyOk()
+        public void TestBizOutCopyOk()
         {
             //SETUP 
             var config = new MapperConfiguration(cfg =>

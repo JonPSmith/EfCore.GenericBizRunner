@@ -133,7 +133,7 @@ namespace GenericBizRunner.Internal
             //NOTE: Async business methods can use either sync or async dto, so we need to handle both
             if (!_isAsync) return DoCopyFromBiz<TDto>(db, mapper, bizOutput);
 
-            var result = await ((Task<TDto>) _dtoAccessInstance.CopyFromBizAsync(db, bizOutput)).ConfigureAwait(false);
+            var result = await ((Task<TDto>) _dtoAccessInstance.CopyFromBizAsync(db, mapper, bizOutput)).ConfigureAwait(false);
             await _dtoAccessInstance.SetupSecondaryOutputDataAsync(db, result).ConfigureAwait(false);
             return result;
         }
