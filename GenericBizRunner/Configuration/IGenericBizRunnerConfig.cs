@@ -1,4 +1,6 @@
-﻿namespace GenericBizRunner.Configuration
+﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT licence. See License.txt in the project root for license information.
+namespace GenericBizRunner.Configuration
 {
     public interface IGenericBizRunnerConfig
     {

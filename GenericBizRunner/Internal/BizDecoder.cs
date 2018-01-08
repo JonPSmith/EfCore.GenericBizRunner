@@ -1,13 +1,5 @@
-﻿#region licence
-
-// =====================================================
-// GenericActions Library - Library for running business actions
-// Filename: BizDecoder.cs
-// Date Created: 2015/01/28
-// © Copyright Selective Analytics 2015. All rights reserved
-// =====================================================
-
-#endregion
+﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT licence. See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Concurrent;
@@ -32,8 +24,6 @@ namespace GenericBizRunner.Internal
         private static readonly ConcurrentDictionary<string, BizInfo> BizDecoderCache =
             new ConcurrentDictionary<string, BizInfo>();
 
-        public BizInfo BizInfo { get; }
-
         /// <summary>
         /// This decodes the iBizType by looking at the in/out types and sets up the data
         /// to be able to call the business method with the right setup.
@@ -41,7 +31,7 @@ namespace GenericBizRunner.Internal
         /// </summary>
         /// <param name="iBizType">Must be an interface linked to the class holding the business logic</param>
         /// <param name="requestedInOut">The details of how the developer has called the method. Used for checking.</param>
-        /// <returns></returns>
+        /// <param name="turnOffCaching"></param>
         public BizDecoder(Type iBizType, RequestedInOut requestedInOut, bool turnOffCaching)
         {
             BizInfo = turnOffCaching
@@ -49,6 +39,8 @@ namespace GenericBizRunner.Internal
                 : BizDecoderCache.GetOrAdd(FormCacheKey(iBizType, requestedInOut),
                     type => LocalDecodeIBizType(iBizType, requestedInOut));
         }
+
+        public BizInfo BizInfo { get; }
 
         //-------------------------------------------------------------------------
         //private helpers

@@ -32,13 +32,19 @@ namespace GenericBizRunner.Internal
 
     internal class BizInfo
     {
-        private dynamic _bizInstance;
+        private readonly Type _extractedActionInterface;
 
         private readonly Type _iBizType;
 
-        private readonly Type _extractedActionInterface;
-
         private readonly ServiceBuilderLookup _matchingServiceType;
+        private dynamic _bizInstance;
+
+        public BizInfo(Type iBizType, Type extractedActionInterface, ServiceBuilderLookup matchingServiceType)
+        {
+            _iBizType = iBizType;
+            _extractedActionInterface = extractedActionInterface;
+            _matchingServiceType = matchingServiceType;
+        }
 
         /// <summary>
         /// True if an Async method
@@ -49,13 +55,6 @@ namespace GenericBizRunner.Internal
         /// True if the interface name contains "WriteDb"
         /// </summary>
         public WriteToDbStates WriteStates => _matchingServiceType.WriteStates;
-
-        public BizInfo(Type iBizType, Type extractedActionInterface, ServiceBuilderLookup matchingServiceType)
-        {
-            _iBizType = iBizType;
-            _extractedActionInterface = extractedActionInterface;
-            _matchingServiceType = matchingServiceType;
-        }
 
         public override string ToString()
         {

@@ -1,14 +1,5 @@
-﻿#region licence
-
-// =====================================================
-// GenericActions Library - Library for running business actions
-// Filename: IGenericActionInOnlyWriteDb.cs
-// Date Created: 2015/02/03
-// © Copyright Selective Analytics 2015. All rights reserved
-// =====================================================
-
-#endregion
-
+﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT licence. See License.txt in the project root for license information.
 namespace GenericBizRunner
 {
     /// <summary>
@@ -17,6 +8,5 @@ namespace GenericBizRunner
     /// </summary>
     /// <typeparam name="TIn">Input to the business logic</typeparam>
     public interface IGenericActionInOnlyWriteDb<in TIn> : IGenericActionInOnly<TIn>
-    {
-    }
+    {}
 }

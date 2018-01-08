@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT licence. See License.txt in the project root for license information.
+
+using System;
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -28,8 +31,6 @@ namespace GenericBizRunner.Internal
         /// </summary>
         private readonly dynamic _dtoAccessInstance;
 
-        private bool IsDirectCopy => _dtoAccessInstance == null;
-
         private readonly bool _isAsync;
 
         private DtoAccessGenerator(bool isAsync, dynamic dtoAccessInstance)
@@ -37,6 +38,8 @@ namespace GenericBizRunner.Internal
             _isAsync = isAsync;
             _dtoAccessInstance = dtoAccessInstance;
         }
+
+        private bool IsDirectCopy => _dtoAccessInstance == null;
 
         public static DtoAccessGenerator BuildCopier(Type fromType, Type toType, bool toBiz, bool asyncAllowed,
             IGenericBizRunnerConfig config)

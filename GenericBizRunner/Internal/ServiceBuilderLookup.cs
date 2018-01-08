@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT licence. See License.txt in the project root for license information.
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using GenericBizRunner.Internal.Runners;
@@ -7,35 +10,6 @@ namespace GenericBizRunner.Internal
 {
     internal class ServiceBuilderLookup
     {
-        /// <summary>
-        /// This holds the internal service to handle this type of biz action
-        /// </summary>
-        public Type ServiceHandleType { get; private set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public RequestedInOut TypeOfService { get; private set; }
-
-        /// <summary>
-        /// True if the interface name contains "WriteDb"
-        /// </summary>
-        public WriteToDbStates WriteStates { get; private set; }
-
-
-        public ServiceBuilderLookup(Type serviceHandleType, RequestedInOut typeOfService, WriteToDbStates writeStates)
-        {
-            ServiceHandleType = serviceHandleType;
-            TypeOfService = typeOfService;
-            WriteStates = writeStates;
-        }
-
-        public override string ToString()
-        {
-            return string.Format("ServiceHandleType: {0}, TypeOfService: {1}, WriteStates: {2}", ServiceHandleType.Name,
-                TypeOfService, WriteStates);
-        }
-
         internal static readonly IReadOnlyDictionary<Type, ServiceBuilderLookup> ServiceLookup =
             new ReadOnlyDictionary<Type, ServiceBuilderLookup>(
                 new Dictionary<Type, ServiceBuilderLookup>()
@@ -54,5 +28,34 @@ namespace GenericBizRunner.Internal
                     //{ typeof(IGenericActionOutOnlyWriteDb<>), new ServiceBuilderLookup(typeof(ActionServiceOutOnly<,>), RequestedInOut.Out, true)},
                     //{ typeof(IGenericActionOutOnlyWriteDbAsync<>), new ServiceBuilderLookup(typeof(ActionServiceOutOnlyAsync<,>), RequestedInOut.Out | RequestedInOut.Async, true)},
                 });
+
+
+        public ServiceBuilderLookup(Type serviceHandleType, RequestedInOut typeOfService, WriteToDbStates writeStates)
+        {
+            ServiceHandleType = serviceHandleType;
+            TypeOfService = typeOfService;
+            WriteStates = writeStates;
+        }
+
+        /// <summary>
+        /// This holds the internal service to handle this type of biz action
+        /// </summary>
+        public Type ServiceHandleType { get; private set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public RequestedInOut TypeOfService { get; private set; }
+
+        /// <summary>
+        /// True if the interface name contains "WriteDb"
+        /// </summary>
+        public WriteToDbStates WriteStates { get; private set; }
+
+        public override string ToString()
+        {
+            return string.Format("ServiceHandleType: {0}, TypeOfService: {1}, WriteStates: {2}", ServiceHandleType.Name,
+                TypeOfService, WriteStates);
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿
+﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT licence. See License.txt in the project root for license information.
+
 namespace GenericBizRunner
 {
     /// <summary>
@@ -25,7 +27,7 @@ namespace GenericBizRunner
         /// </summary>
         /// <typeparam name="TOut">The type of the result to return. Should either be the Business logic output type or class which inherits fromm GenericActionFromBizDto</typeparam>
         /// <returns>The result, or default(TOut) if there is an error</returns>
-        TOut RunBizAction<TOut>(); 
+        TOut RunBizAction<TOut>();
 
         /// <summary>
         /// This runs a business action which takes an input and returns just a status message

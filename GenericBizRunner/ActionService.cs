@@ -21,11 +21,9 @@ namespace GenericBizRunner
         where TContext : DbContext
         where TBizInstance : class, IBizActionStatus
     {
-        private readonly TContext _context;
         private readonly TBizInstance _bizInstance;
         private readonly IGenericBizRunnerConfig _config;
-
-        public IBizActionStatus Status => _bizInstance;
+        private readonly TContext _context;
 
         public ActionService(TContext context, TBizInstance bizInstance, IGenericBizRunnerConfig config = null)
         {
@@ -34,6 +32,8 @@ namespace GenericBizRunner
             _bizInstance = bizInstance ?? throw new ArgumentNullException(nameof(bizInstance));
             _config = config ?? new GenericBizRunnerConfig();
         }
+
+        public IBizActionStatus Status => _bizInstance;
 
         public TOut RunBizAction<TOut>(object inputData)
         {

@@ -1,16 +1,6 @@
-﻿#region licence
+﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT licence. See License.txt in the project root for license information.
 
-// =====================================================
-// GenericActions Library - Library for running business actions
-// Filename: IGenericActionAsync.cs
-// Date Created: 2015/01/28
-// © Copyright Selective Analytics 2015. All rights reserved
-// =====================================================
-
-#endregion
-
-using System.Collections.Immutable;
-using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace GenericBizRunner

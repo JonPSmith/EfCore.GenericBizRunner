@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT licence. See License.txt in the project root for license information.
+
 using AutoMapper;
 
 namespace GenericBizRunner.PublicButHidden
@@ -14,14 +16,6 @@ namespace GenericBizRunner.PublicButHidden
         where TDtoOut : GenericActionFromBizDtoSetup<TBizOut, TDtoOut>
     {
         /// <summary>
-        /// Override this to modify the AutoMapper mappings. For instance adding .ForMember or .BeforeMap/.AfterMap
-        /// </summary>
-        protected virtual void AutoMapperSetup()
-        {
-            CreateMap<TBizOut, TDtoOut>();
-        }
-
-        /// <summary>
         /// ctor
         /// It is valid to call a method that has been overrriden in a derived class (see unit test TestOverrideMethodInBaseCtor)
         /// </summary>
@@ -29,6 +23,14 @@ namespace GenericBizRunner.PublicButHidden
         {
             // ReSharper disable once VirtualMemberCallInConstructor
             AutoMapperSetup();
+        }
+
+        /// <summary>
+        /// Override this to modify the AutoMapper mappings. For instance adding .ForMember or .BeforeMap/.AfterMap
+        /// </summary>
+        protected virtual void AutoMapperSetup()
+        {
+            CreateMap<TBizOut, TDtoOut>();
         }
     }
 }

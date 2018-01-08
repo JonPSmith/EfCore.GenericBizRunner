@@ -1,13 +1,5 @@
-﻿#region licence
-
-// =====================================================
-// GenericActions Library - Library for running business actions
-// Filename: CopyToBizData.cs
-// Date Created: 2015/02/02
-// © Copyright Selective Analytics 2015. All rights reserved
-// =====================================================
-
-#endregion
+﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT licence. See License.txt in the project root for license information.
 
 using Microsoft.EntityFrameworkCore;
 

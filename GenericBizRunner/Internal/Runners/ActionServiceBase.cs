@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT licence. See License.txt in the project root for license information.
+
+using System.Threading.Tasks;
 using GenericBizRunner.Configuration;
 using GenericBizRunner.Helpers;
 using Microsoft.EntityFrameworkCore;
@@ -7,18 +10,18 @@ namespace GenericBizRunner.Internal.Runners
 {
     internal abstract class ActionServiceBase
     {
+        protected ActionServiceBase(WriteToDbStates writeStates, IGenericBizRunnerConfig config)
+        {
+            WriteStates = writeStates;
+            Config = config;
+        }
+
         /// <summary>
         /// This contains info on whether SaveChanges (with validation) should be called after a succsessful business logic has run
         /// </summary>
         private WriteToDbStates WriteStates { get; }
 
         protected IGenericBizRunnerConfig Config { get; }
-
-        protected ActionServiceBase(WriteToDbStates writeStates, IGenericBizRunnerConfig config)
-        {
-            WriteStates = writeStates;
-            Config = config;
-        }
 
         /// <summary>
         /// This a) handled optional save to database and b) calling SetupSecondaryData if there are any errors
@@ -28,7 +31,7 @@ namespace GenericBizRunner.Internal.Runners
         /// <param name="db"></param>
         /// <param name="bizStatus"></param>
         /// <returns></returns>
-        protected void SaveChangedIfRequired(DbContext db, IBizActionStatus bizStatus)
+        protected void SaveChangedIfRequiredAndNoErrors(DbContext db, IBizActionStatus bizStatus)
         {
             if (!bizStatus.HasErrors && WriteStates.HasFlag(WriteToDbStates.WriteToDb))
             {
@@ -51,7 +54,7 @@ namespace GenericBizRunner.Internal.Runners
         /// <param name="db"></param>
         /// <param name="bizStatus"></param>
         /// <returns></returns>
-        protected async Task SaveChangedIfRequiredAsync(DbContext db, IBizActionStatus bizStatus)
+        protected async Task SaveChangedIfRequiredAndNoErrorsAsync(DbContext db, IBizActionStatus bizStatus)
         {
             if (!bizStatus.HasErrors && WriteStates.HasFlag(WriteToDbStates.WriteToDb))
             {

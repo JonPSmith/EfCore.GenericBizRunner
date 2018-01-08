@@ -1,12 +1,15 @@
-﻿using GenericBizRunner.Configuration;
+﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT licence. See License.txt in the project root for license information.
+
+using GenericBizRunner.Configuration;
 using Microsoft.EntityFrameworkCore;
 
 namespace GenericBizRunner.Internal.Runners
 {
     internal class ActionServiceInOut<TBizInterface, TBizIn, TBizOut> : ActionServiceBase
     {
-        public ActionServiceInOut(WriteToDbStates writeStates, IGenericBizRunnerConfig config) : base(writeStates,
-            config)
+        public ActionServiceInOut(WriteToDbStates writeStates, IGenericBizRunnerConfig config) 
+            : base(writeStates, config)
         {
         }
 
@@ -17,12 +20,11 @@ namespace GenericBizRunner.Internal.Runners
             var bizStatus = (IBizActionStatus) bizInstance;
 
             var inData = toBizCopier.DoCopyToBiz<TBizIn>(db, inputData);
-            if (bizStatus.HasErrors) return ReturnDefaultAndResetInDto<TOut>(db, toBizCopier, inputData);
 
             var result = ((IGenericAction<TBizIn, TBizOut>) bizInstance).BizAction(inData);
 
             //This handles optional call of save changes
-            SaveChangedIfRequired(db, bizStatus);
+            SaveChangedIfRequiredAndNoErrors(db, bizStatus);
             if (bizStatus.HasErrors) return ReturnDefaultAndResetInDto<TOut>(db, toBizCopier, inputData);
 
             var data = fromBizCopier.DoCopyFromBiz<TOut>(db, result);
