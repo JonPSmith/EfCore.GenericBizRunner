@@ -1,23 +1,12 @@
 ﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT licence. See License.txt in the project root for license information.
-
-using Xunit;
-
-namespace Tests.UnitTests.AutoMapper
+namespace TestBizLayer.ActionsTransactional.Concrete
 {
-    public class TestAutoMapper
+    public class BizTranActionSecond : BizTranActionBase, IBizTranActionSecond
     {
-        [Fact]
-        public void Test()
+        public BizTranActionSecond()
+            : base(2)
         {
-            //SETUP
-
-
-            //ATTEMPT
-
-
-            //VERIFY
-
         }
     }
 }

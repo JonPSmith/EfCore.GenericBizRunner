@@ -1,6 +1,9 @@
 ﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT licence. See License.txt in the project root for license information.
 
+using AutoMapper;
+using TestBizLayer.BizDTOs;
+using Tests.DTOs;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
@@ -8,43 +11,22 @@ namespace Tests.UnitTests.AutoMapper
 {
     public class TestOverrideMethodInBaseCtor
     {
-        private class BaseClass
-        {
-            public string MyString { get; protected set; }
-
-            protected virtual void MyMethod()
-            {
-                MyString = "Base";
-            }
-
-            public BaseClass()
-            {
-                // ReSharper disable once VirtualMemberCallInConstructor
-                MyMethod();
-            }
-        }
-
-        private class DerivedOverride : BaseClass
-        {
-            protected override void MyMethod()
-            {
-                MyString = "Derived";
-            }
-        }
-
-        // See https://www.codeproject.com/tips/641610/be-careful-with-virtual-method
         [Fact]
-        public void TestThatOverridingMethodInDerivedClassIsCalledInBaseCtor()
+        public void TestDtoWithOverrideOfAutoMapperSetup()
         {
             //SETUP
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new ServiceLayerBizOutWithMappingDto());
+            });
+            var mapper = config.CreateMapper();
 
             //ATTEMPT
-            var baseClass = new BaseClass();
-            var derivedClass = new DerivedOverride();
+            var input = new BizDataOut { Output = "Hello" };
+            var data = mapper.Map<ServiceLayerBizOutWithMappingDto>(input);
 
             //VERIFY
-            baseClass.MyString.ShouldEqual("Base");
-            derivedClass.MyString.ShouldEqual("Derived");
+            data.MappedOutput.ShouldEqual("Hello with suffix.");
         }
     }
 }

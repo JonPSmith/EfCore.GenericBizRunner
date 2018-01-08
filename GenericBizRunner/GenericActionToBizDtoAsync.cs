@@ -33,11 +33,12 @@ namespace GenericActions
         /// Note: Look at AutoMapperSetup method first as that can handle a number of mapping issues
         /// </summary>
         /// <param name="db"></param>
+        /// <param name="mapper"></param>
         /// <param name="source"></param>
         /// <returns></returns>
-        internal protected virtual async Task<TBizIn> CopyToBizDataAsync(DbContext db, TDtoIn source)
+        protected internal virtual async Task<TBizIn> CopyToBizDataAsync(DbContext db, IMapper mapper, TDtoIn source)
         {
-            return Mapper.Map<TBizIn>(source);
+            return mapper.Map<TBizIn>(source);
         }
     }
 }

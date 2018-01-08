@@ -31,11 +31,12 @@ namespace GenericBizRunner
         /// Note: Look at AutoMapperSetup method first as that can handle a number of mapping issues
         /// </summary>
         /// <param name="db">This allows you to access the DbContext to access the database</param>
+        /// <param name="mapper"></param>
         /// <param name="source"></param>
         /// <returns></returns>
-        protected internal virtual TBizIn CopyToBizData(DbContext db, TDtoIn source)
+        protected internal virtual TBizIn CopyToBizData(DbContext db, IMapper mapper, TDtoIn source)
         {
-            return Mapper.Map<TBizIn>(source);
+            return mapper.Map<TBizIn>(source);
         }
     }
 }

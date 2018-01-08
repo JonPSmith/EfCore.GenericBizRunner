@@ -39,9 +39,9 @@ namespace GenericBizRunner
         /// <param name="db"></param>
         /// <param name="source"></param>
         /// <returns></returns>
-        internal protected virtual async Task<TDtoOut> CopyFromBizDataAsync(DbContext db, TBizOut source)
+        internal protected virtual async Task<TDtoOut> CopyFromBizDataAsync(DbContext db, IMapper mapper, TBizOut source)
         {
-            return Mapper.Map<TDtoOut>(source);
+            return mapper.Map<TDtoOut>(source);
         }
     }
 }

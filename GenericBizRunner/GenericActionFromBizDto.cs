@@ -30,15 +30,14 @@ namespace GenericBizRunner
         /// This copies the Business logic's output data into the GenericAction's DTO class.
         /// Override this if you need to do some more complex calculation during the copy 
         /// Note: Look at AutoMapperSetup method first as that can handle a number of mapping issues
-        /// Also note that this method should not fail because any write to the database (optional)
-        /// has already happened by the time this is called.
         /// </summary>
         /// <param name="db"></param>
+        /// <param name="mapper"></param>
         /// <param name="source"></param>
         /// <returns></returns>
-        protected internal virtual TDtoOut CopyFromBizData(DbContext db, TBizOut source)
+        protected internal virtual TDtoOut CopyFromBizData(DbContext db, IMapper mapper, TBizOut source)
         {
-            return Mapper.Map<TDtoOut>(source);
+            return mapper.Map<TDtoOut>(source);
         }
     }
 }

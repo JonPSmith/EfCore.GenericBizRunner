@@ -5,9 +5,17 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using GenericBizRunner.Configuration;
 
 namespace GenericBizRunner
 {
+    public enum SaveChangesValidationStates
+    {
+        UseConfig,
+        Validate,
+        DoNotValidate
+    }
+
     public abstract class BizActionStatus : IBizActionStatus
     {
         private readonly List<ValidationResult> _errors = new List<ValidationResult>();
@@ -40,5 +48,20 @@ namespace GenericBizRunner
         {
             _errors.AddRange(validationResults);
         }
+
+        public bool ValidateSaveChanges(IGenericBizRunnerConfig config)
+        {
+            if (ShouldIValidateSaveChanges == SaveChangesValidationStates.UseConfig)
+                return !config.DoNotValidateSaveChanges;
+
+            return ShouldIValidateSaveChanges == SaveChangesValidationStates.Validate;
+        }
+
+        /// <summary>
+        /// This allows you to set whether GenericBizRunner will validate a call to SaveChanges
+        /// Its default state is to use the IGenericBizRunnerConfig.DoNotValidateSaveChanges boolean, which defaults to false
+        /// </summary>
+        protected virtual SaveChangesValidationStates ShouldIValidateSaveChanges { get; } =
+            SaveChangesValidationStates.UseConfig;
     }
 }

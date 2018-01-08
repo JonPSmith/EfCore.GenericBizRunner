@@ -22,14 +22,6 @@ namespace GenericBizRunner.Internal
         AllFlagsMask = NonAsyncFlagsMask | Async
     }
 
-    [Flags]
-    internal enum WriteToDbStates
-    {
-        DoNotWrite = 0,
-        WriteToDb = 1,
-        ValidateWrite = 2
-    }
-
     internal class BizInfo
     {
         private readonly Type _extractedActionInterface;
@@ -54,13 +46,13 @@ namespace GenericBizRunner.Internal
         /// <summary>
         /// True if the interface name contains "WriteDb"
         /// </summary>
-        public WriteToDbStates WriteStates => _matchingServiceType.WriteStates;
+        public bool RequiresSaveChanges => _matchingServiceType.RequiresSaveChanges;
 
         public override string ToString()
         {
             return string.Format(
-                "IBizType: {0}, ExtractedActionInterface: {1}, MatchingServiceType: {2}, IsAsync: {3}, WriteStates: {4}",
-                _iBizType.Name, _extractedActionInterface.Name, _matchingServiceType, IsAsync, WriteStates);
+                "IBizType: {0}, ExtractedActionInterface: {1}, MatchingServiceType: {2}, IsAsync: {3}, RequiresSaveChanges: {4}",
+                _iBizType.Name, _extractedActionInterface.Name, _matchingServiceType, IsAsync, RequiresSaveChanges);
         }
 
         /// <summary>
@@ -121,7 +113,7 @@ namespace GenericBizRunner.Internal
             genericAgruments.Insert(0, iBizType);
             return Activator.CreateInstance(
                 serviceBaseInfo.ServiceHandleType.MakeGenericType(genericAgruments.ToArray()),
-                new object[] {WriteStates, config});
+                new object[] { RequiresSaveChanges, config});
         }
     }
 }

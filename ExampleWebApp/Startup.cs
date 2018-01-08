@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using AutoMapper;
 using DataLayer.EfCode;
 using EfCoreInAction.Logger;
 using Microsoft.AspNetCore.Builder;
@@ -34,6 +35,8 @@ namespace EfCoreInAction
             // Add framework services.
             services.AddMvc();
 
+            services.AddAutoMapper(); //TODO: Move into AutoFac setup in GenericBizRunners
+
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             var connection = Configuration.GetConnectionString("DefaultConnection");
@@ -46,7 +49,7 @@ namespace EfCoreInAction
             containerBuilder.RegisterModule<ServiceLayer.ServiceLayerModule>();
             containerBuilder.Populate(services);
             var container = containerBuilder.Build();
-            return new AutofacServiceProvider(container);
+            return new AutofacServiceProvider(container); //TODO: Move into AutoFac setup in GenericBizRunners
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

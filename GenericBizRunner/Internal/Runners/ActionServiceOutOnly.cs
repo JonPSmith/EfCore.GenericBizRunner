@@ -2,6 +2,7 @@
 // Licensed under MIT licence. See License.txt in the project root for license information.
 
 
+using AutoMapper;
 using GenericBizRunner.Configuration;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,12 +10,12 @@ namespace GenericBizRunner.Internal.Runners
 {
     internal class ActionServiceOutOnly<TBizInterface, TBizOut> : ActionServiceBase
     {
-        public ActionServiceOutOnly(WriteToDbStates writeStates, IGenericBizRunnerConfig config)
-            : base(writeStates, config)
+        public ActionServiceOutOnly(bool requiresSaveChanges, IGenericBizRunnerConfig config)
+            : base(requiresSaveChanges, config)
         {
         }
 
-        public TOut RunBizActionDbAndInstance<TOut>(DbContext db, TBizInterface bizInstance)
+        public TOut RunBizActionDbAndInstance<TOut>(DbContext db, TBizInterface bizInstance, IMapper mapper)
         {
             var fromBizCopier = DtoAccessGenerator.BuildCopier(typeof(TBizOut), typeof(TOut), false, false, Config);
             var bizStatus = (IBizActionStatus)bizInstance;
@@ -25,7 +26,7 @@ namespace GenericBizRunner.Internal.Runners
             SaveChangedIfRequiredAndNoErrors(db, bizStatus);
             if (bizStatus.HasErrors) return default(TOut);
 
-            var data = fromBizCopier.DoCopyFromBiz<TOut>(db, result);
+            var data = fromBizCopier.DoCopyFromBiz<TOut>(db, mapper, result);
             return data;
         }
     }

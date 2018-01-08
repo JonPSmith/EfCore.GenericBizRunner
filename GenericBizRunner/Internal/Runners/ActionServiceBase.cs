@@ -10,16 +10,16 @@ namespace GenericBizRunner.Internal.Runners
 {
     internal abstract class ActionServiceBase
     {
-        protected ActionServiceBase(WriteToDbStates writeStates, IGenericBizRunnerConfig config)
+        protected ActionServiceBase(bool requiresSaveChanges, IGenericBizRunnerConfig config)
         {
-            WriteStates = writeStates;
+            RequiresSaveChanges = requiresSaveChanges;
             Config = config;
         }
 
         /// <summary>
         /// This contains info on whether SaveChanges (with validation) should be called after a succsessful business logic has run
         /// </summary>
-        private WriteToDbStates WriteStates { get; }
+        private bool RequiresSaveChanges { get; }
 
         protected IGenericBizRunnerConfig Config { get; }
 
@@ -33,9 +33,9 @@ namespace GenericBizRunner.Internal.Runners
         /// <returns></returns>
         protected void SaveChangedIfRequiredAndNoErrors(DbContext db, IBizActionStatus bizStatus)
         {
-            if (!bizStatus.HasErrors && WriteStates.HasFlag(WriteToDbStates.WriteToDb))
+            if (!bizStatus.HasErrors && RequiresSaveChanges)
             {
-                if (WriteStates.HasFlag(WriteToDbStates.ValidateWrite))
+                if (bizStatus.ValidateSaveChanges(Config))
                     bizStatus.AddValidationResults(db.SaveChangesWithValidation());
                 else
                 {
@@ -56,9 +56,9 @@ namespace GenericBizRunner.Internal.Runners
         /// <returns></returns>
         protected async Task SaveChangedIfRequiredAndNoErrorsAsync(DbContext db, IBizActionStatus bizStatus)
         {
-            if (!bizStatus.HasErrors && WriteStates.HasFlag(WriteToDbStates.WriteToDb))
+            if (!bizStatus.HasErrors && RequiresSaveChanges)
             {
-                if (WriteStates.HasFlag(WriteToDbStates.ValidateWrite))
+                if (bizStatus.ValidateSaveChanges(Config))
                     bizStatus.AddValidationResults(await db.SaveChangesWithValidationAsync());
                 else
                 {

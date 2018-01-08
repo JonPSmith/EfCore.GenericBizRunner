@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
+using GenericBizRunner.Configuration;
 
 namespace GenericBizRunner
 {
@@ -40,7 +41,14 @@ namespace GenericBizRunner
         /// <summary>
         /// Adds a collection of ValidationResults to the business logic
         /// </summary>
-        /// <param name="validationResult"></param>
+        /// <param name="validationResults"></param>
         void AddValidationResults(IEnumerable<ValidationResult> validationResults);
+
+        /// <summary>
+        /// This method is used by GenericBzRunner to work out whether a call to saveChanges should also validate the data
+        /// </summary>
+        /// <param name="config"></param>
+        /// <returns></returns>
+        bool ValidateSaveChanges(IGenericBizRunnerConfig config);
     }
 }
