@@ -89,7 +89,7 @@ namespace GenericBizRunner
                 throw new InvalidOperationException("You should only call this on a primitive type. Its only useful for Dtos.");
 
             var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOrInOut, _config.TurnOffCaching);
-            var toBizCopier = DtoAccessGenerator.BuildCopier(typeof(TDto), decoder.BizInfo.GetBizInType(), true, true, _config);
+            var toBizCopier = DtoAccessGenerator.BuildCopier(typeof(TDto), decoder.BizInfo.GetBizInType(), true, false, _config);
             return toBizCopier.CreateDataWithPossibleSetup<TDto>(_context);
         }
 
@@ -106,7 +106,7 @@ namespace GenericBizRunner
                 throw new InvalidOperationException("You should only call this on a primitive type. Its only useful for Dtos.");
 
             var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOrInOut, _config.TurnOffCaching);
-            var toBizCopier = DtoAccessGenerator.BuildCopier(typeof(TDto), decoder.BizInfo.GetBizInType(), true, true, _config);
+            var toBizCopier = DtoAccessGenerator.BuildCopier(typeof(TDto), decoder.BizInfo.GetBizInType(), true, false, _config);
             toBizCopier.SetupSecondaryDataIfRequired(_context, dto);
             return dto;
         }

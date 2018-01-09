@@ -18,16 +18,17 @@ namespace TestBizLayer.Actions.Concrete
 
         public BizDataOut BizAction(BizDataIn inputData)
         {
+            //Put it here so that if SaveChanges is called it will be in database
+            _context.Add(new LogEntry(inputData.Num.ToString()));
             if (inputData.Num >= 0)
             {
-                _context.Add(new LogEntry(inputData.Num.ToString()));
                 Message = "All Ok";
             }
             else
             {
                 AddError("Error");
             }
-            return new BizDataOut("Result");
+            return new BizDataOut( inputData.Num.ToString());
         }
     }
 }

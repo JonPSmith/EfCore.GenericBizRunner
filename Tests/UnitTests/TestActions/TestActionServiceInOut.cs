@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using AutoMapper;
 using GenericBizRunner;
 using GenericBizRunner.Configuration;
@@ -6,15 +7,17 @@ using GenericBizRunner.Internal.Runners;
 using Microsoft.EntityFrameworkCore;
 using TestBizLayer.Actions;
 using TestBizLayer.Actions.Concrete;
+using TestBizLayer.BizDTOs;
 using TestBizLayer.DbForTransactions;
 using Tests.DTOs;
+using Tests.Helpers;
 using TestSupport.EfHelpers;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
 namespace Tests.UnitTests.TestActions
 {
-    public class TestRunBizActionValueInOut
+    public class TestActionServiceInOut
     {
         private readonly IGenericBizRunnerConfig _noCachingConfig = new GenericBizRunnerConfig { TurnOffCaching = true };
         //This action does not access the database, but the ActionService checks that the dbContext isn't null
@@ -22,38 +25,87 @@ namespace Tests.UnitTests.TestActions
         //Beacause this is ValueInOut then there is no need for a mapper, but the ActionService checks that the Mapper isn't null
         private readonly IMapper _emptyMapper = new Mapper(new MapperConfiguration(cfg => {}));
 
-        [Fact]
-        public void TestRunBizActionValueInOutDirectOk()
+        [Theory]
+        [InlineData(123, false)]
+        [InlineData(-1, true)]
+        public void TestActionServiceValueInOutDirectOk(int num, bool hasErrors)
         {
             //SETUP 
             var bizInstance = new BizActionValueInOut();
             var runner = new ActionService<IBizActionValueInOut>(_emptyDbContext, bizInstance, _emptyMapper, _noCachingConfig);
-            var input = 123;
+            var input = num;
 
             //ATTEMPT
             var data = runner.RunBizAction<string>(input);
 
             //VERIFY
-            bizInstance.HasErrors.ShouldBeFalse();
-            data.ShouldEqual("123");
-            bizInstance.Message.ShouldEqual("All Ok");
+            bizInstance.HasErrors.ShouldEqual(hasErrors);
+            if (hasErrors)
+            {
+                data.ShouldBeNull();
+                bizInstance.Message.ShouldEqual("Failed with 1 error");
+            }
+            else
+                data.ShouldEqual(num.ToString());
         }
 
-        [Fact]
-        public void TestRunBizActionValueInOutDirectBizErrorOk()
+        [Theory]
+        [InlineData(123, false)]
+        [InlineData(-1, true)]
+        public void TestActionServiceInOutDtosOk(int num, bool hasErrors)
         {
             //SETUP 
-            var bizInstance = new BizActionValueInOut();
-            var runner = new ActionService<IBizActionValueInOut>(_emptyDbContext, bizInstance, _emptyMapper, _noCachingConfig);
-            var input = -1;
+            var mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto, ServiceLayerBizOutDto>();
+            var bizInstance = new BizActionInOut();
+            var runner = new ActionService<IBizActionInOut>(_emptyDbContext, bizInstance, mapper, _noCachingConfig);
+            var input = new ServiceLayerBizInDto{Num = num};
 
             //ATTEMPT
-            var data = runner.RunBizAction<string>(input);
+            var data = runner.RunBizAction<ServiceLayerBizOutDto>(input);
 
             //VERIFY
-            bizInstance.HasErrors.ShouldBeTrue();
-            data.ShouldBeNull();
-            bizInstance.Message.ShouldEqual("Failed with 1 error");
+            bizInstance.HasErrors.ShouldEqual(hasErrors);
+            if (hasErrors)
+            {
+                data.ShouldBeNull();
+                bizInstance.Message.ShouldEqual("Failed with 1 error");
+            }
+            else
+                data.Output.ShouldEqual(num.ToString());
+        }
+
+
+        [Theory]
+        [InlineData(123, false)]
+        [InlineData(-1, true)]
+        public void TestActionServiceValueInOutDatabaseOk(int num, bool hasErrors)
+        {
+            //SETUP 
+            var options = SqliteInMemory.CreateOptions<TestDbContext>();
+            using (var context = new TestDbContext(options))
+            {
+                context.Database.EnsureCreated();
+
+                var bizInstance = new BizActionInOutWriteDb(context);
+                var runner = new ActionService<IBizActionInOutWriteDb>(context, bizInstance, _emptyMapper, _noCachingConfig);
+                var input = new ServiceLayerBizInDto { Num = num };
+
+                //ATTEMPT
+                var data = runner.RunBizAction<BizDataOut>(input);
+
+                //VERIFY
+                bizInstance.HasErrors.ShouldEqual(hasErrors);
+                if (hasErrors)
+                {
+                    context.LogEntries.Any().ShouldBeFalse();
+                    data.ShouldBeNull();
+                }
+                else
+                {
+                    context.LogEntries.Single().LogText.ShouldEqual(num.ToString());
+                    data.Output.ShouldEqual(num.ToString());
+                }
+            }
         }
 
         //---------------------------------------------------------------

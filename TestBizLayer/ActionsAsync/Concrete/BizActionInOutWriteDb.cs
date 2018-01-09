@@ -20,9 +20,10 @@ namespace TestBizLayer.ActionsAsync.Concrete
 
         public async Task<BizDataOut> BizActionAsync(BizDataIn inputData)
         {
+            //Put it here so that if SaveChanges is called it will be in database
+            _context.Add(new LogEntry(inputData.Num.ToString()));
             if (inputData.Num >= 0)
             {
-                _context.Add(new LogEntry(inputData.Num.ToString()));
                 Message = "All Ok";
             }
             else

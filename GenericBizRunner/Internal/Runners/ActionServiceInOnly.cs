@@ -16,7 +16,7 @@ namespace GenericBizRunner.Internal.Runners
 
         public void RunBizActionDbAndInstance(DbContext db, TBizInterface bizInstance, IMapper mapper, object inputData)
         {
-            var toBizCopier = DtoAccessGenerator.BuildCopier(inputData.GetType(), typeof(TBizIn), true, true, Config);
+            var toBizCopier = DtoAccessGenerator.BuildCopier(inputData.GetType(), typeof(TBizIn), true, false, Config);
             var bizStatus = (IBizActionStatus)bizInstance;
 
             var inData = toBizCopier.DoCopyToBiz<TBizIn>(db, mapper, inputData);
