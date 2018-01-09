@@ -30,7 +30,7 @@ namespace TestBizLayer.ActionsAsync.Concrete
             {
                 AddError("Error");
             }
-            return new BizDataOut("Result");
+            return new BizDataOut(inputData.Num.ToString());
         }
     }
 }

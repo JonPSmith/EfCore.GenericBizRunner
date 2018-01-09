@@ -2,6 +2,7 @@
 // Licensed under MIT licence. See License.txt in the project root for license information.
 
 using System;
+using System.Threading.Tasks;
 using AutoMapper;
 using GenericBizRunner.Configuration;
 using GenericBizRunner.Internal;
@@ -9,16 +10,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GenericBizRunner
 {
-    public class ActionService<TBizInstance> : ActionService<DbContext, TBizInstance>
+    public class ActionServiceAsync<TBizInstance> : ActionServiceAsync<DbContext, TBizInstance>
         where TBizInstance : class, IBizActionStatus
     {
-        public ActionService(DbContext context, TBizInstance bizInstance, IMapper mapper, IGenericBizRunnerConfig config = null)
+        public ActionServiceAsync(DbContext context, TBizInstance bizInstance, IMapper mapper, IGenericBizRunnerConfig config = null)
             : base(context, bizInstance, mapper, config)
         {
         }
     }
 
-    public class ActionService<TContext, TBizInstance> : BizActionStatus, IActionService<TBizInstance>
+    public class ActionServiceAsync<TContext, TBizInstance> : BizActionStatus, IActionServiceAsync<TBizInstance>
         where TContext : DbContext
         where TBizInstance : class, IBizActionStatus
     {
@@ -27,7 +28,7 @@ namespace GenericBizRunner
         private readonly IMapper _mapper;
         private readonly TContext _context;
 
-        public ActionService(TContext context, TBizInstance bizInstance, IMapper mapper, IGenericBizRunnerConfig config = null)
+        public ActionServiceAsync(TContext context, TBizInstance bizInstance, IMapper mapper, IGenericBizRunnerConfig config = null)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _bizInstance = bizInstance ?? throw new ArgumentNullException(nameof(bizInstance));
@@ -46,10 +47,12 @@ namespace GenericBizRunner
         /// <typeparam name="TOut">The type of the result to return. Should either be the Business logic output type or class which inherits fromm GenericActionFromBizDto</typeparam>
         /// <param name="inputData">The input data. It should be Should either be the Business logic input type or class which inherits form GenericActionToBizDto</param>
         /// <returns>The returned data after the run, or default value is thewre was an error</returns>
-        public TOut RunBizAction<TOut>(object inputData)
+        public async Task<TOut> RunBizActionAsync<TOut>(object inputData)
         {
-            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOut, _config.TurnOffCaching);
-            return decoder.BizInfo.GetServiceInstance(_config).RunBizActionDbAndInstance<TOut>(_context, _bizInstance, _mapper, inputData);
+            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOut | RequestedInOut.Async, _config.TurnOffCaching);
+            return await ((Task<TOut>) decoder.BizInfo.GetServiceInstance(_config)
+                    .RunBizActionDbAndInstanceAsync<TOut>(_context, _bizInstance, _mapper, inputData))
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -57,10 +60,12 @@ namespace GenericBizRunner
         /// </summary>
         /// <typeparam name="TOut">The type of the result to return. Should either be the Business logic output type or class which inherits fromm GenericActionFromBizDto</typeparam>
         /// <returns>The returned data after the run, or default value is thewre was an error</returns>
-        public TOut RunBizAction<TOut>()
+        public async Task<TOut> RunBizActionAsync<TOut>()
         {
-            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.Out, _config.TurnOffCaching);
-            return decoder.BizInfo.GetServiceInstance(_config).RunBizActionDbAndInstance<TOut>(_context, _bizInstance, _mapper);
+            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.Out | RequestedInOut.Async, _config.TurnOffCaching);
+            return await ((Task<TOut>)decoder.BizInfo.GetServiceInstance(_config)
+                    .RunBizActionDbAndInstanceAsync<TOut>(_context, _bizInstance, _mapper))
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -68,11 +73,12 @@ namespace GenericBizRunner
         /// </summary>
         /// <param name="inputData">The input data. It should be Should either be the Business logic input type or class which inherits form GenericActionToBizDto</param>
         /// <returns>status message with no result part</returns>
-        public void RunBizAction(object inputData)
+        public async Task RunBizActionAsync(object inputData)
         {
-            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.In, _config.TurnOffCaching);
-            decoder.BizInfo.GetServiceInstance(_config)
-                .RunBizActionDbAndInstance(_context, _bizInstance, _mapper, inputData);
+            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.In | RequestedInOut.Async, _config.TurnOffCaching);
+            await ((Task) decoder.BizInfo.GetServiceInstance(_config)
+                .RunBizActionDbAndInstanceAsync(_context, _bizInstance, _mapper, inputData))
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -81,14 +87,14 @@ namespace GenericBizRunner
         /// </summary>
         /// <typeparam name="TDto"></typeparam>
         /// <returns></returns>
-        public TDto GetDto<TDto>() where TDto : class, new()
+        public async Task<TDto>  GetDtoAsync<TDto>() where TDto : class, new()
         {
             if (!typeof(TDto).IsClass)
                 throw new InvalidOperationException("You should only call this on a primitive type. Its only useful for Dtos.");
 
-            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOrInOut, _config.TurnOffCaching);
-            var toBizCopier = DtoAccessGenerator.BuildCopier(typeof(TDto), decoder.BizInfo.GetBizInType(), true, false, _config);
-            return toBizCopier.CreateDataWithPossibleSetup<TDto>(_context);
+            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOrInOut | RequestedInOut.Async, _config.TurnOffCaching);
+            var toBizCopier = DtoAccessGenerator.BuildCopier(typeof(TDto), decoder.BizInfo.GetBizInType(), true, true, _config);
+            return await toBizCopier.CreateDataWithPossibleSetupAsync<TDto>(_context).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -98,14 +104,14 @@ namespace GenericBizRunner
         /// </summary>
         /// <typeparam name="TDto"></typeparam>
         /// <returns></returns>
-        public TDto ResetDto<TDto>(TDto dto) where TDto : class
+        public async Task<TDto> ResetDtoAsync<TDto>(TDto dto) where TDto : class
         {
             if (!typeof(TDto).IsClass)
                 throw new InvalidOperationException("You should only call this on a primitive type. Its only useful for Dtos.");
 
-            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOrInOut, _config.TurnOffCaching);
-            var toBizCopier = DtoAccessGenerator.BuildCopier(typeof(TDto), decoder.BizInfo.GetBizInType(), true, false, _config);
-            toBizCopier.SetupSecondaryDataIfRequired(_context, dto);
+            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOrInOut | RequestedInOut.Async, _config.TurnOffCaching);
+            var toBizCopier = DtoAccessGenerator.BuildCopier(typeof(TDto), decoder.BizInfo.GetBizInType(), true, true, _config);
+            await toBizCopier.SetupSecondaryDataIfRequiredAsync(_context, dto).ConfigureAwait(false);
             return dto;
         }
 

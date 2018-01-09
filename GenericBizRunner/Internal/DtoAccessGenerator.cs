@@ -94,8 +94,6 @@ namespace GenericBizRunner.Internal
                     await _dtoAccessInstance.SetupSecondaryDataAsync(db, inputDto).ConfigureAwait(false);
                 else
                     _dtoAccessInstance.SetupSecondaryData(db, inputDto);
-
-                return;
             }
         }
 

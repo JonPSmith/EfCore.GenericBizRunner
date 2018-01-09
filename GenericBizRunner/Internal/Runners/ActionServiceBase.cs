@@ -75,5 +75,12 @@ namespace GenericBizRunner.Internal.Runners
             inDtoAcessor.SetupSecondaryDataIfRequired(db, inputdto);
             return default(TOut);
         }
+
+        protected static async Task<TOut> ReturnDefaultAndResetInDtoAsync<TOut>(DbContext db, DtoAccessGenerator inDtoAcessor,
+            object inputdto)
+        {
+            await inDtoAcessor.SetupSecondaryDataIfRequiredAsync(db, inputdto).ConfigureAwait(false);
+            return default(TOut);
+        }
     }
 }
