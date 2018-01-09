@@ -3,15 +3,24 @@
 
 using GenericBizRunner;
 using TestBizLayer.BizDTOs;
+using TestBizLayer.DbForTransactions;
 
 namespace TestBizLayer.Actions.Concrete
 {
     public class BizActionInOutWriteDb : BizActionStatus, IBizActionInOutWriteDb
     {
+        private readonly TestDbContext _context;
+
+        public BizActionInOutWriteDb(TestDbContext context)
+        {
+            _context = context;
+        }
+
         public BizDataOut BizAction(BizDataIn inputData)
         {
             if (inputData.Num >= 0)
             {
+                _context.Add(new LogEntry(inputData.Num.ToString()));
                 Message = "All Ok";
             }
             else

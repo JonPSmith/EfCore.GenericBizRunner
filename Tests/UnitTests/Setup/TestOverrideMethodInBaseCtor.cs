@@ -7,7 +7,7 @@ using Tests.DTOs;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
-namespace Tests.UnitTests.AutoMapper
+namespace Tests.UnitTests.Setup
 {
     public class TestOverrideMethodInBaseCtor
     {

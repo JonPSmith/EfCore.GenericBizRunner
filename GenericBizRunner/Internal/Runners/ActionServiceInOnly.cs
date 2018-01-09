@@ -21,7 +21,7 @@ namespace GenericBizRunner.Internal.Runners
 
             var inData = toBizCopier.DoCopyToBiz<TBizIn>(db, mapper, inputData);
 
-            ((IGenericActionInOnlyAsync<TBizIn>)bizInstance).BizActionAsync(inData);
+            ((IGenericActionInOnly<TBizIn>)bizInstance).BizAction(inData);
 
             //This handles optional call of save changes
             SaveChangedIfRequiredAndNoErrors(db, bizStatus);

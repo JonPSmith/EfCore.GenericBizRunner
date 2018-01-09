@@ -12,8 +12,6 @@ namespace Tests.DTOs
     {
         public int Num { get; set; }
 
-        public int DtoControlNum { get; set; }
-
         public bool SetupSecondaryDataCalled { get; private set; }
 
         public bool CopyToBizDataCalled { get; private set; }

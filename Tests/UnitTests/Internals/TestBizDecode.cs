@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using AutoMapper;
 using GenericBizRunner;
 using GenericBizRunner.Configuration;
 using GenericBizRunner.Internal;
@@ -256,7 +257,7 @@ namespace Tests.UnitTests.Internals
         }
 
         //---------------------------------------------------------------------
-        //Transactional - GetRunMethod
+        //GetRunMethod
 
         [Fact]
         public void TestGetRunMethodWithOutputTypeOk()
@@ -271,7 +272,7 @@ namespace Tests.UnitTests.Internals
             runMethod.Name.ShouldEqual("RunBizActionDbAndInstance");
             runMethod.ReturnType.ShouldEqual(typeof(BizDataOut));
             runMethod.GetParameters().Select(x => x.ParameterType).ShouldEqual(
-                new[] {typeof (DbContext), typeof (IBizActionInOut), typeof (object)});
+                new[] {typeof (DbContext), typeof (IBizActionInOut), typeof(IMapper), typeof (object)});
         }
 
         [Fact]
@@ -287,7 +288,7 @@ namespace Tests.UnitTests.Internals
             runMethod.Name.ShouldEqual("RunBizActionDbAndInstance");
             runMethod.ReturnType.ShouldEqual(typeof(void));
             runMethod.GetParameters().Select(x => x.ParameterType).ShouldEqual(
-                new[] { typeof(DbContext), typeof(IBizActionInOnly), typeof(object) });
+                new[] { typeof(DbContext), typeof(IBizActionInOnly), typeof(IMapper), typeof(object) });
         }
 
         [Fact]
@@ -303,7 +304,7 @@ namespace Tests.UnitTests.Internals
             runMethod.Name.ShouldEqual("RunBizActionDbAndInstanceAsync");
             runMethod.ReturnType.ShouldEqual(typeof(Task<BizDataOut>));
             runMethod.GetParameters().Select(x => x.ParameterType).ShouldEqual(
-                new[] { typeof(DbContext), typeof(IBizActionInOutAsync), typeof(object) });
+                new[] { typeof(DbContext), typeof(IBizActionInOutAsync), typeof(IMapper), typeof(object) });
         }
 
         [Fact]
@@ -319,7 +320,7 @@ namespace Tests.UnitTests.Internals
             runMethod.Name.ShouldEqual("RunBizActionDbAndInstanceAsync");
             runMethod.ReturnType.ShouldEqual(typeof(Task));
             runMethod.GetParameters().Select(x => x.ParameterType).ShouldEqual(
-                new[] { typeof(DbContext), typeof(IBizActionInOnlyAsync), typeof(object)});
+                new[] { typeof(DbContext), typeof(IBizActionInOnlyAsync), typeof(IMapper), typeof(object)});
         }
 
         //---------------------------------------------------------------------

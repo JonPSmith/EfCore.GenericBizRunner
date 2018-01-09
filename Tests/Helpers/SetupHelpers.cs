@@ -16,5 +16,16 @@ namespace Tests.Helpers
             var mapper = config.CreateMapper();
             return mapper;
         }
+
+        public static IMapper CreateMapper<T1, T2>() where T1 : Profile, new() where T2 : Profile, new()
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new T1());
+                cfg.AddProfile(new T2());
+            });
+            var mapper = config.CreateMapper();
+            return mapper;
+        }
     }
 }

@@ -23,23 +23,6 @@ namespace Tests.UnitTests.TestActions
         private readonly IMapper _emptyMapper = new Mapper(new MapperConfiguration(cfg => {}));
 
         [Fact]
-        public void TestCallInternalInOutServiceOk()
-        {
-            //SETUP 
-            var bizInstance = new BizActionValueInOut();
-            var runner = new ActionServiceInOut<IBizActionValueInOut, int, string>(false, _noCachingConfig);
-            var input = 123;
-
-            //ATTEMPT
-            var data = runner.RunBizActionDbAndInstance<string>(_emptyDbContext, bizInstance, _emptyMapper, input);
-
-            //VERIFY
-            bizInstance.HasErrors.ShouldBeFalse();
-            data.ShouldEqual("123");
-            bizInstance.Message.ShouldEqual("All Ok");
-        }
-
-        [Fact]
         public void TestRunBizActionValueInOutDirectOk()
         {
             //SETUP 
