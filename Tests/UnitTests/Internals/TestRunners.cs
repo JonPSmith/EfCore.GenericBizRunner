@@ -2,15 +2,11 @@
 // Licensed under MIT licence. See License.txt in the project root for license information.
 
 using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
 using GenericBizRunner.Configuration;
 using GenericBizRunner.Internal.Runners;
 using Microsoft.EntityFrameworkCore;
 using TestBizLayer.Actions;
 using TestBizLayer.Actions.Concrete;
-using TestBizLayer.ActionsAsync;
-using TestBizLayer.ActionsAsync.Concrete;
 using TestBizLayer.BizDTOs;
 using TestBizLayer.DbForTransactions;
 using Tests.DTOs;
@@ -183,14 +179,13 @@ namespace Tests.UnitTests.Internals
         public void TestActionServiceInOnlyMappingDatabaseOk(int num, bool hasErrors)
         {
             //SETUP 
-            var config = new GenericBizRunnerConfig { TurnOffCaching = true, DoNotValidateSaveChanges = true };
             var options = SqliteInMemory.CreateOptions<TestDbContext>();
             using (var context = new TestDbContext(options))
             {
                 context.Database.EnsureCreated();
                 var mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto, ServiceLayerBizOutDto>();
                 var bizInstance = new BizActionInOnlyWriteDb(context);
-                var runner = new ActionServiceInOnly<IBizActionInOnlyWriteDb, BizDataIn>(true, config);
+                var runner = new ActionServiceInOnly<IBizActionInOnlyWriteDb, BizDataIn>(true, _noCachingConfig);
                 var inDto = new ServiceLayerBizInDto {Num = num};
 
                 //ATTEMPT
@@ -227,6 +222,37 @@ namespace Tests.UnitTests.Internals
             }
         }
 
+        //---------------------------------------------------------------
+        //checking validation
+
+        [Theory]
+        [InlineData(123, false, false)]
+        [InlineData(1, false, true)]
+        [InlineData(1, true, false)]
+        public void TestValidation(int num, bool hasErrors, bool doNotValidateSaveChanges)
+        {
+            //SETUP 
+            var config = new GenericBizRunnerConfig { TurnOffCaching = true, DoNotValidateSaveChanges = doNotValidateSaveChanges };
+            var options = SqliteInMemory.CreateOptions<TestDbContext>();
+            using (var context = new TestDbContext(options))
+            {
+                context.Database.EnsureCreated();
+                var mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto, ServiceLayerBizOutDto>();
+                var bizInstance = new BizActionInOutWriteDb(context);
+                var runner = new ActionServiceInOut<IBizActionInOutWriteDb, BizDataIn, BizDataOut>(true, config);
+                var inDto = new ServiceLayerBizInDto { Num = num };
+
+                //ATTEMPT
+                var data = runner.RunBizActionDbAndInstance<ServiceLayerBizOutDto>(context, bizInstance, mapper, inDto);
+
+                //VERIFY
+                bizInstance.HasErrors.ShouldEqual(hasErrors);
+                if (hasErrors)
+                    context.LogEntries.Any().ShouldBeFalse();
+                else
+                    context.LogEntries.Single().LogText.ShouldEqual(num.ToString());
+            }
+        }
 
     }
 }

@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Linq;
 using GenericBizRunner.Configuration;
 
@@ -16,6 +17,7 @@ namespace GenericBizRunner
         DoNotValidate
     }
 
+    [DebuggerDisplay("Message = {Message}")]
     public abstract class BizActionStatus : IBizActionStatus
     {
         private readonly List<ValidationResult> _errors = new List<ValidationResult>();
