@@ -50,23 +50,6 @@ namespace Tests.UnitTests.Internals
             input.SetupSecondaryDataCalled.ShouldBeFalse();
         }
 
-        //-----------------------
-        //BizOut
-
-        [Fact]
-        public void TestBizOutDirectOk()
-        {
-            //SETUP 
-            var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataOut), typeof(BizDataOut), false, false, _noCachingConfig);
-            var input = new BizDataOut { Output = "test copy"};
-
-            //ATTEMPT
-            var data = copier.DoCopyFromBiz<BizDataOut>(null, null, input);
-
-            //VERIFY    
-            data.Output.ShouldEqual("test copy");
-        }
-
         [Fact]
         public void TestBizOutCopyOk()
         {
@@ -86,6 +69,52 @@ namespace Tests.UnitTests.Internals
             data.Output.ShouldEqual("test copy");
             data.CopyFromBizDataCalled.ShouldBeTrue();
             data.SetupSecondaryOutputDataCalled.ShouldBeTrue();
+        }
+
+        //-----------------------
+        //BizOut
+
+        [Fact]
+        public void TestBizOutDirectOk()
+        {
+            //SETUP 
+            var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataOut), typeof(BizDataOut), false, false, _noCachingConfig);
+            var input = new BizDataOut { Output = "test copy"};
+
+            //ATTEMPT
+            var data = copier.DoCopyFromBiz<BizDataOut>(null, null, input);
+
+            //VERIFY    
+            data.Output.ShouldEqual("test copy");
+        }
+
+        //-------------------------------------------------------------
+        //CreateDataWithPossibleSetup
+
+        [Fact]
+        public void TestCreateDataWithPossibleSetupDirectOk()
+        {
+            //SETUP 
+            var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataIn), typeof(BizDataIn), true, false, _noCachingConfig);
+
+            //ATTEMPT
+            var data = copier.CreateDataWithPossibleSetup<BizDataIn>(null);
+
+            //VERIFY    
+            //Should not fail
+        }
+
+        [Fact]
+        public void TestCreateDataWithPossibleSetupDtoOk()
+        {
+            //SETUP 
+            var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDto), typeof(BizDataIn), true, false, _noCachingConfig);
+
+            //ATTEMPT
+            var data = copier.CreateDataWithPossibleSetup<ServiceLayerBizInDto>(null);
+
+            //VERIFY    
+            data.SetupSecondaryDataCalled.ShouldBeTrue();
         }
 
         //-------------------------------------------------------------------
@@ -117,35 +146,6 @@ namespace Tests.UnitTests.Internals
 
             //VERIFY    
             input.SetupSecondaryDataCalled.ShouldBeTrue();
-        }
-
-        //-------------------------------------------------------------
-        //CreateDataWithPossibleSetup
-
-        [Fact]
-        public void TestCreateDataWithPossibleSetupDirectOk()
-        {
-            //SETUP 
-            var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataIn), typeof(BizDataIn), true, false, _noCachingConfig);
-
-            //ATTEMPT
-            var data = copier.CreateDataWithPossibleSetup<BizDataIn>(null);
-
-            //VERIFY    
-            //Should not fail
-        }
-
-        [Fact]
-        public void TestCreateDataWithPossibleSetupDtoOk()
-        {
-            //SETUP 
-            var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDto), typeof(BizDataIn), true, false, _noCachingConfig);
-
-            //ATTEMPT
-            var data = copier.CreateDataWithPossibleSetup<ServiceLayerBizInDto>(null);
-
-            //VERIFY    
-            data.SetupSecondaryDataCalled.ShouldBeTrue();
         }
     }
 }

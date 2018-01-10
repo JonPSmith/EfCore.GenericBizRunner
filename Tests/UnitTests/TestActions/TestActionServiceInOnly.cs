@@ -1,9 +1,11 @@
-﻿using System;
+﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT licence. See License.txt in the project root for license information.
+
+using System;
 using System.Linq;
 using AutoMapper;
 using GenericBizRunner;
 using GenericBizRunner.Configuration;
-using GenericBizRunner.Internal.Runners;
 using Microsoft.EntityFrameworkCore;
 using TestBizLayer.Actions;
 using TestBizLayer.Actions.Concrete;
@@ -20,6 +22,7 @@ namespace Tests.UnitTests.TestActions
     public class TestActionServiceInOnly
     {
         private readonly IGenericBizRunnerConfig _noCachingConfig = new GenericBizRunnerConfig { TurnOffCaching = true };
+
         //This action does not access the database, but the ActionService checks that the dbContext isn't null
         private readonly DbContext _emptyDbContext = new TestDbContext(SqliteInMemory.CreateOptions<TestDbContext>());
         readonly IMapper _mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto, ServiceLayerBizOutDto>();
@@ -101,6 +104,21 @@ namespace Tests.UnitTests.TestActions
             }
         }
 
+        [Fact]
+        public void TestCallHasOutputBad()
+        {
+            //SETUP 
+            var bizInstance = new BizActionInOnly();
+            var runner = new ActionService<IBizActionInOnly>(_emptyDbContext, bizInstance, _mapper, _noCachingConfig);
+            var input = "string";
+
+            //ATTEMPT
+            var ex = Assert.Throws<InvalidOperationException>(() => runner.RunBizAction<string>(input));
+
+            //VERIFY
+            ex.Message.ShouldEqual("Your call of IBizActionInOnly needed 'InOut' but the Business class had a different setup of 'In'");
+        }
+
         //---------------------------------------------------------------
         //error checking
 
@@ -117,21 +135,6 @@ namespace Tests.UnitTests.TestActions
 
             //VERIFY
             ex.Message.ShouldEqual("Indirect copy to biz action. from type = String, to type BizDataIn. Expected a DTO of type GenericActionToBizDto<BizDataIn,String>");
-        }
-
-        [Fact]
-        public void TestCallHasOutputBad()
-        {
-            //SETUP 
-            var bizInstance = new BizActionInOnly();
-            var runner = new ActionService<IBizActionInOnly>(_emptyDbContext, bizInstance, _mapper, _noCachingConfig);
-            var input = "string";
-
-            //ATTEMPT
-            var ex = Assert.Throws<InvalidOperationException>(() => runner.RunBizAction<string>(input));
-
-            //VERIFY
-            ex.Message.ShouldEqual("Your call of IBizActionInOnly needed 'InOut' but the Business class had a different setup of 'In'");
         }
 
 

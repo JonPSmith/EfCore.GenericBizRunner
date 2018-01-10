@@ -17,18 +17,16 @@ namespace Tests.UnitTests.Internals
     {
         private readonly IGenericBizRunnerConfig _noCachingConfig = new GenericBizRunnerConfig { TurnOffCaching = true };
 
-        //NOTE: async business methods can use either sync or async dtos, so we need to check both
-
         [Fact]
-        public async Task TestBizInCopyAsyncServiceInstanceOk()
+        public async Task TestBizInCopyAsyncAsyncDtoOk()
         {
             //SETUP 
             var mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDtoAsync>();
-            var copier = new CopyToBizDataAsync<BizDataIn, ServiceLayerBizInDtoAsync>();
+            var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDtoAsync), typeof(BizDataIn), true, true, _noCachingConfig);
             var input = new ServiceLayerBizInDtoAsync { Num = 234 };
 
             //ATTEMPT
-            var data = await copier.CopyToBizAsync(null, mapper, input);
+            var data = await copier.DoCopyToBizAsync<BizDataIn>(null, mapper, input);
 
             //VERIFY    
             data.Num.ShouldEqual(234);
@@ -51,16 +49,18 @@ namespace Tests.UnitTests.Internals
             data.Num.ShouldEqual(234);
         }
 
+        //NOTE: async business methods can use either sync or async dtos, so we need to check both
+
         [Fact]
-        public async Task TestBizInCopyAsyncAsyncDtoOk()
+        public async Task TestBizInCopyAsyncServiceInstanceOk()
         {
             //SETUP 
             var mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDtoAsync>();
-            var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDtoAsync), typeof(BizDataIn), true, true, _noCachingConfig);
+            var copier = new CopyToBizDataAsync<BizDataIn, ServiceLayerBizInDtoAsync>();
             var input = new ServiceLayerBizInDtoAsync { Num = 234 };
 
             //ATTEMPT
-            var data = await copier.DoCopyToBizAsync<BizDataIn>(null, mapper, input);
+            var data = await copier.CopyToBizAsync(null, mapper, input);
 
             //VERIFY    
             data.Num.ShouldEqual(234);
@@ -81,23 +81,6 @@ namespace Tests.UnitTests.Internals
             data.Num.ShouldEqual(234);
         }
 
-        //-----------------------
-        //BizOut
-
-        [Fact]
-        public async Task TestBizOutCopyAsyncDirectOk()
-        {
-            //SETUP 
-            var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataOut), typeof(BizDataOut), false, true, _noCachingConfig);
-            var input = new BizDataOut { Output = "test copy" };
-
-            //ATTEMPT
-            var data = await copier.DoCopyFromBizAsync<BizDataOut>(null, null, input);
-
-            //VERIFY    
-            data.Output.ShouldEqual("test copy");
-        }
-
 
         [Fact]
         public async Task TestBizOutCopyAsyncAsyncDtoOk()
@@ -116,6 +99,23 @@ namespace Tests.UnitTests.Internals
             data.SetupSecondaryOutputDataCalled.ShouldBeTrue();
         }
 
+        //-----------------------
+        //BizOut
+
+        [Fact]
+        public async Task TestBizOutCopyAsyncDirectOk()
+        {
+            //SETUP 
+            var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataOut), typeof(BizDataOut), false, true, _noCachingConfig);
+            var input = new BizDataOut { Output = "test copy" };
+
+            //ATTEMPT
+            var data = await copier.DoCopyFromBizAsync<BizDataOut>(null, null, input);
+
+            //VERIFY    
+            data.Output.ShouldEqual("test copy");
+        }
+
         [Fact]
         public async Task TestBizOutCopyAsyncSyncDtoOk()
         {
@@ -131,6 +131,48 @@ namespace Tests.UnitTests.Internals
             data.Output.ShouldEqual("test copy");
             data.CopyFromBizDataCalled.ShouldBeTrue();
             data.SetupSecondaryOutputDataCalled.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task TestCreateDataWithPossibleSetupAsyncDtoOk()
+        {
+            //SETUP 
+            var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDtoAsync), typeof(BizDataIn), true, true, _noCachingConfig);
+
+            //ATTEMPT
+            var data = await copier.CreateDataWithPossibleSetupAsync<ServiceLayerBizInDtoAsync>(null);
+
+            //VERIFY    
+            data.SetupSecondaryDataCalled.ShouldBeTrue();
+        }
+
+        //-------------------------------------------------------------
+        //CreateDataWithPossibleSetup
+
+        [Fact]
+        public async Task TestCreateDataWithPossibleSetupDirectOk()
+        {
+            //SETUP 
+            var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataIn), typeof(BizDataIn), true, true, _noCachingConfig);
+
+            //ATTEMPT
+            await copier.CreateDataWithPossibleSetupAsync<BizDataIn>(null);
+
+            //VERIFY    
+            //Should work with no exceptions
+        }
+
+        [Fact]
+        public async Task TestCreateDataWithPossibleSetupSyncDtoOk()
+        {
+            //SETUP 
+            var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDto), typeof(BizDataIn), true, true, _noCachingConfig);
+
+            //ATTEMPT
+            var data = await copier.CreateDataWithPossibleSetupAsync<ServiceLayerBizInDto>(null);
+
+            //VERIFY    
+            data.SetupSecondaryDataCalled.ShouldBeTrue();
         }
 
 
@@ -178,49 +220,5 @@ namespace Tests.UnitTests.Internals
             //VERIFY    
             input.SetupSecondaryDataCalled.ShouldBeTrue();
         }
-
-        //-------------------------------------------------------------
-        //CreateDataWithPossibleSetup
-
-        [Fact]
-        public async Task TestCreateDataWithPossibleSetupDirectOk()
-        {
-            //SETUP 
-            var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataIn), typeof(BizDataIn), true, true, _noCachingConfig);
-
-            //ATTEMPT
-            await copier.CreateDataWithPossibleSetupAsync<BizDataIn>(null);
-
-            //VERIFY    
-            //Should work with no exceptions
-        }
-
-        [Fact]
-        public async Task TestCreateDataWithPossibleSetupAsyncDtoOk()
-        {
-            //SETUP 
-            var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDtoAsync), typeof(BizDataIn), true, true, _noCachingConfig);
-
-            //ATTEMPT
-            var data = await copier.CreateDataWithPossibleSetupAsync<ServiceLayerBizInDtoAsync>(null);
-
-            //VERIFY    
-            data.SetupSecondaryDataCalled.ShouldBeTrue();
-        }
-
-        [Fact]
-        public async Task TestCreateDataWithPossibleSetupSyncDtoOk()
-        {
-            //SETUP 
-            var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDto), typeof(BizDataIn), true, true, _noCachingConfig);
-
-            //ATTEMPT
-            var data = await copier.CreateDataWithPossibleSetupAsync<ServiceLayerBizInDto>(null);
-
-            //VERIFY    
-            data.SetupSecondaryDataCalled.ShouldBeTrue();
-        }
-
-
     }
 }

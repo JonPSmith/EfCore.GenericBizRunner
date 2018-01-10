@@ -20,6 +20,11 @@ namespace TestBizLayer.ActionsTransactional.Concrete
             CallOnSuccess = SuccessAction;
         }
 
+        public async Task<BizDataGuid> BizActionAsync(BizDataGuid inputData)
+        {
+            return BizAction(inputData);
+        }
+
         private void SuccessAction(BizDataGuid input)
         {
             if (_db != null)
@@ -27,11 +32,6 @@ namespace TestBizLayer.ActionsTransactional.Concrete
                     .Add(new LogEntry(input.Modes.HasFlag(ActionModes.SecondWriteBad)
                         ? "x"
                         : string.Format("Stage {0}: Guid = {1}", _stageNum, input.Unique)));
-        }
-
-        public async Task<BizDataGuid> BizActionAsync(BizDataGuid inputData)
-        {
-            return BizAction(inputData);
         }
     }
 }

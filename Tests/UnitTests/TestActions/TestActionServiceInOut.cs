@@ -1,9 +1,11 @@
-﻿using System;
+﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT licence. See License.txt in the project root for license information.
+
+using System;
 using System.Linq;
 using AutoMapper;
 using GenericBizRunner;
 using GenericBizRunner.Configuration;
-using GenericBizRunner.Internal.Runners;
 using Microsoft.EntityFrameworkCore;
 using TestBizLayer.Actions;
 using TestBizLayer.Actions.Concrete;
@@ -20,8 +22,10 @@ namespace Tests.UnitTests.TestActions
     public class TestActionServiceInOut
     {
         private readonly IGenericBizRunnerConfig _noCachingConfig = new GenericBizRunnerConfig { TurnOffCaching = true };
+
         //This action does not access the database, but the ActionService checks that the dbContext isn't null
         private readonly DbContext _emptyDbContext = new TestDbContext(SqliteInMemory.CreateOptions<TestDbContext>());
+
         //Beacause this is ValueInOut then there is no need for a mapper, but the ActionService checks that the Mapper isn't null
         private readonly IMapper _emptyMapper = new Mapper(new MapperConfiguration(cfg => {}));
 
@@ -108,22 +112,18 @@ namespace Tests.UnitTests.TestActions
             }
         }
 
-        //---------------------------------------------------------------
-        //error checking
-
         [Fact]
-        public void TestInputIsBad()
+        public void TestCallHasNoInputBad()
         {
             //SETUP 
             var bizInstance = new BizActionValueInOut();
             var runner = new ActionService<IBizActionValueInOut>(_emptyDbContext, bizInstance, _emptyMapper, _noCachingConfig);
-            var input = "string";
 
             //ATTEMPT
-            var ex = Assert.Throws<InvalidOperationException>( () => runner.RunBizAction<string>(input));
+            var ex = Assert.Throws<InvalidOperationException>(() => runner.RunBizAction<string>());
 
             //VERIFY
-            ex.Message.ShouldEqual("Indirect copy to biz action. from type = String, to type Int32. Expected a DTO of type GenericActionToBizDto<Int32,String>");
+            ex.Message.ShouldEqual("Your call of IBizActionValueInOut needed 'Out' but the Business class had a different setup of 'InOut'");
         }
 
         [Fact]
@@ -141,18 +141,22 @@ namespace Tests.UnitTests.TestActions
             ex.Message.ShouldEqual("Your call of IBizActionValueInOut needed 'In' but the Business class had a different setup of 'InOut'");
         }
 
+        //---------------------------------------------------------------
+        //error checking
+
         [Fact]
-        public void TestCallHasNoInputBad()
+        public void TestInputIsBad()
         {
             //SETUP 
             var bizInstance = new BizActionValueInOut();
             var runner = new ActionService<IBizActionValueInOut>(_emptyDbContext, bizInstance, _emptyMapper, _noCachingConfig);
+            var input = "string";
 
             //ATTEMPT
-            var ex = Assert.Throws<InvalidOperationException>(() => runner.RunBizAction<string>());
+            var ex = Assert.Throws<InvalidOperationException>( () => runner.RunBizAction<string>(input));
 
             //VERIFY
-            ex.Message.ShouldEqual("Your call of IBizActionValueInOut needed 'Out' but the Business class had a different setup of 'InOut'");
+            ex.Message.ShouldEqual("Indirect copy to biz action. from type = String, to type Int32. Expected a DTO of type GenericActionToBizDto<Int32,String>");
         }
 
         [Fact]

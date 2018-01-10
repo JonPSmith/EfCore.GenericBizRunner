@@ -5,7 +5,6 @@ using System.Linq;
 using AutoMapper;
 using GenericBizRunner;
 using GenericBizRunner.Configuration;
-using GenericBizRunner.Helpers;
 using TestBizLayer.Actions;
 using TestBizLayer.Actions.Concrete;
 using TestBizLayer.BizDTOs;
@@ -99,6 +98,5 @@ namespace Tests.UnitTests.Setup
                 context.LogEntries.Any().ShouldBeFalse();
             }
         }
-
     }
 }

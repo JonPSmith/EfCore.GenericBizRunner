@@ -1,12 +1,13 @@
-﻿using System;
+﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT licence. See License.txt in the project root for license information.
+
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using GenericBizRunner;
 using GenericBizRunner.Configuration;
 using Microsoft.EntityFrameworkCore;
-using TestBizLayer.Actions;
-using TestBizLayer.Actions.Concrete;
 using TestBizLayer.ActionsAsync;
 using TestBizLayer.ActionsAsync.Concrete;
 using TestBizLayer.BizDTOs;
@@ -22,6 +23,7 @@ namespace Tests.UnitTests.TestActionsAsync
     public class TestActionServiceInOnlyAsync
     {
         private readonly IGenericBizRunnerConfig _noCachingConfig = new GenericBizRunnerConfig { TurnOffCaching = true };
+
         //This action does not access the database, but the ActionServiceAsync checks that the dbContext isn't null
         private readonly DbContext _emptyDbContext = new TestDbContext(SqliteInMemory.CreateOptions<TestDbContext>());
         readonly IMapper _mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto, ServiceLayerBizOutDto>();
@@ -127,6 +129,21 @@ namespace Tests.UnitTests.TestActionsAsync
             }
         }
 
+        [Fact]
+        public async Task TestCallHasOutputBad()
+        {
+            //SETUP 
+            var bizInstance = new BizActionInOnlyAsync();
+            var runner = new ActionServiceAsync<IBizActionInOnlyAsync>(_emptyDbContext, bizInstance, _mapper, _noCachingConfig);
+            var input = "string";
+
+            //ATTEMPT
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(async () => await runner.RunBizActionAsync<string>(input));
+
+            //VERIFY
+            ex.Message.ShouldEqual("Your call of IBizActionInOnlyAsync needed 'InOut, Async' but the Business class had a different setup of 'In, Async'");
+        }
+
         //---------------------------------------------------------------
         //error checking
 
@@ -143,21 +160,6 @@ namespace Tests.UnitTests.TestActionsAsync
 
             //VERIFY
             ex.Message.ShouldEqual("Indirect copy to biz action. from type = String, to type BizDataIn. Expected a DTO of type GenericActionToBizDto<BizDataIn,String>");
-        }
-
-        [Fact]
-        public async Task TestCallHasOutputBad()
-        {
-            //SETUP 
-            var bizInstance = new BizActionInOnlyAsync();
-            var runner = new ActionServiceAsync<IBizActionInOnlyAsync>(_emptyDbContext, bizInstance, _mapper, _noCachingConfig);
-            var input = "string";
-
-            //ATTEMPT
-            var ex = await Assert.ThrowsAsync<InvalidOperationException>(async () => await runner.RunBizActionAsync<string>(input));
-
-            //VERIFY
-            ex.Message.ShouldEqual("Your call of IBizActionInOnlyAsync needed 'InOut, Async' but the Business class had a different setup of 'In, Async'");
         }
     }
 }

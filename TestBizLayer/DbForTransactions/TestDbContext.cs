@@ -7,10 +7,10 @@ namespace TestBizLayer.DbForTransactions
 {
     public class TestDbContext : DbContext
     {
-        public DbSet<LogEntry> LogEntries { get; set; }
-
         public TestDbContext(
             DbContextOptions<TestDbContext> options)
             : base(options) { }
+
+        public DbSet<LogEntry> LogEntries { get; set; }
     }
 }

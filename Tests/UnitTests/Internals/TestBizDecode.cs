@@ -57,23 +57,27 @@ namespace Tests.UnitTests.Internals
             //VERIFY
         }
 
+        //---------------------------------------------------------------------
+        //Check Interface lookup
+
         [Fact]
-        public void TestDecodeBizActionValueInOutOk()
+        public void TestCheckAllInterfacesAreInLookup()
         {
             //SETUP 
+            var genericActionInterfaces =
+                Assembly.GetAssembly(typeof (IGenericAction<,>))
+                    .GetTypes()
+                    .Where(x => x.IsInterface && x.Name.StartsWith("IGenericAction") && x != typeof(DbContext))
+                    .ToList();
 
             //ATTEMPT
-            var decoder = new BizDecoder(typeof(IBizActionValueInOut), RequestedInOut.InOut, true);
 
             //VERIFY
-            ((Type)decoder.BizInfo.GetServiceInstance(_noCachingConfig).GetType()).GetGenericTypeDefinition().ShouldEqual(typeof(ActionServiceInOut<,,>));
-            var args = ((Type)decoder.BizInfo.GetServiceInstance(_noCachingConfig).GetType()).GetGenericArguments();
-            args.Length.ShouldEqual(3);
-            args[0].ShouldEqual(typeof(IBizActionValueInOut));
-            args[1].ShouldEqual(typeof(int));
-            args[2].ShouldEqual(typeof(string));
-            decoder.BizInfo.IsAsync.ShouldEqual(false);
-            decoder.BizInfo.RequiresSaveChanges.ShouldEqual(false);
+            genericActionInterfaces.Count.ShouldEqual(ServiceBuilderLookup.ServiceLookup.Count);
+            foreach (var foundInterface in genericActionInterfaces)
+            {
+                ServiceBuilderLookup.ServiceLookup.ContainsKey(foundInterface.GetGenericTypeDefinition()).ShouldEqual(true);
+            }
         }
 
         [Fact]
@@ -186,6 +190,25 @@ namespace Tests.UnitTests.Internals
             decoder.BizInfo.RequiresSaveChanges.ShouldEqual(false);
         }
 
+        [Fact]
+        public void TestDecodeBizActionValueInOutOk()
+        {
+            //SETUP 
+
+            //ATTEMPT
+            var decoder = new BizDecoder(typeof(IBizActionValueInOut), RequestedInOut.InOut, true);
+
+            //VERIFY
+            ((Type)decoder.BizInfo.GetServiceInstance(_noCachingConfig).GetType()).GetGenericTypeDefinition().ShouldEqual(typeof(ActionServiceInOut<,,>));
+            var args = ((Type)decoder.BizInfo.GetServiceInstance(_noCachingConfig).GetType()).GetGenericArguments();
+            args.Length.ShouldEqual(3);
+            args[0].ShouldEqual(typeof(IBizActionValueInOut));
+            args[1].ShouldEqual(typeof(int));
+            args[2].ShouldEqual(typeof(string));
+            decoder.BizInfo.IsAsync.ShouldEqual(false);
+            decoder.BizInfo.RequiresSaveChanges.ShouldEqual(false);
+        }
+
         //-----------------------------------------------------------
         //writeDb
 
@@ -256,23 +279,20 @@ namespace Tests.UnitTests.Internals
             outType.ShouldEqual(typeof(BizDataOut));
         }
 
-        //---------------------------------------------------------------------
-        //GetRunMethod
-
         [Fact]
-        public void TestGetRunMethodWithOutputTypeOk()
+        public void TestGetRunMethodNoOutputTypeAsyncOk()
         {
             //SETUP 
-            var decoder = new BizDecoder(typeof(IBizActionInOut), RequestedInOut.InOut, true);
+            var decoder = new BizDecoder(typeof(IBizActionInOnlyAsync), RequestedInOut.In | RequestedInOut.Async, true);
 
             //ATTEMPT
             var runMethod = decoder.BizInfo.GetRunMethod();
 
             //VERIFY
-            runMethod.Name.ShouldEqual("RunBizActionDbAndInstance");
-            runMethod.ReturnType.ShouldEqual(typeof(BizDataOut));
+            runMethod.Name.ShouldEqual("RunBizActionDbAndInstanceAsync");
+            runMethod.ReturnType.ShouldEqual(typeof(Task));
             runMethod.GetParameters().Select(x => x.ParameterType).ShouldEqual(
-                new[] {typeof (DbContext), typeof (IBizActionInOut), typeof(IMapper), typeof (object)});
+                new[] { typeof(DbContext), typeof(IBizActionInOnlyAsync), typeof(IMapper), typeof(object)});
         }
 
         [Fact]
@@ -307,43 +327,23 @@ namespace Tests.UnitTests.Internals
                 new[] { typeof(DbContext), typeof(IBizActionInOutAsync), typeof(IMapper), typeof(object) });
         }
 
+        //---------------------------------------------------------------------
+        //GetRunMethod
+
         [Fact]
-        public void TestGetRunMethodNoOutputTypeAsyncOk()
+        public void TestGetRunMethodWithOutputTypeOk()
         {
             //SETUP 
-            var decoder = new BizDecoder(typeof(IBizActionInOnlyAsync), RequestedInOut.In | RequestedInOut.Async, true);
+            var decoder = new BizDecoder(typeof(IBizActionInOut), RequestedInOut.InOut, true);
 
             //ATTEMPT
             var runMethod = decoder.BizInfo.GetRunMethod();
 
             //VERIFY
-            runMethod.Name.ShouldEqual("RunBizActionDbAndInstanceAsync");
-            runMethod.ReturnType.ShouldEqual(typeof(Task));
+            runMethod.Name.ShouldEqual("RunBizActionDbAndInstance");
+            runMethod.ReturnType.ShouldEqual(typeof(BizDataOut));
             runMethod.GetParameters().Select(x => x.ParameterType).ShouldEqual(
-                new[] { typeof(DbContext), typeof(IBizActionInOnlyAsync), typeof(IMapper), typeof(object)});
-        }
-
-        //---------------------------------------------------------------------
-        //Check Interface lookup
-
-        [Fact]
-        public void TestCheckAllInterfacesAreInLookup()
-        {
-            //SETUP 
-            var genericActionInterfaces =
-                Assembly.GetAssembly(typeof (IGenericAction<,>))
-                    .GetTypes()
-                    .Where(x => x.IsInterface && x.Name.StartsWith("IGenericAction") && x != typeof(DbContext))
-                    .ToList();
-
-            //ATTEMPT
-
-            //VERIFY
-            genericActionInterfaces.Count.ShouldEqual(ServiceBuilderLookup.ServiceLookup.Count);
-            foreach (var foundInterface in genericActionInterfaces)
-            {
-                ServiceBuilderLookup.ServiceLookup.ContainsKey(foundInterface.GetGenericTypeDefinition()).ShouldEqual(true);
-            }
+                new[] {typeof (DbContext), typeof (IBizActionInOut), typeof(IMapper), typeof (object)});
         }
     }
 }

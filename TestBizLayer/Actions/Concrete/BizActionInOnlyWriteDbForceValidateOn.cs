@@ -11,12 +11,12 @@ namespace TestBizLayer.Actions.Concrete
     {
         private readonly TestDbContext _context;
 
-        protected override ValidateOnSaveStates ValidateOnSaveSetting => ValidateOnSaveStates.Validate;
-
         public BizActionInOnlyWriteDbForceValidateOn(TestDbContext context)
         {
             _context = context;
         }
+
+        protected override ValidateOnSaveStates ValidateOnSaveSetting => ValidateOnSaveStates.Validate;
 
         public void BizAction(BizDataIn inputData)
         {

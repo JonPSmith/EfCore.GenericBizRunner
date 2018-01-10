@@ -24,54 +24,12 @@ namespace Tests.UnitTests.TestActionsAsync
     public class TestGetDtoAndResetDtoAsync
     {
         private readonly IGenericBizRunnerConfig _noCachingConfig = new GenericBizRunnerConfig { TurnOffCaching = true };
+
         //This action does not access the database, but the ActionService checks that the dbContext isn't null
         private readonly DbContext _emptyDbContext = new TestDbContext(SqliteInMemory.CreateOptions<TestDbContext>());
+
         //Beacause this is ValueInOut then there is no need for a mapper, but the ActionService checks that the Mapper isn't null
         private readonly IMapper _mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDtoAsync, ServiceLayerBizInDto>();
-
-        [Fact]
-        public async Task TestGetDtoDirectOk()
-        {
-            //SETUP 
-            var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _mapper, _noCachingConfig);
-
-            //ATTEMPT
-            var data = await service.GetDtoAsync<BizDataIn>();
-
-            //VERIFY
-            data.ShouldNotBeNull();
-            data.ShouldBeType<BizDataIn>();
-        }
-
-        [Fact]
-        public async Task TestGetDtoGenericActionsDtoOk()
-        {
-            //SETUP 
-            var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _mapper, _noCachingConfig);
-
-            //ATTEMPT
-            var data = await service.GetDtoAsync<ServiceLayerBizInDto>();
-
-            //VERIFY
-            data.ShouldNotBeNull();
-            data.ShouldBeType<ServiceLayerBizInDto>();
-            data.SetupSecondaryDataCalled.ShouldEqual(true);
-        }
-
-        [Fact]
-        public async Task TestGetDtoGenericActionsDtoAsyncOk()
-        {
-            //SETUP 
-            var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _mapper, _noCachingConfig);
-
-            //ATTEMPT
-            var data = await service.GetDtoAsync<ServiceLayerBizInDtoAsync>();
-
-            //VERIFY
-            data.ShouldNotBeNull();
-            data.ShouldBeType<ServiceLayerBizInDtoAsync>();
-            data.SetupSecondaryDataCalled.ShouldEqual(true);
-        }
 
         [Fact]
         public async Task Test10ResetDtoDirectOk()
@@ -86,6 +44,22 @@ namespace Tests.UnitTests.TestActionsAsync
             //VERIFY
             data.ShouldNotBeNull();
             data.Num.ShouldEqual(123);
+        }
+
+        [Fact]
+        public async Task Test11ResetDtoAsyncOk()
+        {
+            //SETUP 
+            var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _mapper, _noCachingConfig);
+            var data = new ServiceLayerBizInDtoAsync { Num = 123 };
+
+            //ATTEMPT
+            await service.ResetDtoAsync(data);
+
+            //VERIFY
+            data.ShouldNotBeNull();
+            data.Num.ShouldEqual(123);
+            data.SetupSecondaryDataCalled.ShouldBeTrue();
         }
 
         [Fact]
@@ -105,19 +79,32 @@ namespace Tests.UnitTests.TestActionsAsync
         }
 
         [Fact]
-        public async Task Test11ResetDtoAsyncOk()
+        public async Task TestGetDtoDirectOk()
         {
             //SETUP 
             var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _mapper, _noCachingConfig);
-            var data = new ServiceLayerBizInDtoAsync { Num = 123 };
 
             //ATTEMPT
-            await service.ResetDtoAsync(data);
+            var data = await service.GetDtoAsync<BizDataIn>();
 
             //VERIFY
             data.ShouldNotBeNull();
-            data.Num.ShouldEqual(123);
-            data.SetupSecondaryDataCalled.ShouldBeTrue();
+            data.ShouldBeType<BizDataIn>();
+        }
+
+        [Fact]
+        public async Task TestGetDtoGenericActionsDtoAsyncOk()
+        {
+            //SETUP 
+            var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _mapper, _noCachingConfig);
+
+            //ATTEMPT
+            var data = await service.GetDtoAsync<ServiceLayerBizInDtoAsync>();
+
+            //VERIFY
+            data.ShouldNotBeNull();
+            data.ShouldBeType<ServiceLayerBizInDtoAsync>();
+            data.SetupSecondaryDataCalled.ShouldEqual(true);
         }
 
         //------------------------------------------------------------
@@ -139,6 +126,21 @@ namespace Tests.UnitTests.TestActionsAsync
         }
 
         [Fact]
+        public async Task TestGetDtoGenericActionsDtoOk()
+        {
+            //SETUP 
+            var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _mapper, _noCachingConfig);
+
+            //ATTEMPT
+            var data = await service.GetDtoAsync<ServiceLayerBizInDto>();
+
+            //VERIFY
+            data.ShouldNotBeNull();
+            data.ShouldBeType<ServiceLayerBizInDto>();
+            data.SetupSecondaryDataCalled.ShouldEqual(true);
+        }
+
+        [Fact]
         public async Task TestGetDtoGenericActionsDtoOutOnlyBad()
         {
             //SETUP 
@@ -146,6 +148,20 @@ namespace Tests.UnitTests.TestActionsAsync
 
             //ATTEMPT
             var ex = await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.GetDtoAsync<ServiceLayerBizInDto>());
+
+            //VERIFY
+            ex.Message.ShouldEqual("The action with interface of IBizActionOutOnly does not have an input, but you called it with a method that needs an input.");
+        }
+
+        [Fact]
+        public async Task TestResetDtoGenericActionsDtoBad()
+        {
+            //SETUP 
+            var service = new ActionServiceAsync<IBizActionOutOnly>(_emptyDbContext, new BizActionOutOnly(), _mapper, _noCachingConfig);
+            var data = new ServiceLayerBizInDto();
+
+            //ATTEMPT
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.ResetDtoAsync(data));
 
             //VERIFY
             ex.Message.ShouldEqual("The action with interface of IBizActionOutOnly does not have an input, but you called it with a method that needs an input.");
@@ -167,21 +183,5 @@ namespace Tests.UnitTests.TestActionsAsync
             //VERIFY
             ex.Message.ShouldEqual("Indirect copy to biz action. from type = ServiceLayerBizOutDto, to type BizDataIn. Expected a DTO of type GenericActionToBizDto<BizDataIn,ServiceLayerBizOutDto>");
         }
-
-        [Fact]
-        public async Task TestResetDtoGenericActionsDtoBad()
-        {
-            //SETUP 
-            var service = new ActionServiceAsync<IBizActionOutOnly>(_emptyDbContext, new BizActionOutOnly(), _mapper, _noCachingConfig);
-            var data = new ServiceLayerBizInDto();
-
-            //ATTEMPT
-            var ex = await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.ResetDtoAsync(data));
-
-            //VERIFY
-            ex.Message.ShouldEqual("The action with interface of IBizActionOutOnly does not have an input, but you called it with a method that needs an input.");
-        }
-
-
     }
 }

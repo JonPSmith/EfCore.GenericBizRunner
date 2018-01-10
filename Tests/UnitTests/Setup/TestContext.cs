@@ -31,25 +31,6 @@ namespace Tests.UnitTests.Setup
         }
 
         [Fact]
-        public void TestAddLogEntryValidationOk()
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<TestDbContext>();
-            using (var context = new TestDbContext(options))
-            {
-                context.Database.EnsureCreated();
-
-                //ATTEMPT
-                context.Add(new LogEntry("Hello"));
-                var errors = context.SaveChangesWithValidation();
-
-                //VERIFY
-                context.LogEntries.Count().ShouldEqual(1);
-                errors.Any().ShouldBeFalse();
-            }
-        }
-
-        [Fact]
         public void TestAddLogEntryValidationError()
         {
             //SETUP
@@ -65,6 +46,25 @@ namespace Tests.UnitTests.Setup
                 //VERIFY
                 context.LogEntries.Count().ShouldEqual(0);
                 errors.Any().ShouldBeTrue();
+            }
+        }
+
+        [Fact]
+        public void TestAddLogEntryValidationOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<TestDbContext>();
+            using (var context = new TestDbContext(options))
+            {
+                context.Database.EnsureCreated();
+
+                //ATTEMPT
+                context.Add(new LogEntry("Hello"));
+                var errors = context.SaveChangesWithValidation();
+
+                //VERIFY
+                context.LogEntries.Count().ShouldEqual(1);
+                errors.Any().ShouldBeFalse();
             }
         }
     }

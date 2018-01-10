@@ -93,6 +93,41 @@ namespace Tests.UnitTests.DependecyInjection
         }
 
         [Fact]
+        public void TestGenericBizRunnerAutoFacModuleAddConfig()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<TestDbContext>();
+            var builder = new ContainerBuilder();
+            builder.RegisterInstance(options).SingleInstance();
+            builder.RegisterType<TestDbContext>().As<TestDbContext>().InstancePerLifetimeScope();
+            builder.RegisterType<BizActionInOnlyWriteDb>().As<IBizActionInOnlyWriteDb>().InstancePerLifetimeScope();
+            builder.RegisterInstance(SetupHelpers.CreateMapper<ServiceLayerBizInDto>()).As<IMapper>().SingleInstance();
+
+            //ATTEMPT
+            var config = new GenericBizRunnerConfig
+            {
+                DoNotValidateSaveChanges = true
+            };
+            builder.RegisterModule(new BizRunnerDiModule<TestDbContext>
+            {
+                SpecificConfig = config
+            });
+            var container = builder.Build();
+
+            //VERIFY
+            using (var lifetimeScope = container.BeginLifetimeScope())
+            {
+                var dbContext = lifetimeScope.Resolve<TestDbContext>();
+                dbContext.Database.EnsureCreated();
+
+                var runner = lifetimeScope.Resolve<IActionService<IBizActionInOnlyWriteDb>>();
+                runner.RunBizAction(new BizDataIn{Num = 1});
+
+                dbContext.LogEntries.Single().LogText.ShouldEqual("1");
+            }
+        }
+
+        [Fact]
         public void TestGenericBizRunnerAutoFacModuleBoundedContext()
         {
             //SETUP
@@ -135,41 +170,6 @@ namespace Tests.UnitTests.DependecyInjection
             {
                 var ex = Assert.Throws<ComponentNotRegisteredException>( ()  => lifetimeScope.Resolve<IActionService<IBizActionInOut>>());
                 ex.Message.ShouldStartWith("The requested service 'GenericBizRunner.IActionService`1");
-            }
-        }
-
-        [Fact]
-        public void TestGenericBizRunnerAutoFacModuleAddConfig()
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<TestDbContext>();
-            var builder = new ContainerBuilder();
-            builder.RegisterInstance(options).SingleInstance();
-            builder.RegisterType<TestDbContext>().As<TestDbContext>().InstancePerLifetimeScope();
-            builder.RegisterType<BizActionInOnlyWriteDb>().As<IBizActionInOnlyWriteDb>().InstancePerLifetimeScope();
-            builder.RegisterInstance(SetupHelpers.CreateMapper<ServiceLayerBizInDto>()).As<IMapper>().SingleInstance();
-
-            //ATTEMPT
-            var config = new GenericBizRunnerConfig
-            {
-                DoNotValidateSaveChanges = true
-            };
-            builder.RegisterModule(new BizRunnerDiModule<TestDbContext>
-            {
-                SpecificConfig = config
-            });
-            var container = builder.Build();
-
-            //VERIFY
-            using (var lifetimeScope = container.BeginLifetimeScope())
-            {
-                var dbContext = lifetimeScope.Resolve<TestDbContext>();
-                dbContext.Database.EnsureCreated();
-
-                var runner = lifetimeScope.Resolve<IActionService<IBizActionInOnlyWriteDb>>();
-                runner.RunBizAction(new BizDataIn{Num = 1});
-
-                dbContext.LogEntries.Single().LogText.ShouldEqual("1");
             }
         }
     }

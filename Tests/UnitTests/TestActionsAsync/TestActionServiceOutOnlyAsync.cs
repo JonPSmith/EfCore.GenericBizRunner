@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// Licensed under MIT licence. See License.txt in the project root for license information.
+
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -20,8 +23,10 @@ namespace Tests.UnitTests.TestActionsAsync
     public class TestActionServiceOutOnlyAsync
     {
         private readonly IGenericBizRunnerConfig _noCachingConfig = new GenericBizRunnerConfig { TurnOffCaching = true };
+
         //This action does not access the database, but the ActionService checks that the dbContext isn't null
         private readonly DbContext _emptyDbContext = new TestDbContext(SqliteInMemory.CreateOptions<TestDbContext>());
+
         //Beacause this is ValueInOut then there is no need for a mapper, but the ActionService checks that the Mapper isn't null
         private readonly IMapper _mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto, ServiceLayerBizOutDto>();
 
@@ -34,22 +39,6 @@ namespace Tests.UnitTests.TestActionsAsync
 
             //ATTEMPT
             var data = await runner.RunBizActionAsync<BizDataOut>();
-
-            //VERIFY
-            bizInstance.HasErrors.ShouldBeFalse();
-            data.Output.ShouldEqual("Result");
-        }
-
-        [Fact]
-        public async Task TestActionServiceOutOnlyDtosOk()
-        {
-            //SETUP 
-            var mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto, ServiceLayerBizOutDto>();
-            var bizInstance = new BizActionOutOnlyAsync();
-            var runner = new ActionServiceAsync<IBizActionOutOnlyAsync>(_emptyDbContext, bizInstance, mapper, _noCachingConfig);
-
-            //ATTEMPT
-            var data = await runner.RunBizActionAsync<ServiceLayerBizOutDto>();
 
             //VERIFY
             bizInstance.HasErrors.ShouldBeFalse();
@@ -94,6 +83,37 @@ namespace Tests.UnitTests.TestActionsAsync
             }
         }
 
+        [Fact]
+        public async Task TestActionServiceOutOnlyDtosOk()
+        {
+            //SETUP 
+            var mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto, ServiceLayerBizOutDto>();
+            var bizInstance = new BizActionOutOnlyAsync();
+            var runner = new ActionServiceAsync<IBizActionOutOnlyAsync>(_emptyDbContext, bizInstance, mapper, _noCachingConfig);
+
+            //ATTEMPT
+            var data = await runner.RunBizActionAsync<ServiceLayerBizOutDto>();
+
+            //VERIFY
+            bizInstance.HasErrors.ShouldBeFalse();
+            data.Output.ShouldEqual("Result");
+        }
+
+        [Fact]
+        public async Task TestCallHasNoOutputBad()
+        {
+            //SETUP 
+            var bizInstance = new BizActionOutOnlyAsync();
+            var runner = new ActionServiceAsync<IBizActionOutOnlyAsync>(_emptyDbContext, bizInstance, _mapper, _noCachingConfig);
+            var input = "string";
+
+            //ATTEMPT
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(async () => await runner.RunBizActionAsync(input));
+
+            //VERIFY
+            ex.Message.ShouldEqual("Your call of IBizActionOutOnlyAsync needed 'In, Async' but the Business class had a different setup of 'Out, Async'");
+        }
+
         //---------------------------------------------------------------
         //error checking
 
@@ -110,21 +130,6 @@ namespace Tests.UnitTests.TestActionsAsync
 
             //VERIFY
             ex.Message.ShouldEqual("Your call of IBizActionOutOnlyAsync needed 'InOut, Async' but the Business class had a different setup of 'Out, Async'");
-        }
-
-        [Fact]
-        public async Task TestCallHasNoOutputBad()
-        {
-            //SETUP 
-            var bizInstance = new BizActionOutOnlyAsync();
-            var runner = new ActionServiceAsync<IBizActionOutOnlyAsync>(_emptyDbContext, bizInstance, _mapper, _noCachingConfig);
-            var input = "string";
-
-            //ATTEMPT
-            var ex = await Assert.ThrowsAsync<InvalidOperationException>(async () => await runner.RunBizActionAsync(input));
-
-            //VERIFY
-            ex.Message.ShouldEqual("Your call of IBizActionOutOnlyAsync needed 'In, Async' but the Business class had a different setup of 'Out, Async'");
         }
     }
 }

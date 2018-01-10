@@ -20,7 +20,6 @@ namespace Tests.UnitTests.Internals
 {
     public class TestRunnersAsync
     {
-
         private readonly IGenericBizRunnerConfig _noCachingConfig = new GenericBizRunnerConfig { TurnOffCaching = true };
         private readonly DbContext _dbContext = new TestDbContext(SqliteInMemory.CreateOptions<TestDbContext>());
 
@@ -68,22 +67,6 @@ namespace Tests.UnitTests.Internals
             bizInstance.HasErrors.ShouldEqual(hasErrors);
         }
 
-        [Fact]
-        public async Task TestActionServiceOutOnlyNoDtoOk()
-        {
-            //SETUP 
-            var mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto>(); //doesn't need a mapper, but mapper msutn't be null
-            var bizInstance = new BizActionOutOnlyAsync();
-            var runner = new ActionServiceOutOnlyAsync<IBizActionOutOnlyAsync, BizDataOut>(false, _noCachingConfig);
-
-            //ATTEMPT
-            var data = await runner.RunBizActionDbAndInstanceAsync<BizDataOut>(_dbContext, bizInstance, mapper);
-
-            //VERIFY
-            bizInstance.HasErrors.ShouldBeFalse();
-            data.Output.ShouldEqual("Result");
-        }
-
         //-------------------------------------------------------
         //Async, with mapping, no database access
 
@@ -125,22 +108,6 @@ namespace Tests.UnitTests.Internals
 
             //VERIFY
             bizInstance.HasErrors.ShouldEqual(hasErrors);
-        }
-
-        [Fact]
-        public async Task TestActionServiceOutOnlyMappingOk()
-        {
-            //SETUP 
-            var mapper = SetupHelpers.CreateMapper<ServiceLayerBizOutDto>();
-            var bizInstance = new BizActionOutOnlyAsync();
-            var runner = new ActionServiceOutOnlyAsync<IBizActionOutOnlyAsync, BizDataOut>(false, _noCachingConfig);
-
-            //ATTEMPT
-            var data = await runner.RunBizActionDbAndInstanceAsync<ServiceLayerBizOutDto>(_dbContext, bizInstance, mapper);
-
-            //VERIFY
-            bizInstance.HasErrors.ShouldBeFalse();
-            data.Output.ShouldEqual("Result");
         }
 
 
@@ -202,28 +169,6 @@ namespace Tests.UnitTests.Internals
             }
         }
 
-        [Fact]
-        public async Task TestActionServiceOutOnlyMappingDatabaseOk()
-        {
-            //SETUP 
-            var options = SqliteInMemory.CreateOptions<TestDbContext>();
-            using (var context = new TestDbContext(options))
-            {
-                context.Database.EnsureCreated();
-
-                var mapper = SetupHelpers.CreateMapper<ServiceLayerBizOutDto>();
-                var bizInstance = new BizActionOutOnlyWriteDbAsync(context);
-                var runner = new ActionServiceOutOnlyAsync<IBizActionOutOnlyWriteDbAsync, BizDataOut>(true, _noCachingConfig);
-
-                //ATTEMPT
-                var data = await runner.RunBizActionDbAndInstanceAsync<ServiceLayerBizOutDto>(context, bizInstance, mapper);
-
-                //VERIFY
-                bizInstance.HasErrors.ShouldBeFalse();
-                context.LogEntries.Single().LogText.ShouldEqual("BizActionOutOnlyWriteDbAsync");
-            }
-        }
-
         //---------------------------------------------------------------
         //checking validation
 
@@ -254,6 +199,60 @@ namespace Tests.UnitTests.Internals
                 else
                     context.LogEntries.Single().LogText.ShouldEqual(num.ToString());
             }
+        }
+
+        [Fact]
+        public async Task TestActionServiceOutOnlyMappingDatabaseOk()
+        {
+            //SETUP 
+            var options = SqliteInMemory.CreateOptions<TestDbContext>();
+            using (var context = new TestDbContext(options))
+            {
+                context.Database.EnsureCreated();
+
+                var mapper = SetupHelpers.CreateMapper<ServiceLayerBizOutDto>();
+                var bizInstance = new BizActionOutOnlyWriteDbAsync(context);
+                var runner = new ActionServiceOutOnlyAsync<IBizActionOutOnlyWriteDbAsync, BizDataOut>(true, _noCachingConfig);
+
+                //ATTEMPT
+                var data = await runner.RunBizActionDbAndInstanceAsync<ServiceLayerBizOutDto>(context, bizInstance, mapper);
+
+                //VERIFY
+                bizInstance.HasErrors.ShouldBeFalse();
+                context.LogEntries.Single().LogText.ShouldEqual("BizActionOutOnlyWriteDbAsync");
+            }
+        }
+
+        [Fact]
+        public async Task TestActionServiceOutOnlyMappingOk()
+        {
+            //SETUP 
+            var mapper = SetupHelpers.CreateMapper<ServiceLayerBizOutDto>();
+            var bizInstance = new BizActionOutOnlyAsync();
+            var runner = new ActionServiceOutOnlyAsync<IBizActionOutOnlyAsync, BizDataOut>(false, _noCachingConfig);
+
+            //ATTEMPT
+            var data = await runner.RunBizActionDbAndInstanceAsync<ServiceLayerBizOutDto>(_dbContext, bizInstance, mapper);
+
+            //VERIFY
+            bizInstance.HasErrors.ShouldBeFalse();
+            data.Output.ShouldEqual("Result");
+        }
+
+        [Fact]
+        public async Task TestActionServiceOutOnlyNoDtoOk()
+        {
+            //SETUP 
+            var mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto>(); //doesn't need a mapper, but mapper msutn't be null
+            var bizInstance = new BizActionOutOnlyAsync();
+            var runner = new ActionServiceOutOnlyAsync<IBizActionOutOnlyAsync, BizDataOut>(false, _noCachingConfig);
+
+            //ATTEMPT
+            var data = await runner.RunBizActionDbAndInstanceAsync<BizDataOut>(_dbContext, bizInstance, mapper);
+
+            //VERIFY
+            bizInstance.HasErrors.ShouldBeFalse();
+            data.Output.ShouldEqual("Result");
         }
     }
 }
