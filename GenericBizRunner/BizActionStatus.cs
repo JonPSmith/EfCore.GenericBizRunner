@@ -31,7 +31,7 @@ namespace GenericBizRunner
         {
             get => HasErrors
                 ? $"Failed with {_errors.Count} error" + (_errors.Count == 1 ? "" : "s")
-                : _successMessage;
+                : _successMessage ?? "<not run yet>";
             set => _successMessage = value;
         }
 

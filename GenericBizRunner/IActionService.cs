@@ -1,13 +1,19 @@
 ﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT licence. See License.txt in the project root for license information.
 
+using Microsoft.EntityFrameworkCore;
+
 namespace GenericBizRunner
 {
+    public interface IActionService<TBizInstance> : IActionService<DbContext, TBizInstance> where TBizInstance : class
+    { }
+
     /// <summary>
     /// This is the primary interface to the sync actions
     /// </summary>
+    /// <typeparam name="TContext"></typeparam>
     /// <typeparam name="TBizInstance"></typeparam>
-    public interface IActionService<TBizInstance>
+    public interface IActionService<TContext, TBizInstance> where TContext : DbContext where TBizInstance : class
     {
         /// <summary>
         /// This contains the Status after the BizAction is run

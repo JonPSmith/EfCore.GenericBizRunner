@@ -2,14 +2,19 @@
 // Licensed under MIT licence. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace GenericBizRunner
 {
+    public interface IActionServiceAsync<TBizInstance> : IActionServiceAsync<DbContext, TBizInstance> where TBizInstance : class
+    { }
+
     /// <summary>
-    /// This is the primary interface to the Async actions
+    /// This is the primary interface to the sync actions
     /// </summary>
+    /// <typeparam name="TContext"></typeparam>
     /// <typeparam name="TBizInstance"></typeparam>
-    public interface IActionServiceAsync<TBizInstance>
+    public interface IActionServiceAsync<TContext, TBizInstance> where TContext : DbContext where TBizInstance : class
     {
         /// <summary>
         /// This contains the Status after the BizAction is run
