@@ -27,8 +27,7 @@ namespace Tests.UnitTests.TestActionsAsync
         //This action does not access the database, but the ActionService checks that the dbContext isn't null
         private readonly DbContext _emptyDbContext = new TestDbContext(SqliteInMemory.CreateOptions<TestDbContext>());
 
-        //Beacause this is ValueInOut then there is no need for a mapper, but the ActionService checks that the Mapper isn't null
-        private readonly IMapper _emptyMapper = new Mapper(new MapperConfiguration(cfg => {}));
+        readonly IMapper _mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto, ServiceLayerBizOutDto>();
 
 
         [Theory]
@@ -106,6 +105,21 @@ namespace Tests.UnitTests.TestActionsAsync
                 data.Output.ShouldEqual(num.ToString());
         }
 
+        [Fact]
+        public async Task TestActionServiceErrorInSetupOk()
+        {
+            //SETUP         
+            var bizInstance = new BizActionInOutAsync();
+            var runner = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, bizInstance, _mapper, _noCachingConfig);
+            var input = await runner.GetDtoAsync<ServiceLayerBizInDto>(x => { x.RaiseErrorInSetupSecondaryData = true; });
+
+            //ATTEMPT
+            await runner.RunBizActionAsync<ServiceLayerBizOutDtoAsync>(input);
+
+            //VERIFY
+            bizInstance.HasErrors.ShouldEqual(true);
+            bizInstance.Errors.Single().ErrorMessage.ShouldEqual("Error in SetupSecondaryData");
+        }
 
         [Theory]
         [InlineData(123, false)]
@@ -119,7 +133,7 @@ namespace Tests.UnitTests.TestActionsAsync
                 context.Database.EnsureCreated();
 
                 var bizInstance = new BizActionInOutWriteDbAsync(context);
-                var runner = new ActionServiceAsync<IBizActionInOutWriteDbAsync>(context, bizInstance, _emptyMapper, _noCachingConfig);
+                var runner = new ActionServiceAsync<IBizActionInOutWriteDbAsync>(context, bizInstance, _mapper, _noCachingConfig);
                 var input = new ServiceLayerBizInDto { Num = num };
 
                 //ATTEMPT
@@ -130,6 +144,41 @@ namespace Tests.UnitTests.TestActionsAsync
                 if (hasErrors)
                 {
                     context.LogEntries.Any().ShouldBeFalse();
+                    input.SetupSecondaryDataCalled.ShouldBeTrue();
+                    data.ShouldBeNull();
+                }
+                else
+                {
+                    context.LogEntries.Single().LogText.ShouldEqual(num.ToString());
+                    data.Output.ShouldEqual(num.ToString());
+                }
+            }
+        }
+
+        [Theory]
+        [InlineData(123, false)]
+        [InlineData(1, true)]
+        public async Task TestActionServiceInOutDatabaseValidationOk(int num, bool hasErrors)
+        {
+            //SETUP 
+            var options = SqliteInMemory.CreateOptions<TestDbContext>();
+            using (var context = new TestDbContext(options))
+            {
+                context.Database.EnsureCreated();
+
+                var bizInstance = new BizActionInOutWriteDbAsync(context);
+                var runner = new ActionServiceAsync<IBizActionInOutWriteDbAsync>(context, bizInstance, _mapper, _noCachingConfig);
+                var input = new ServiceLayerBizInDto { Num = num };
+
+                //ATTEMPT
+                var data = await runner.RunBizActionAsync<BizDataOut>(input);
+
+                //VERIFY
+                bizInstance.HasErrors.ShouldEqual(hasErrors);
+                if (hasErrors)
+                {
+                    context.LogEntries.Any().ShouldBeFalse();
+                    input.SetupSecondaryDataCalled.ShouldBeTrue();
                     data.ShouldBeNull();
                 }
                 else
@@ -145,7 +194,7 @@ namespace Tests.UnitTests.TestActionsAsync
         {
             //SETUP 
             var bizInstance = new BizActionInOutAsync();
-            var runner = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, bizInstance, _emptyMapper, _noCachingConfig);
+            var runner = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, bizInstance, _mapper, _noCachingConfig);
 
             //ATTEMPT
             var ex = await Assert.ThrowsAsync<InvalidOperationException>(async () => await runner.RunBizActionAsync<string>());
@@ -159,7 +208,7 @@ namespace Tests.UnitTests.TestActionsAsync
         {
             //SETUP 
             var bizInstance = new BizActionInOutAsync();
-            var runner = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, bizInstance, _emptyMapper, _noCachingConfig);
+            var runner = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, bizInstance, _mapper, _noCachingConfig);
             var input = "string";
 
             //ATTEMPT
@@ -177,7 +226,7 @@ namespace Tests.UnitTests.TestActionsAsync
         {
             //SETUP 
             var bizInstance = new BizActionInOutAsync();
-            var runner = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, bizInstance, _emptyMapper, _noCachingConfig);
+            var runner = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, bizInstance, _mapper, _noCachingConfig);
             var input = "string";
 
             //ATTEMPT

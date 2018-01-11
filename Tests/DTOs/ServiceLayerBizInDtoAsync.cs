@@ -4,6 +4,7 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using GenericActions;
+using GenericBizRunner;
 using Microsoft.EntityFrameworkCore;
 using TestBizLayer.BizDTOs;
 
@@ -13,13 +14,17 @@ namespace Tests.DTOs
     {
         public int Num { get; set; }
 
+        public bool RaiseErrorInSetupSecondaryData { get; set; }
+
         public bool SetupSecondaryDataCalled { get; private set; }
         public bool CopyToBizDataCalled { get; private set; }
 
-        protected internal override Task SetupSecondaryDataAsync(DbContext db)
+        protected internal override Task SetupSecondaryDataAsync(DbContext db, IBizActionStatus status)
         {
             SetupSecondaryDataCalled = true;
-            return base.SetupSecondaryDataAsync(db);
+            if (RaiseErrorInSetupSecondaryData)
+                status.AddError("Error in SetupSecondaryData");
+            return base.SetupSecondaryDataAsync(db, status);
         }
 
         protected internal override async Task<BizDataIn> CopyToBizDataAsync(DbContext db, IMapper mapper, ServiceLayerBizInDtoAsync source)

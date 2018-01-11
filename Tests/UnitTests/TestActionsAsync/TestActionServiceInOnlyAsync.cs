@@ -98,10 +98,26 @@ namespace Tests.UnitTests.TestActionsAsync
                 bizInstance.Message.ShouldEqual("All Ok");
         }
 
+        [Fact]
+        public async Task TestActionServiceErrorInSetupOk()
+        {
+            //SETUP         
+            var bizInstance = new BizActionInOnlyAsync();
+            var runner = new ActionServiceAsync<IBizActionInOnlyAsync>(_emptyDbContext, bizInstance, _mapper, _noCachingConfig);
+            var input = await runner.GetDtoAsync<ServiceLayerBizInDto>(x => { x.RaiseErrorInSetupSecondaryData = true; });
+
+            //ATTEMPT
+            await runner.RunBizActionAsync(input);
+
+            //VERIFY
+            bizInstance.HasErrors.ShouldEqual(true);
+            bizInstance.Errors.Single().ErrorMessage.ShouldEqual("Error in SetupSecondaryData");
+        }
+
         [Theory]
         [InlineData(123, false)]
         [InlineData(-1, true)]
-        public async Task TestActionServiceInOutDtosDatabaseOk(int num, bool hasErrors)
+        public async Task TestActionServiceDtosDatabaseOk(int num, bool hasErrors)
         {
             //SETUP  
             var options = SqliteInMemory.CreateOptions<TestDbContext>();
@@ -121,6 +137,39 @@ namespace Tests.UnitTests.TestActionsAsync
                 if (hasErrors)
                 {
                     context.LogEntries.Any().ShouldBeFalse();
+                    input.SetupSecondaryDataCalled.ShouldBeTrue();
+                }
+                else
+                {
+                    context.LogEntries.Single().LogText.ShouldEqual(num.ToString());
+                }
+            }
+        }
+
+        [Theory]
+        [InlineData(123, false)]
+        [InlineData(1, true)]
+        public async Task TestActionServiceDtosDatabaseValidationOk(int num, bool hasErrors)
+        {
+            //SETUP  
+            var options = SqliteInMemory.CreateOptions<TestDbContext>();
+            using (var context = new TestDbContext(options))
+            {
+                context.Database.EnsureCreated();
+                var bizInstance = new BizActionInOnlyWriteDbAsync(context);
+                var runner =
+                    new ActionServiceAsync<IBizActionInOnlyWriteDbAsync>(context, bizInstance, _mapper, _noCachingConfig);
+                var input = new ServiceLayerBizInDto { Num = num };
+
+                //ATTEMPT
+                await runner.RunBizActionAsync(input);
+
+                //VERIFY
+                bizInstance.HasErrors.ShouldEqual(hasErrors);
+                if (hasErrors)
+                {
+                    context.LogEntries.Any().ShouldBeFalse();
+                    input.SetupSecondaryDataCalled.ShouldBeTrue();
                 }
                 else
                 {

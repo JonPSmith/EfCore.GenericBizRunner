@@ -69,17 +69,17 @@ namespace GenericBizRunner.Internal.Runners
             }
         }
 
-        protected static TOut ReturnDefaultAndResetInDto<TOut>(DbContext db,
+        protected static TOut ReturnDefaultAndResetInDto<TOut>(DbContext db, IBizActionStatus status,
             DtoAccessGenerator inDtoAcessor, object inputdto)
         {
-            inDtoAcessor.SetupSecondaryDataIfRequired(db, inputdto);
+            inDtoAcessor.SetupSecondaryDataIfRequired(db, status, inputdto);
             return default(TOut);
         }
 
-        protected static async Task<TOut> ReturnDefaultAndResetInDtoAsync<TOut>(DbContext db, DtoAccessGenerator inDtoAcessor,
-            object inputdto)
+        protected static async Task<TOut> ReturnDefaultAndResetInDtoAsync<TOut>(DbContext db, IBizActionStatus status,
+            DtoAccessGenerator inDtoAcessor, object inputdto)
         {
-            await inDtoAcessor.SetupSecondaryDataIfRequiredAsync(db, inputdto).ConfigureAwait(false);
+            await inDtoAcessor.SetupSecondaryDataIfRequiredAsync(db, status, inputdto).ConfigureAwait(false);
             return default(TOut);
         }
     }

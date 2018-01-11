@@ -20,12 +20,17 @@ namespace GenericBizRunner.Internal.Runners
             var toBizCopier = DtoAccessGenerator.BuildCopier(inputData.GetType(), typeof(TBizIn), true, true, Config);
             var bizStatus = (IBizActionStatus)bizInstance;
 
+            //The SetupSecondaryData produced errors
+            if (bizStatus.HasErrors) return;
+
             var inData = await toBizCopier.DoCopyToBizAsync<TBizIn>(db, mapper, inputData).ConfigureAwait(false);
 
             await ((IGenericActionInOnlyAsync<TBizIn>) bizInstance).BizActionAsync(inData).ConfigureAwait(false);
 
             //This handles optional call of save changes
             await SaveChangedIfRequiredAndNoErrorsAsync(db, bizStatus).ConfigureAwait(false);
+            if (bizStatus.HasErrors)
+                await toBizCopier.SetupSecondaryDataIfRequiredAsync(db, bizStatus, inputData).ConfigureAwait(false);
         }
     }
 }

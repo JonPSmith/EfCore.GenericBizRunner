@@ -90,7 +90,7 @@ namespace GenericBizRunner
 
             var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOrInOut, _config.TurnOffCaching);
             var toBizCopier = DtoAccessGenerator.BuildCopier(typeof(TDto), decoder.BizInfo.GetBizInType(), true, false, _config);
-            return toBizCopier.CreateDataWithPossibleSetup<TDto>(_context, runBeforeSetup);
+            return toBizCopier.CreateDataWithPossibleSetup<TDto>(_context, Status, runBeforeSetup);
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace GenericBizRunner
 
             var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOrInOut, _config.TurnOffCaching);
             var toBizCopier = DtoAccessGenerator.BuildCopier(typeof(TDto), decoder.BizInfo.GetBizInType(), true, false, _config);
-            toBizCopier.SetupSecondaryDataIfRequired(_context, dto);
+            toBizCopier.SetupSecondaryDataIfRequired(_context, Status, dto);
             return dto;
         }
 

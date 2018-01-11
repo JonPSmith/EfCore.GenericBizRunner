@@ -21,7 +21,8 @@ namespace GenericBizRunner
         /// This is called a) when a dto is created by GetDto , b) when ResetDto is called and c) when the call to the business logic fails
         /// </summary>
         /// <param name="db"></param>
-        protected internal virtual void SetupSecondaryData(DbContext db)
+        /// <param name="status"></param>
+        protected internal virtual void SetupSecondaryData(DbContext db, IBizActionStatus status)
         {
         }
 

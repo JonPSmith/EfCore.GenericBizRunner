@@ -34,7 +34,7 @@ namespace ServiceLayer.OrderServices
 
         public ImmutableList<string> BookTitles => _bookTitles.ToImmutableList();
 
-        protected override void SetupSecondaryData(DbContext db)
+        protected override void SetupSecondaryData(DbContext db, IBizActionStatus status)
         {
             if (OrderId == 0) return;
 

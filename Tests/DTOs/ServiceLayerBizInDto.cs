@@ -12,13 +12,17 @@ namespace Tests.DTOs
     {
         public int Num { get; set; }
 
+        public bool RaiseErrorInSetupSecondaryData { get; set; }
+
         public bool SetupSecondaryDataCalled { get; private set; }
 
         public bool CopyToBizDataCalled { get; private set; }
 
-        protected internal override void SetupSecondaryData(DbContext db)
+        protected internal override void SetupSecondaryData(DbContext db, IBizActionStatus status)
         {
             SetupSecondaryDataCalled = true;
+            if (RaiseErrorInSetupSecondaryData)
+                status.AddError("Error in SetupSecondaryData");
         }
 
         protected internal override BizDataIn CopyToBizData(DbContext db, IMapper mapper, ServiceLayerBizInDto source)

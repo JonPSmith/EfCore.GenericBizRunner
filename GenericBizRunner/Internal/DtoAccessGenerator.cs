@@ -78,39 +78,39 @@ namespace GenericBizRunner.Internal
             return result;
         }
 
-        public void SetupSecondaryDataIfRequired(DbContext db, object inputDto)
+        public void SetupSecondaryDataIfRequired(DbContext db, IBizActionStatus status, object inputDto)
         {
             if (!IsDirectCopy)
                 //we need to call SetupSecondaryOutputData
-                _dtoAccessInstance.SetupSecondaryData(db, inputDto);
+                _dtoAccessInstance.SetupSecondaryData(db, status, inputDto);
         }
 
-        public async Task SetupSecondaryDataIfRequiredAsync(DbContext db, object inputDto)
+        public async Task SetupSecondaryDataIfRequiredAsync(DbContext db, IBizActionStatus status, object inputDto)
         {
             //NOTE: Async business methods can use either sync or async dto, so we need to handle both
             if (!IsDirectCopy)
             {
                 //we need to call SetupSecondaryOutputData
                 if (_isAsync)
-                    await _dtoAccessInstance.SetupSecondaryDataAsync(db, inputDto).ConfigureAwait(false);
+                    await _dtoAccessInstance.SetupSecondaryDataAsync(db, status, inputDto).ConfigureAwait(false);
                 else
-                    _dtoAccessInstance.SetupSecondaryData(db, inputDto);
+                    _dtoAccessInstance.SetupSecondaryData(db, status, inputDto);
             }
         }
 
-        public T CreateDataWithPossibleSetup<T>(DbContext db, Action<T> runBeforeSetup) where T : class, new()
+        public T CreateDataWithPossibleSetup<T>(DbContext db, IBizActionStatus status, Action<T> runBeforeSetup) where T : class, new()
         {
             var result = new T();
             runBeforeSetup?.Invoke(result);
-            SetupSecondaryDataIfRequired(db, result);
+            SetupSecondaryDataIfRequired(db, status, result);
             return result;
         }
 
-        public async Task<T> CreateDataWithPossibleSetupAsync<T>(DbContext db, Action<T> runBeforeSetup) where T : class, new()
+        public async Task<T> CreateDataWithPossibleSetupAsync<T>(DbContext db, IBizActionStatus status, Action<T> runBeforeSetup) where T : class, new()
         {
             var result = new T();
             runBeforeSetup?.Invoke(result);
-            await SetupSecondaryDataIfRequiredAsync(db, result).ConfigureAwait(false);
+            await SetupSecondaryDataIfRequiredAsync(db, status, result).ConfigureAwait(false);
             return result;
         }
 

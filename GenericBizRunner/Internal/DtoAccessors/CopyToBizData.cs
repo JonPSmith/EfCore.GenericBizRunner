@@ -15,9 +15,9 @@ namespace GenericBizRunner.Internal.DtoAccessors
             return ((TDtoIn) source).CopyToBizData(db, mapper, (TDtoIn) source);
         }
 
-        public void SetupSecondaryData(DbContext db, object dto)
+        public void SetupSecondaryData(DbContext db, IBizActionStatus status, object dto)
         {
-            ((TDtoIn) dto).SetupSecondaryData(db);
+            ((TDtoIn) dto).SetupSecondaryData(db, status);
         }
     }
 }

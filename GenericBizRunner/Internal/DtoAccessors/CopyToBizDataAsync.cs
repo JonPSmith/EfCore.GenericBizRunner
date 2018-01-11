@@ -17,9 +17,9 @@ namespace GenericBizRunner.Internal.DtoAccessors
             return await ((TDtoIn)source).CopyToBizDataAsync(db, mapper, (TDtoIn)source).ConfigureAwait(false);
         }
 
-        public async Task SetupSecondaryDataAsync(DbContext db, object dto)
+        public async Task SetupSecondaryDataAsync(DbContext db, IBizActionStatus status, object dto)
         {
-            await ((TDtoIn) dto).SetupSecondaryDataAsync(db).ConfigureAwait(false);
+            await ((TDtoIn) dto).SetupSecondaryDataAsync(db, status).ConfigureAwait(false);
         }
     }
 }

@@ -20,13 +20,16 @@ namespace GenericBizRunner.Internal.Runners
             var fromBizCopier = DtoAccessGenerator.BuildCopier(typeof(TBizOut), typeof(TOut), false, false, Config);
             var bizStatus = (IBizActionStatus) bizInstance;
 
+            //The SetupSecondaryData produced errors
+            if (bizStatus.HasErrors) return default(TOut);
+
             var inData = toBizCopier.DoCopyToBiz<TBizIn>(db, mapper, inputData);
 
             var result = ((IGenericAction<TBizIn, TBizOut>) bizInstance).BizAction(inData);
 
             //This handles optional call of save changes
             SaveChangedIfRequiredAndNoErrors(db, bizStatus);
-            if (bizStatus.HasErrors) return ReturnDefaultAndResetInDto<TOut>(db, toBizCopier, inputData);
+            if (bizStatus.HasErrors) return ReturnDefaultAndResetInDto<TOut>(db, bizStatus, toBizCopier, inputData);
 
             var data = fromBizCopier.DoCopyFromBiz<TOut>(db, mapper, result);
             return data;

@@ -21,6 +21,9 @@ namespace GenericBizRunner.Internal.Runners
             var fromBizCopier = DtoAccessGenerator.BuildCopier(typeof(TBizOut), typeof(TOut), false, true, Config);
             var bizStatus = (IBizActionStatus)bizInstance;
 
+            //The SetupSecondaryData produced errors
+            if (bizStatus.HasErrors) return default(TOut);
+
             var inData = await toBizCopier.DoCopyToBizAsync<TBizIn>(db, mapper, inputData).ConfigureAwait(false);
 
             var result = await ((IGenericActionAsync<TBizIn, TBizOut>)bizInstance).BizActionAsync(inData).ConfigureAwait(false);
@@ -29,7 +32,7 @@ namespace GenericBizRunner.Internal.Runners
             SaveChangedIfRequiredAndNoErrors(db, bizStatus);
             if (bizStatus.HasErrors)
                 return
-                    await ReturnDefaultAndResetInDtoAsync<TOut>(db, toBizCopier, inputData).ConfigureAwait(false);
+                    await ReturnDefaultAndResetInDtoAsync<TOut>(db, bizStatus, toBizCopier, inputData).ConfigureAwait(false);
 
             var data = await fromBizCopier.DoCopyFromBizAsync<TOut>(db, mapper, result).ConfigureAwait(false);
             return data;

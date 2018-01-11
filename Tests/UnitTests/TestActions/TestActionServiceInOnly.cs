@@ -73,6 +73,22 @@ namespace Tests.UnitTests.TestActions
                 bizInstance.Message.ShouldEqual("All Ok");
         }
 
+        [Fact]
+        public void TestActionServiceErrorInSetupOk()
+        {
+            //SETUP         
+            var bizInstance = new BizActionInOnly();
+            var runner = new ActionService<IBizActionInOnly>(_emptyDbContext, bizInstance, _mapper, _noCachingConfig);
+            var input = runner.GetDto<ServiceLayerBizInDto>(x => { x.RaiseErrorInSetupSecondaryData = true; });
+
+            //ATTEMPT
+            runner.RunBizAction(input);
+
+            //VERIFY
+            bizInstance.HasErrors.ShouldEqual(true);
+            bizInstance.Errors.Single().ErrorMessage.ShouldEqual("Error in SetupSecondaryData");
+        }
+
         [Theory]
         [InlineData(123, false)]
         [InlineData(-1, true)]

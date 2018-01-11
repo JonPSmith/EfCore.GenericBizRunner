@@ -3,6 +3,7 @@
 
 using System.Threading.Tasks;
 using AutoMapper;
+using GenericBizRunner;
 using GenericBizRunner.PublicButHidden;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,8 +23,9 @@ namespace GenericActions
         /// This is called a) when a dto is created by GetDto , b) when ResetDto is called and c) when the call to the business logic fails
         /// </summary>
         /// <param name="db"></param>
+        /// <param name="status"></param>
         /// <returns></returns>
-        internal protected virtual async Task SetupSecondaryDataAsync(DbContext db)
+        internal protected virtual async Task SetupSecondaryDataAsync(DbContext db, IBizActionStatus status)
         {
         }
 

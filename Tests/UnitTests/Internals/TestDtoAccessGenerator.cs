@@ -6,6 +6,7 @@ using GenericBizRunner.Configuration;
 using GenericBizRunner.Internal;
 using TestBizLayer.BizDTOs;
 using Tests.DTOs;
+using Tests.Helpers;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
@@ -96,9 +97,10 @@ namespace Tests.UnitTests.Internals
         {
             //SETUP 
             var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataIn), typeof(BizDataIn), true, false, _noCachingConfig);
-
+            var status = new TestBizActionStatus();
+            
             //ATTEMPT
-            var data = copier.CreateDataWithPossibleSetup<BizDataIn>(null, null);
+            var data = copier.CreateDataWithPossibleSetup<BizDataIn>(null, status, null);
 
             //VERIFY    
             //Should not fail
@@ -109,9 +111,10 @@ namespace Tests.UnitTests.Internals
         {
             //SETUP 
             var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDto), typeof(BizDataIn), true, false, _noCachingConfig);
+            var status = new TestBizActionStatus();
 
             //ATTEMPT
-            var data = copier.CreateDataWithPossibleSetup<ServiceLayerBizInDto>(null, null);
+            var data = copier.CreateDataWithPossibleSetup<ServiceLayerBizInDto>(null, status, null);
 
             //VERIFY    
             data.SetupSecondaryDataCalled.ShouldBeTrue();
@@ -123,9 +126,10 @@ namespace Tests.UnitTests.Internals
         {
             //SETUP 
             var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDto), typeof(BizDataIn), true, false, _noCachingConfig);
+            var status = new TestBizActionStatus();
 
             //ATTEMPT
-            var data = copier.CreateDataWithPossibleSetup<ServiceLayerBizInDto>(null, x => { x.Num = 2;});
+            var data = copier.CreateDataWithPossibleSetup<ServiceLayerBizInDto>(null, status, x => { x.Num = 2;});
 
             //VERIFY    
             data.SetupSecondaryDataCalled.ShouldBeTrue();
@@ -141,9 +145,10 @@ namespace Tests.UnitTests.Internals
             //SETUP 
             var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataIn), typeof(BizDataIn), true, false, _noCachingConfig);
             var input = new BizDataIn { Num = 234 };
+            var status = new TestBizActionStatus();
 
             //ATTEMPT
-            copier.SetupSecondaryDataIfRequired(null, input);
+            copier.SetupSecondaryDataIfRequired(null, status, input);
 
             //VERIFY    
             //Should not do anything, but musn't fail
@@ -155,9 +160,10 @@ namespace Tests.UnitTests.Internals
             //SETUP 
             var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDto), typeof(BizDataIn), true, false, _noCachingConfig);
             var input = new ServiceLayerBizInDto { Num = 234 };
+            var status = new TestBizActionStatus();
 
             //ATTEMPT
-            copier.SetupSecondaryDataIfRequired(null, input);
+            copier.SetupSecondaryDataIfRequired(null, status, input);
 
             //VERIFY    
             input.SetupSecondaryDataCalled.ShouldBeTrue();
