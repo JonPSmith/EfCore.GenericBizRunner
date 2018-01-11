@@ -17,7 +17,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataLayer", "DataLayer\Data
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceLayer", "ServiceLayer\ServiceLayer.csproj", "{758C515A-7346-48A2-9D8D-2D1BE702BEF2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestBizLayer", "TestBizLayer\TestBizLayer.csproj", "{F950A52D-1242-4970-B063-8269D9174332}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestBizLayer", "TestBizLayer\TestBizLayer.csproj", "{F950A52D-1242-4970-B063-8269D9174332}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{432A2EFF-C75A-46C8-ADD9-A92BAF2C1193}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

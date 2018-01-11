@@ -6,7 +6,9 @@ using TestBizLayer.BizDTOs;
 
 namespace TestBizLayer.Actions.Concrete
 {
-    public class BizActionInOut : BizActionStatus, IBizActionInOut
+    public class BizActionInOut : 
+        BizActionStatus, 
+        IBizActionInOut
     {
         public BizDataOut BizAction(BizDataIn inputData)
         {

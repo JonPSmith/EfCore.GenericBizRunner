@@ -8,6 +8,7 @@ using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using DataLayer.EfCode;
 using EfCoreInAction.Logger;
+using GenericBizRunner.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -35,7 +36,6 @@ namespace EfCoreInAction
             // Add framework services.
             services.AddMvc();
 
-            services.AddAutoMapper(); //TODO: Move into AutoFac setup in GenericBizRunners
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -44,12 +44,22 @@ namespace EfCoreInAction
             services.AddDbContext<EfCoreContext>(options => options.UseSqlServer(connection,
                 b => b.MigrationsAssembly("DataLayer")));
 
-            //Add AutoFac
+            //Now I use AutoFac to do some of the more complex registering of services
             var containerBuilder = new ContainerBuilder();
+
+            #region GenericBizRunner parts
+            // Need to call AddAutoMapper to set up the mappings any GenericAction From/To Biz Dtos
+            services.AddAutoMapper(); 
+            //GenericBizRunner has two AutoFac modules that can register all the services needed
+            //This one is the simplest, as it sets up the link to the application's DbContext
+            containerBuilder.RegisterModule(new BizRunnerDiModule<EfCoreContext>());
+            #endregion
+
+            //Now I register my business logic
             containerBuilder.RegisterModule<ServiceLayer.ServiceLayerModule>();
             containerBuilder.Populate(services);
             var container = containerBuilder.Build();
-            return new AutofacServiceProvider(container); //TODO: Move into AutoFac setup in GenericBizRunners
+            return new AutofacServiceProvider(container); 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,7 +1,9 @@
 ﻿// Copyright (c) 2017 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT licence. See License.txt in the project root for license information.
 
+using System;
 using DataLayer.EfCode;
+using GenericBizRunner;
 using Microsoft.AspNetCore.Mvc;
 using ServiceLayer.OrderServices.Concrete;
 
@@ -29,6 +31,11 @@ namespace EfCoreInAction.Controllers
             var detailService = new DisplayOrdersService(_context);
             SetupTraceInfo();
             return View(detailService.GetOrderDetail(orderId));
+        }
+
+        public IActionResult ChangeDelivery(int orderId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

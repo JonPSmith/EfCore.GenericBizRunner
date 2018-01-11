@@ -7,8 +7,10 @@ using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using GenericBizRunner;
 using Microsoft.AspNetCore.Mvc;
+using ServiceLayer.CheckoutServices;
 using ServiceLayer.CheckoutServices.Concrete;
-using ServiceLayer.OrderServices.Concrete;
+using ExampleWebApp.Helpers;
+using Microsoft.AspNetCore.Http;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -53,31 +55,50 @@ namespace EfCoreInAction.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult PlaceOrder(PlaceOrderInDto dto, [FromServices]IActionService<IPlaceOrderAction> service)
-        {
-            var listService = new CheckoutListService(_context, HttpContext.Request.Cookies);
+        public IActionResult PlaceOrder(PlaceOrderInDto dto, 
+            [FromServices]IActionService<IPlaceOrderAction> service)
+        {    
             if (!ModelState.IsValid)
             {
-                //model errors so return immediately
-                return View("Index", listService.GetCheckoutInfoFromCookie());
+                //model errors so return to checkout page, showing the basket
+                return View("Index", FormCheckoutDtoFromCookie(HttpContext));
             }
 
+            //This runs my business logic using the service injected into the Action's parameters 
             var order = service.RunBizAction<Order>(dto);
 
             if (!service.Status.HasErrors)
             {
-                //todo: clear checkout cookie
+                //If successful I need to clear the line items from the basket cookie
+                ClearCheckoutCookie(HttpContext);
+                SetupTraceInfo();       //Used to update the logs
                 return RedirectToAction("ConfirmOrder", "Orders", new { order.OrderId });
             }
 
-            //Otherwise errors, so copy over and redisplay
-            foreach (var error in service.Status.Errors)
-            {
-                var properties = error.MemberNames.ToList();
-                ModelState.AddModelError(properties.Any() ? properties.First() : "", error.ErrorMessage);
-            }
-            SetupTraceInfo();
-            return View("Index", listService.GetCheckoutInfoFromCookie());
+            //Otherwise errors, so I need to redisplay the basket from the cookie
+            var checkoutDto = FormCheckoutDtoFromCookie(HttpContext);      
+            //This copies the errors to the ModelState
+            service.Status.CopyErrorsToModelState(ModelState, checkoutDto);
+
+            SetupTraceInfo();       //Used to update the logs
+            return View("Index", checkoutDto);
+        }
+
+        //----------------------------------------------------
+        //private methods
+
+        private CheckoutDto FormCheckoutDtoFromCookie(HttpContext httpContext)
+        {
+            var listService = new CheckoutListService(_context, HttpContext.Request.Cookies);
+            return listService.GetCheckoutInfoFromCookie();
+        }
+
+        private void ClearCheckoutCookie(HttpContext httpContext)
+        {
+            var checkoutCookie = new CheckoutCookie(HttpContext.Request.Cookies, HttpContext.Response.Cookies);
+            var cookieService = new CheckoutCookieService(checkoutCookie.GetValue());
+            cookieService.ClearAllLineItems();
+            checkoutCookie.AddOrUpdateCookie(cookieService.EncodeForCookie());
         }
     }
 }

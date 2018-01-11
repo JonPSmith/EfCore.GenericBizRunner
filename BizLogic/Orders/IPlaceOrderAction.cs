@@ -3,5 +3,5 @@ using GenericBizRunner;
 
 namespace BizLogic.Orders
 {
-    public interface IPlaceOrderAction : IGenericAction<PlaceOrderInDto, Order> { }
+    public interface IPlaceOrderAction : IGenericActionWriteDb<PlaceOrderInDto, Order> { }
 }

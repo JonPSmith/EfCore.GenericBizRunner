@@ -10,17 +10,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ServiceLayer
 {
-    public class ServiceLayerModule : Autofac.Module //#A
+    public class ServiceLayerModule : Autofac.Module
     {
-        protected override void Load( //#B
-            ContainerBuilder builder) //#B
+        protected override void Load(ContainerBuilder builder)
         {
-            //Need to register DbContext pointing to the EfCoreContext. Note the insatncePerLifetimeScope
-            builder.RegisterType<EfCoreContext>().As<DbContext>().InstancePerLifetimeScope();
-
-            //and register the GenericActions interfaces by hand as they are generic
-            builder.RegisterGeneric(typeof(ActionService<>)).As(typeof(IActionService<>));
-            //builder.RegisterGeneric(typeof(ActionServiceAsync<>)).As(typeof(IActionServiceAsync<>));
 
             //-----------------------------
             //Now register the other layers

@@ -13,6 +13,10 @@ namespace ServiceLayer.OrderServices
 
         public DateTime DateOrderedUtc { get; set; }
 
+        public DateTime ExpectedDeliveryDate { get; set; }
+
+        public bool HasBeenDelivered { get; set; }
+
         public string OrderNumber => $"SO{OrderId:D6}";
 
         public IEnumerable<CheckoutItemDto> LineItems { get; set; }

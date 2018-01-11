@@ -12,6 +12,10 @@ namespace DataLayer.EfClasses
 
         public DateTime DateOrderedUtc { get; set; }
 
+        public DateTime ExpectedDeliveryDate { get; set; }
+
+        public bool HasBeenDelivered { get; set; }
+
         /// <summary>
         /// In this simple example the cookie holds a GUID for everyone that 
         /// </summary>

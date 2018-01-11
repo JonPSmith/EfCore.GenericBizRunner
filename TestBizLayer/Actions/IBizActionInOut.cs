@@ -6,6 +6,7 @@ using TestBizLayer.BizDTOs;
 
 namespace TestBizLayer.Actions
 {
-    public interface IBizActionInOut : IGenericAction<BizDataIn, BizDataOut>
+    public interface IBizActionInOut : 
+        IGenericAction<BizDataIn, BizDataOut>
     {}
 }

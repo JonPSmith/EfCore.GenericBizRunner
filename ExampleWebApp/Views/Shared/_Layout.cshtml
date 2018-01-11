@@ -35,6 +35,7 @@
                 <ul class="nav navbar-nav">
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">All books</a></li>
                     <li><a asp-area="" asp-controller="Checkout" asp-action="Index">Checkout</a></li>
+                    <li><a asp-area="" asp-controller="Orders" asp-action="Index">Orders</a></li>
                     <li><a href="#" id="show-logs" class="hidden">Logs&nbsp;<span class="badge"></span></a></li>
                     @if (Context.Request.IsLocal())
                     {
@@ -45,7 +46,7 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="dropdownAdminItems">
                                 <li>@Html.ActionLink("Reset database", "ResetDatabase", "Admin")</li>
-                                @*<li>@Html.ActionLink("Add Book", "AddBook", "Admin")</li>*@
+                                <li>@Html.ActionLink("Reset Orders", "ResetOrders", "Admin")</li>
                             </ul>
                         </li>
                     }

@@ -26,10 +26,20 @@ namespace EfCoreInAction.Controllers
         {
             Request.ThrowErrorIfNotLocal();
 
+            _context.DevelopmentEnsureDeleted();
             _context.DevelopmentEnsureCreated();
             var numBooks = _context.SeedDatabase(_env.WebRootPath);
             SetupTraceInfo();
             return View("BookUpdated", $"Successfully reset the database and added {numBooks} books.");
+        }
+
+        public IActionResult ResetOrders()
+        {
+            Request.ThrowErrorIfNotLocal();
+
+            _context.ResetOrders();
+            SetupTraceInfo();
+            return View("BookUpdated", $"Successfully reset the customer orders.");
         }
 
     }

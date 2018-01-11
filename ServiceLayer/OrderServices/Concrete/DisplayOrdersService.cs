@@ -7,6 +7,7 @@ using System.Linq;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using ServiceLayer.CheckoutServices;
 using ServiceLayer.CheckoutServices.Concrete;
 
@@ -51,20 +52,24 @@ namespace ServiceLayer.OrderServices.Concrete
 
         private IQueryable<OrderListDto> SelectQuery(IQueryable<Order> orders)
         {
-            return orders.Select(x => new OrderListDto
+            return orders.Include(x => x.LineItems).ThenInclude(x => x.ChosenBook)
+                .Select(x => new OrderListDto
                                {
                                    OrderId = x.OrderId,
                                    DateOrderedUtc = x.DateOrderedUtc,
+                                   ExpectedDeliveryDate = x.ExpectedDeliveryDate,
+                                   HasBeenDelivered = x.HasBeenDelivered,
                                    LineItems = x.LineItems.Select(lineItem => new CheckoutItemDto
                                    {
                                        BookId = lineItem.BookId,
                                        Title = lineItem.ChosenBook.Title,
+                                       ImageUrl = lineItem.ChosenBook.ImageUrl,
                                        AuthorsName = string.Join(", ",
                                         lineItem.ChosenBook.AuthorsLink
                                             .OrderBy(q => q.Order)
                                             .Select(q => q.Author.Name)),
                                        BookPrice = lineItem.BookPrice,
-                                       NumBooks = lineItem.NumBooks,
+                                       NumBooks = lineItem.NumBooks
                                    })
                                });
         }
