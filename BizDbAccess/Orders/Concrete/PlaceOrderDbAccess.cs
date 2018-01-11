@@ -3,25 +3,12 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
 
-namespace BizDbAccess.Orders
+namespace BizDbAccess.Orders.Concrete
 {
-    public interface IPlaceOrderDbAccess
-    {
-        /// <summary>
-        /// This finds any books that fits the BookIds given to it
-        /// </summary>
-        /// <param name="bookIds"></param>
-        /// <returns>A dictionary with the BookId as the key, and the Book as the value</returns>
-        IDictionary<int, Book> FindBooksByIdsWithPriceOffers(IEnumerable<int> bookIds);
-
-        void Add(Order newOrder);
-    }
-
     public class PlaceOrderDbAccess : IPlaceOrderDbAccess
     {
         private readonly EfCoreContext _context;

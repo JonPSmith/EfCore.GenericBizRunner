@@ -98,7 +98,7 @@ namespace Tests.UnitTests.Internals
             var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataIn), typeof(BizDataIn), true, false, _noCachingConfig);
 
             //ATTEMPT
-            var data = copier.CreateDataWithPossibleSetup<BizDataIn>(null);
+            var data = copier.CreateDataWithPossibleSetup<BizDataIn>(null, null);
 
             //VERIFY    
             //Should not fail
@@ -111,10 +111,25 @@ namespace Tests.UnitTests.Internals
             var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDto), typeof(BizDataIn), true, false, _noCachingConfig);
 
             //ATTEMPT
-            var data = copier.CreateDataWithPossibleSetup<ServiceLayerBizInDto>(null);
+            var data = copier.CreateDataWithPossibleSetup<ServiceLayerBizInDto>(null, null);
 
             //VERIFY    
             data.SetupSecondaryDataCalled.ShouldBeTrue();
+            data.Num.ShouldEqual(0);
+        }
+
+        [Fact]
+        public void TestCreateDataWithPossibleSetupDtoWithActionOk()
+        {
+            //SETUP 
+            var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDto), typeof(BizDataIn), true, false, _noCachingConfig);
+
+            //ATTEMPT
+            var data = copier.CreateDataWithPossibleSetup<ServiceLayerBizInDto>(null, x => { x.Num = 2;});
+
+            //VERIFY    
+            data.SetupSecondaryDataCalled.ShouldBeTrue();
+            data.Num.ShouldEqual(2);
         }
 
         //-------------------------------------------------------------------

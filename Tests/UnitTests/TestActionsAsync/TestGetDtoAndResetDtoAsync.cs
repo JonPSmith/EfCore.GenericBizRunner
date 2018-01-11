@@ -32,7 +32,7 @@ namespace Tests.UnitTests.TestActionsAsync
         private readonly IMapper _mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDtoAsync, ServiceLayerBizInDto>();
 
         [Fact]
-        public async Task Test10ResetDtoDirectOk()
+        public async Task TestResetDtoDirectOk()
         {
             //SETUP 
             var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _mapper, _noCachingConfig);
@@ -47,7 +47,7 @@ namespace Tests.UnitTests.TestActionsAsync
         }
 
         [Fact]
-        public async Task Test11ResetDtoAsyncOk()
+        public async Task TestResetDtoAsyncOk()
         {
             //SETUP 
             var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _mapper, _noCachingConfig);
@@ -105,6 +105,23 @@ namespace Tests.UnitTests.TestActionsAsync
             data.ShouldNotBeNull();
             data.ShouldBeType<ServiceLayerBizInDtoAsync>();
             data.SetupSecondaryDataCalled.ShouldEqual(true);
+            data.Num.ShouldEqual(0);
+        }
+
+        [Fact]
+        public async Task TestGetDtoGenericActionsDtoAsyncOkAithAction()
+        {
+            //SETUP 
+            var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _mapper, _noCachingConfig);
+
+            //ATTEMPT
+            var data = await service.GetDtoAsync<ServiceLayerBizInDtoAsync>(x => { x.Num = 2;});
+
+            //VERIFY
+            data.ShouldNotBeNull();
+            data.ShouldBeType<ServiceLayerBizInDtoAsync>();
+            data.SetupSecondaryDataCalled.ShouldEqual(true);
+            data.Num.ShouldEqual(2);
         }
 
         //------------------------------------------------------------

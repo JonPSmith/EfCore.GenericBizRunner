@@ -1,6 +1,7 @@
 // Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT licence. See License.txt in the project root for license information.
 
+using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
@@ -48,8 +49,9 @@ namespace GenericBizRunner
         /// If the type is based on a GenericActionsDto it will run SetupSecondaryData on it before hadning it back
         /// </summary>
         /// <typeparam name="TDto"></typeparam>
+        /// <param name="runBeforeSetup">An optional action to set something in the new DTO before SetupSecondaryData is called</param>
         /// <returns></returns>
-        Task<TDto> GetDtoAsync<TDto>() where TDto : class, new();
+        Task<TDto> GetDtoAsync<TDto>(Action<TDto> runBeforeSetup = null) where TDto : class, new();
 
         /// <summary>
         /// This should be called if a model error is found in the input data.

@@ -29,7 +29,7 @@ namespace Tests.UnitTests.TestActions
         private readonly IMapper _mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto, ServiceLayerBizOutDto>();
 
         [Fact]
-        public void Test10ResetDtoDirectOk()
+        public void TestResetDtoDirectOk()
         {
             //SETUP 
             var service = new ActionService<IBizActionInOut>(_emptyDbContext, new BizActionInOut(), _mapper, _noCachingConfig);
@@ -44,7 +44,7 @@ namespace Tests.UnitTests.TestActions
         }
 
         [Fact]
-        public void Test11ResetDtoGenericActionsOk()
+        public void TestResetDtoGenericActionsOk()
         {
             //SETUP 
             var service = new ActionService<IBizActionInOut>(_emptyDbContext, new BizActionInOut(), _mapper, _noCachingConfig);
@@ -74,16 +74,32 @@ namespace Tests.UnitTests.TestActions
         }
 
         [Fact]
-        public void TestGetDtoGenericActionsDtoAsyncBad()
+        public void TestGetDtoGenericActionsDtoOk()
         {
             //SETUP 
             var service = new ActionService<IBizActionInOut>(_emptyDbContext, new BizActionInOut(), _mapper, _noCachingConfig);
 
             //ATTEMPT
-            var ex = Assert.Throws<InvalidOperationException>(() => service.GetDto<ServiceLayerBizInDtoAsync>());
+            var data = service.GetDto<ServiceLayerBizInDto>();
 
             //VERIFY
-            ex.Message.ShouldEqual("You cannot use an Async version of the DTO in a non-async action.");
+            data.ShouldNotBeNull();
+            data.ShouldBeType<ServiceLayerBizInDto>();
+            data.SetupSecondaryDataCalled.ShouldEqual(true);
+        }
+
+        [Fact]
+        public void TestGetDtoGenericActionsWithParamDtoOk()
+        {
+            //SETUP 
+            var service = new ActionService<IBizActionInOut>(_emptyDbContext, new BizActionInOut(), _mapper, _noCachingConfig);
+
+            //ATTEMPT
+            var data = service.GetDto<ServiceLayerBizInDto>(x => { x.Num = 2;});
+
+            //VERIFY
+            data.Num.ShouldEqual(2);
+            data.SetupSecondaryDataCalled.ShouldEqual(true);
         }
 
         //------------------------------------------------------------
@@ -105,21 +121,6 @@ namespace Tests.UnitTests.TestActions
         }
 
         [Fact]
-        public void TestGetDtoGenericActionsDtoOk()
-        {
-            //SETUP 
-            var service = new ActionService<IBizActionInOut>(_emptyDbContext, new BizActionInOut(), _mapper, _noCachingConfig);
-
-            //ATTEMPT
-            var data = service.GetDto<ServiceLayerBizInDto>();
-
-            //VERIFY
-            data.ShouldNotBeNull();
-            data.ShouldBeType<ServiceLayerBizInDto>();
-            data.SetupSecondaryDataCalled.ShouldEqual(true);
-        }
-
-        [Fact]
         public void TestGetDtoGenericActionsDtoOutOnlyBad()
         {
             //SETUP 
@@ -130,6 +131,19 @@ namespace Tests.UnitTests.TestActions
 
             //VERIFY
             ex.Message.ShouldEqual("The action with interface of IBizActionOutOnly does not have an input, but you called it with a method that needs an input.");
+        }
+
+        [Fact]
+        public void TestGetDtoGenericActionsDtoAsyncBad()
+        {
+            //SETUP 
+            var service = new ActionService<IBizActionInOut>(_emptyDbContext, new BizActionInOut(), _mapper, _noCachingConfig);
+
+            //ATTEMPT
+            var ex = Assert.Throws<InvalidOperationException>(() => service.GetDto<ServiceLayerBizInDtoAsync>());
+
+            //VERIFY
+            ex.Message.ShouldEqual("You cannot use an Async version of the DTO in a non-async action.");
         }
 
         [Fact]

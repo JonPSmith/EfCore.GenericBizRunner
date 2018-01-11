@@ -2,6 +2,7 @@
 // Licensed under MIT licence. See License.txt in the project root for license information.
 
 using System;
+using System.Linq.Expressions;
 using AutoMapper;
 using GenericBizRunner.Configuration;
 using GenericBizRunner.Internal;
@@ -77,18 +78,19 @@ namespace GenericBizRunner
 
         /// <summary>
         /// This will return a new class for input. 
-        /// If the type is based on a GenericActionsDto, or it has ISetupsecondaryData, it will run SetupSecondaryData on it before handing it back
+        /// If the type is based on a GenericActionsDto it will run SetupSecondaryData on it before handing it back
         /// </summary>
         /// <typeparam name="TDto"></typeparam>
+        /// <param name="runBeforeSetup">An optional action to set something in the new DTO before SetupSecondaryData is called</param>
         /// <returns></returns>
-        public TDto GetDto<TDto>() where TDto : class, new()
+        public TDto GetDto<TDto>(Action<TDto> runBeforeSetup = null) where TDto : class, new()
         {
             if (!typeof(TDto).IsClass)
                 throw new InvalidOperationException("You should only call this on a primitive type. Its only useful for Dtos.");
 
             var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOrInOut, _config.TurnOffCaching);
             var toBizCopier = DtoAccessGenerator.BuildCopier(typeof(TDto), decoder.BizInfo.GetBizInType(), true, false, _config);
-            return toBizCopier.CreateDataWithPossibleSetup<TDto>(_context);
+            return toBizCopier.CreateDataWithPossibleSetup<TDto>(_context, runBeforeSetup);
         }
 
         /// <summary>

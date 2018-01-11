@@ -140,10 +140,25 @@ namespace Tests.UnitTests.Internals
             var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDtoAsync), typeof(BizDataIn), true, true, _noCachingConfig);
 
             //ATTEMPT
-            var data = await copier.CreateDataWithPossibleSetupAsync<ServiceLayerBizInDtoAsync>(null);
+            var data = await copier.CreateDataWithPossibleSetupAsync<ServiceLayerBizInDtoAsync>(null, null);
 
             //VERIFY    
             data.SetupSecondaryDataCalled.ShouldBeTrue();
+            data.Num.ShouldEqual(0);
+        }
+
+        [Fact]
+        public async Task TestCreateDataWithPossibleSetupAsyncDtoWithActionOk()
+        {
+            //SETUP 
+            var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDtoAsync), typeof(BizDataIn), true, true, _noCachingConfig);
+
+            //ATTEMPT
+            var data = await copier.CreateDataWithPossibleSetupAsync<ServiceLayerBizInDtoAsync>(null, x => { x.Num = 2;});
+
+            //VERIFY    
+            data.SetupSecondaryDataCalled.ShouldBeTrue();
+            data.Num.ShouldEqual(2);
         }
 
         //-------------------------------------------------------------
@@ -156,7 +171,7 @@ namespace Tests.UnitTests.Internals
             var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataIn), typeof(BizDataIn), true, true, _noCachingConfig);
 
             //ATTEMPT
-            await copier.CreateDataWithPossibleSetupAsync<BizDataIn>(null);
+            await copier.CreateDataWithPossibleSetupAsync<BizDataIn>(null, null);
 
             //VERIFY    
             //Should work with no exceptions
@@ -169,12 +184,26 @@ namespace Tests.UnitTests.Internals
             var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDto), typeof(BizDataIn), true, true, _noCachingConfig);
 
             //ATTEMPT
-            var data = await copier.CreateDataWithPossibleSetupAsync<ServiceLayerBizInDto>(null);
+            var data = await copier.CreateDataWithPossibleSetupAsync<ServiceLayerBizInDto>(null, null);
 
             //VERIFY    
             data.SetupSecondaryDataCalled.ShouldBeTrue();
+            data.Num.ShouldEqual(0);
         }
 
+        [Fact]
+        public async Task TestCreateDataWithPossibleSetupSyncDtoWithActionOk()
+        {
+            //SETUP 
+            var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDto), typeof(BizDataIn), true, true, _noCachingConfig);
+
+            //ATTEMPT
+            var data = await copier.CreateDataWithPossibleSetupAsync<ServiceLayerBizInDto>(null, x => { x.Num = 2; });
+
+            //VERIFY    
+            data.SetupSecondaryDataCalled.ShouldBeTrue();
+            data.Num.ShouldEqual(2);
+        }
 
         //-------------------------------------------------------------------
         //SetupSecondaryDataIfRequired

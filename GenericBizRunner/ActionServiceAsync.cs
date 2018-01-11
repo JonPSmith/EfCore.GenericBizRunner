@@ -19,7 +19,7 @@ namespace GenericBizRunner
         }
     }
 
-    public class ActionServiceAsync<TContext, TBizInstance> : BizActionStatus, IActionServiceAsync<TBizInstance>
+    public class ActionServiceAsync<TContext, TBizInstance> : IActionServiceAsync<TBizInstance>
         where TContext : DbContext
         where TBizInstance : class, IBizActionStatus
     {
@@ -83,18 +83,19 @@ namespace GenericBizRunner
 
         /// <summary>
         /// This will return a new class for input. 
-        /// If the type is based on a GenericActionsDto, or it has ISetupsecondaryData, it will run SetupSecondaryData on it before handing it back
+        /// If the type is based on a GenericActionsDto it will run SetupSecondaryData on it before handing it back
         /// </summary>
         /// <typeparam name="TDto"></typeparam>
+        /// <param name="runBeforeSetup">An optional action to set something in the new DTO before SetupSecondaryData is called</param>
         /// <returns></returns>
-        public async Task<TDto>  GetDtoAsync<TDto>() where TDto : class, new()
+        public async Task<TDto> GetDtoAsync<TDto>(Action<TDto> runBeforeSetup = null) where TDto : class, new()
         {
             if (!typeof(TDto).IsClass)
                 throw new InvalidOperationException("You should only call this on a primitive type. Its only useful for Dtos.");
 
             var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOrInOut | RequestedInOut.Async, _config.TurnOffCaching);
             var toBizCopier = DtoAccessGenerator.BuildCopier(typeof(TDto), decoder.BizInfo.GetBizInType(), true, true, _config);
-            return await toBizCopier.CreateDataWithPossibleSetupAsync<TDto>(_context).ConfigureAwait(false);
+            return await toBizCopier.CreateDataWithPossibleSetupAsync<TDto>(_context, runBeforeSetup).ConfigureAwait(false);
         }
 
         /// <summary>

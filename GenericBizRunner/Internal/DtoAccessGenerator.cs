@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -97,16 +98,18 @@ namespace GenericBizRunner.Internal
             }
         }
 
-        public T CreateDataWithPossibleSetup<T>(DbContext db) where T : class, new()
+        public T CreateDataWithPossibleSetup<T>(DbContext db, Action<T> runBeforeSetup) where T : class, new()
         {
             var result = new T();
+            runBeforeSetup?.Invoke(result);
             SetupSecondaryDataIfRequired(db, result);
             return result;
         }
 
-        public async Task<T> CreateDataWithPossibleSetupAsync<T>(DbContext db) where T : class, new()
+        public async Task<T> CreateDataWithPossibleSetupAsync<T>(DbContext db, Action<T> runBeforeSetup) where T : class, new()
         {
             var result = new T();
+            runBeforeSetup?.Invoke(result);
             await SetupSecondaryDataIfRequiredAsync(db, result).ConfigureAwait(false);
             return result;
         }
