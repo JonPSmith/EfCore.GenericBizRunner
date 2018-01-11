@@ -69,8 +69,8 @@ namespace GenericBizRunner.Internal.Runners
             }
         }
 
-        protected static TOut ReturnDefaultAndResetInDto<TOut>(DbContext db, DtoAccessGenerator inDtoAcessor,
-            object inputdto)
+        protected static TOut ReturnDefaultAndResetInDto<TOut>(DbContext db,
+            DtoAccessGenerator inDtoAcessor, object inputdto)
         {
             inDtoAcessor.SetupSecondaryDataIfRequired(db, inputdto);
             return default(TOut);

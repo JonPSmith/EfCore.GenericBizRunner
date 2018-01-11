@@ -7,9 +7,9 @@ using GenericBizRunner;
 
 namespace BizLogic.Orders.Concrete
 {
-    public class ChangeDeliveryAction : BizActionStatus
+    public class ChangeDeliveryAction : BizActionStatus, IChangeDeliverAction
     {
-        private IChangeDeliverDbAccess _dbAccess;
+        private readonly IChangeDeliverDbAccess _dbAccess;
 
         public ChangeDeliveryAction(IChangeDeliverDbAccess dbAccess)
         {

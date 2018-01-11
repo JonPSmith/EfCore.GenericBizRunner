@@ -7,13 +7,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataLayer.EfCode
 {
-    public class OrderContext : DbContext
+    public class OrderDbContext : DbContext
     {
         public DbSet<Book> Books { get; set; } //#A
         public DbSet<Order> Orders { get; set; }
 
-        public OrderContext(
-            DbContextOptions<OrderContext> options)
+        public OrderDbContext(
+            DbContextOptions<OrderDbContext> options)
             : base(options)
         {
         }
@@ -25,10 +25,10 @@ namespace DataLayer.EfCode
             modelBuilder.ApplyConfiguration(new OrderConfig());
             modelBuilder.ApplyConfiguration(new LineItemConfig());
 
-            modelBuilder.Ignore<Review>(); //#B
-            modelBuilder.Ignore<PriceOffer>(); //#B
-            modelBuilder.Ignore<Author>(); //#B
-            modelBuilder.Ignore<BookAuthor>(); //#B
+            modelBuilder.Ignore<Review>(); 
+            modelBuilder.Ignore<PriceOffer>();
+            modelBuilder.Ignore<Author>();
+            modelBuilder.Ignore<BookAuthor>(); 
         }
     }
 }

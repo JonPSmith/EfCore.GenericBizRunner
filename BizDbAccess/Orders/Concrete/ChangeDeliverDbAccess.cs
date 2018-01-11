@@ -8,9 +8,9 @@ namespace BizDbAccess.Orders.Concrete
 {
     public class ChangeDeliverDbAccess : IChangeDeliverDbAccess
     {
-        private readonly EfCoreContext _context;
+        private readonly OrderDbContext _context;
 
-        public ChangeDeliverDbAccess(EfCoreContext context)
+        public ChangeDeliverDbAccess(OrderDbContext context)
         {
             _context = context;
         }

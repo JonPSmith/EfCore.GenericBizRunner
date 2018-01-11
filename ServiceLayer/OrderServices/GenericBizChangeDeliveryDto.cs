@@ -2,13 +2,21 @@
 // Licensed under MIT licence. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using BizLogic.Orders;
+using DataLayer.EfClasses;
 using GenericBizRunner;
+using Microsoft.EntityFrameworkCore;
 
 namespace ServiceLayer.OrderServices
 {
     public class GenericBizChangeDeliveryDto : GenericActionToBizDto<ChangeDeliverDto, GenericBizChangeDeliveryDto>
     {
+
+        private List<string> _bookTitles;
+
         public int OrderId { get; set; }
 
         public string UserId { get; set; }
@@ -18,8 +26,27 @@ namespace ServiceLayer.OrderServices
         //---------------------------------------------
         //Presentation layer items
 
-        public DateTime OriginalDeliveryDate { get; set; }
+        public string OrderNumber => $"SO{OrderId:D6}";
 
+        public DateTime DateOrderedUtc { get; private set; }
 
+        public DateTime OriginalDeliveryDate { get; private set; }
+
+        public ImmutableList<string> BookTitles => _bookTitles.ToImmutableList();
+
+        protected override void SetupSecondaryData(DbContext db)
+        {
+            if (OrderId == 0) return;
+
+            var order = db.Set<Order>()
+                .Include(x => x.LineItems).ThenInclude(x => x.ChosenBook)
+                .SingleOrDefault(x => x.OrderId == OrderId);
+
+            if (order == null) return;
+
+            DateOrderedUtc = order.DateOrderedUtc;
+            OriginalDeliveryDate = order.ExpectedDeliveryDate;
+            _bookTitles = order.LineItems.Select(x => x.ChosenBook.Title).ToList();
+        }
     }
 }

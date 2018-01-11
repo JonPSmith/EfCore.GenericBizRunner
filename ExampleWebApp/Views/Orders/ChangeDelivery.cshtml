@@ -1,0 +1,74 @@
+﻿@model ServiceLayer.OrderServices.GenericBizChangeDeliveryDto
+
+@{
+    ViewData["Title"] = "ChangeDelivery";
+}
+
+<h2>Change Delivery date</h2>
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <div class="panel-heading">
+            <div>
+                <span class="h4">Order @Model.OrderNumber </span>
+                placed on @Model.DateOrderedUtc.ToString("f"). Expected delivery on @Model.OriginalDeliveryDate.ToShortDateString()
+            </div>
+        </div>
+    </div>
+    <div class="panel-body">
+        @{
+            foreach (var book in Model.BookTitles)
+            {
+                <div class="row">
+
+                    <div class="col-xs-10 col-xs-offset-2">
+                        <h4 class="product-name">
+                            <strong>@book</strong>
+                        </h4>
+                    </div>
+                </div>
+                <hr>
+            }
+        }
+    </div>
+    <form method="POST">
+        <div class="row">
+            <div class="col-md-4">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="OrderId" class="control-label"></label>
+                    <input asp-for="OrderId" class="form-control" type="hidden"/>
+                </div>
+                <div class="form-group">
+                    <label asp-for="UserId" class="control-label"></label>
+                    <input asp-for="UserId" class="form-control" type="hidden"/>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Current delivery</label>
+                    @Model.OriginalDeliveryDate.ToShortDateString()
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer">
+            <div class="row text-center">
+                <div class="col-xs-3">
+                    <button type="submit" class="btn btn-success btn-block">
+                        Change
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
