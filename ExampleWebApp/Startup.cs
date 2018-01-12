@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using ServiceLayer;
 using ServiceLayer.DatabaseServices.Concrete;
 
 namespace EfCoreInAction
@@ -41,8 +42,8 @@ namespace EfCoreInAction
 
             var connection = Configuration.GetConnectionString("DefaultConnection");
             if (Configuration["ENVIRONMENT"] == "Development")
-            services.AddDbContext<EfCoreContext>(options => options.UseSqlServer(connection,
-                b => b.MigrationsAssembly("DataLayer")));
+            services.AddDbContext<EfCoreContext>(options => options.UseSqlServer(connection));
+            services.AddDbContext<OrderDbContext>(options => options.UseSqlServer(connection));
 
             //Now I use AutoFac to do some of the more complex registering of services
             var containerBuilder = new ContainerBuilder();
@@ -53,6 +54,8 @@ namespace EfCoreInAction
             //GenericBizRunner has two AutoFac modules that can register all the services needed
             //This one is the simplest, as it sets up the link to the application's DbContext
             containerBuilder.RegisterModule(new BizRunnerDiModule<EfCoreContext>());
+            //Now I use the ServiceLayer AutoFac module that registers all the other DI items, such as my biz logic
+            containerBuilder.RegisterModule(new ServiceLayerModule());
             #endregion
 
             //Now I register my business logic
