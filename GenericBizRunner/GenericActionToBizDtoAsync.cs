@@ -3,11 +3,10 @@
 
 using System.Threading.Tasks;
 using AutoMapper;
-using GenericBizRunner;
 using GenericBizRunner.PublicButHidden;
 using Microsoft.EntityFrameworkCore;
 
-namespace GenericActions
+namespace GenericBizRunner
 {
     /// <summary>
     /// This is the class that your async DTOs for input should inherit
@@ -23,7 +22,7 @@ namespace GenericActions
         /// This is called a) when a dto is created by GetDto , b) when ResetDto is called and c) when the call to the business logic fails
         /// </summary>
         /// <param name="db"></param>
-        /// <param name="status"></param>
+        /// <param name="status">You can raise an error, which will stop the biz logic from running</param>
         /// <returns></returns>
         internal protected virtual async Task SetupSecondaryDataAsync(DbContext db, IBizActionStatus status)
         {

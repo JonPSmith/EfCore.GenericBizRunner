@@ -36,13 +36,21 @@ namespace ServiceLayer.OrderServices
 
         protected override void SetupSecondaryData(DbContext db, IBizActionStatus status)
         {
-            if (OrderId == 0) return;
+            if (OrderId == 0)
+                throw new InvalidOperationException("You must set the OrderId before you call SetupSecondaryData");
+            if (UserId == null)
+                throw new InvalidOperationException("You must set the UserId before you call SetupSecondaryData");
 
             var order = db.Set<Order>()
                 .Include(x => x.LineItems).ThenInclude(x => x.ChosenBook)
                 .SingleOrDefault(x => x.OrderId == OrderId);
 
-            if (order == null) return;
+            if (order == null)
+            {
+                status.AddError("Sorry, I could not find the order you asked for.");
+                //Log possible hacking 
+                return;
+            }
 
             DateOrderedUtc = order.DateOrderedUtc;
             OriginalDeliveryDate = order.ExpectedDeliveryDate;
