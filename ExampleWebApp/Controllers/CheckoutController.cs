@@ -11,6 +11,7 @@ using ServiceLayer.CheckoutServices;
 using ServiceLayer.CheckoutServices.Concrete;
 using ExampleWebApp.Helpers;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -72,7 +73,7 @@ namespace EfCoreInAction.Controllers
                 //If successful I need to clear the line items from the basket cookie
                 ClearCheckoutCookie(HttpContext);
                 SetupTraceInfo();       //Used to update the logs
-                return RedirectToAction("ConfirmOrder", "Orders", new { order.OrderId });
+                return RedirectToAction("ConfirmOrder", "Orders", new { order.OrderId, Message = "Your order is confirmed" });
             }
 
             //Otherwise errors, so I need to redisplay the basket from the cookie

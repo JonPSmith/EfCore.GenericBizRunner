@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using BizLogic.Orders;
 using DataLayer.EfClasses;
@@ -12,11 +11,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ServiceLayer.OrderServices
 {
-    public class GenericBizChangeDeliveryDto : GenericActionToBizDto<ChangeDeliverDto, GenericBizChangeDeliveryDto>
+    public class WebChangeDeliveryDto : GenericActionToBizDto<BizChangeDeliverDto, WebChangeDeliveryDto>
     {
-
-        private List<string> _bookTitles;
-
         public int OrderId { get; set; }
 
         public string UserId { get; set; }
@@ -32,7 +28,11 @@ namespace ServiceLayer.OrderServices
 
         public DateTime OriginalDeliveryDate { get; private set; }
 
-        public ImmutableList<string> BookTitles => _bookTitles.ToImmutableList();
+        public List<string> BookTitles { get; private set; }
+
+        public List<DateTime> PossibleDeliveryDates { get; private set; }
+
+        public bool HasErrors { get; private set; }
 
         protected override void SetupSecondaryData(DbContext db, IBizActionStatus status)
         {
@@ -48,13 +48,27 @@ namespace ServiceLayer.OrderServices
             if (order == null)
             {
                 status.AddError("Sorry, I could not find the order you asked for.");
+                HasErrors = true;
                 //Log possible hacking 
                 return;
             }
 
             DateOrderedUtc = order.DateOrderedUtc;
             OriginalDeliveryDate = order.ExpectedDeliveryDate;
-            _bookTitles = order.LineItems.Select(x => x.ChosenBook.Title).ToList();
+            NewDeliveryDate = OriginalDeliveryDate < DateTime.Today
+                ? DateTime.Today
+                : OriginalDeliveryDate;
+            BookTitles = order.LineItems.Select(x => x.ChosenBook.Title).ToList();
+            PossibleDeliveryDates = FormPossibleDeliveryDates(DateTime.Today).ToList();
+        }
+
+        private IEnumerable<DateTime> FormPossibleDeliveryDates(DateTime startDate)
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                yield return startDate;
+                startDate = startDate.AddDays(1);
+            }
         }
     }
 }

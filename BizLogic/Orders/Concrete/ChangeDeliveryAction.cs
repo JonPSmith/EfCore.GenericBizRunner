@@ -16,7 +16,7 @@ namespace BizLogic.Orders.Concrete
             _dbAccess = dbAccess;
         }
 
-        public void BizAction(ChangeDeliverDto dto)
+        public void BizAction(BizChangeDeliverDto dto)
         {
             var order = _dbAccess.GetOrder(dto.OrderId);
             if (order == null)

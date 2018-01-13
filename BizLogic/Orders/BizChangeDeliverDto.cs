@@ -5,7 +5,7 @@ using System;
 
 namespace BizLogic.Orders
 {
-    public class ChangeDeliverDto
+    public class BizChangeDeliverDto
     {
         public int OrderId { get; set; }
 
