@@ -30,9 +30,7 @@ namespace GenericBizRunner.Internal.Runners
 
             //This handles optional call of save changes
             SaveChangedIfRequiredAndNoErrors(db, bizStatus);
-            if (bizStatus.HasErrors)
-                return
-                    await ReturnDefaultAndResetInDtoAsync<TOut>(db, bizStatus, toBizCopier, inputData).ConfigureAwait(false);
+            if (bizStatus.HasErrors) return default(TOut);
 
             var data = await fromBizCopier.DoCopyFromBizAsync<TOut>(db, mapper, result).ConfigureAwait(false);
             return data;

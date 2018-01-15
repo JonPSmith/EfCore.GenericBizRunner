@@ -29,7 +29,7 @@ namespace GenericBizRunner.Internal.Runners
 
             //This handles optional call of save changes
             SaveChangedIfRequiredAndNoErrors(db, bizStatus);
-            if (bizStatus.HasErrors) return ReturnDefaultAndResetInDto<TOut>(db, bizStatus, toBizCopier, inputData);
+            if (bizStatus.HasErrors) return default(TOut);
 
             var data = fromBizCopier.DoCopyFromBiz<TOut>(db, mapper, result);
             return data;
