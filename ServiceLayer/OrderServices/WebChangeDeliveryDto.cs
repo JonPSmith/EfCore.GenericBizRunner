@@ -7,6 +7,7 @@ using System.Linq;
 using BizLogic.Orders;
 using DataLayer.EfClasses;
 using GenericBizRunner;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace ServiceLayer.OrderServices
@@ -30,10 +31,19 @@ namespace ServiceLayer.OrderServices
 
         public List<string> BookTitles { get; private set; }
 
-        public List<DateTime> PossibleDeliveryDates { get; private set; }
+        public SelectList PossibleDeliveryDates { get; private set; }
 
+        /// <summary>
+        /// This is set if there are any errors. It is there to stop the Razor page
+        /// accessing the properties, as they won't be set up properly
+        /// </summary>
         public bool HasErrors { get; private set; }
 
+        /// <summary>
+        /// This is called by the BizRunner. It sets up the presentation layer properties
+        /// </summary>
+        /// <param name="db"></param>
+        /// <param name="status"></param>
         protected override void SetupSecondaryData(DbContext db, IBizActionStatus status)
         {
             if (OrderId == 0)
@@ -59,14 +69,17 @@ namespace ServiceLayer.OrderServices
                 ? DateTime.Today
                 : OriginalDeliveryDate;
             BookTitles = order.LineItems.Select(x => x.ChosenBook.Title).ToList();
-            PossibleDeliveryDates = FormPossibleDeliveryDates(DateTime.Today).ToList();
+            PossibleDeliveryDates = new SelectList(FormPossibleDeliveryDates(DateTime.Today));
+            var selected = PossibleDeliveryDates.FirstOrDefault(x => x.Text == NewDeliveryDate.ToString("d"));
+            if (selected != null)
+                selected.Selected = true;
         }
 
-        private IEnumerable<DateTime> FormPossibleDeliveryDates(DateTime startDate)
+        private IEnumerable<string> FormPossibleDeliveryDates(DateTime startDate)
         {
             for (int i = 0; i < 10; i++)
             {
-                yield return startDate;
+                yield return startDate.ToString("d");
                 startDate = startDate.AddDays(1);
             }
         }

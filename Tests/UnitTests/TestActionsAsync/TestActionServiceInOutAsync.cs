@@ -144,7 +144,7 @@ namespace Tests.UnitTests.TestActionsAsync
                 if (hasErrors)
                 {
                     context.LogEntries.Any().ShouldBeFalse();
-                    input.SetupSecondaryDataCalled.ShouldBeTrue();
+                    input.SetupSecondaryDataCalled.ShouldBeFalse();
                     data.ShouldBeNull();
                 }
                 else
@@ -178,7 +178,7 @@ namespace Tests.UnitTests.TestActionsAsync
                 if (hasErrors)
                 {
                     context.LogEntries.Any().ShouldBeFalse();
-                    input.SetupSecondaryDataCalled.ShouldBeTrue();
+                    input.SetupSecondaryDataCalled.ShouldBeFalse();
                     data.ShouldBeNull();
                 }
                 else

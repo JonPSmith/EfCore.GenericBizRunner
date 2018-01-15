@@ -39,21 +39,15 @@ else
         </div>
         <hr>
         <form class="form-inline" method="POST">
-            <div><strong class="text-warning">@Html.ValidationSummary(false)</strong></div>
+            <div><strong class="text-danger">@Html.ValidationSummary(false)</strong></div>
             <div class="form-group">
                 <input asp-for="OrderId" class="form-control" type="hidden"/>
                 <input asp-for="UserId" class="form-control" type="hidden"/>
                 <div class="row">
                     <div class="col-sm-12">
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                        <label class="control-label">Current delivery</label>
-                        @{
-                            var selectList = new SelectList(Model.PossibleDeliveryDates.Select(date => date.ToString("d")));
-                            var selected = selectList.First(x => x.Text == Model.NewDeliveryDate.ToString("d"));
-                            selected.Selected = true;
-                        }
+                        <label class="control-label">Set new delivery</label>
                         <select name="NewDeliveryDate" class="form-control"
-                                asp-items="@selectList"></select>
+                                asp-items="@Model.PossibleDeliveryDates"></select>
                     </div>
                 </div>
                 @*<div class="form-group panel-footer">*@

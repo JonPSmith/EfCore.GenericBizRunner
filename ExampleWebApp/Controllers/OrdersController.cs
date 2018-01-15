@@ -40,7 +40,7 @@ namespace EfCoreInAction.Controllers
         }
 
         public IActionResult ChangeDelivery(int id, 
-            [FromServices]IActionService<OrderDbContext, IChangeDeliverAction> service)
+            [FromServices]IActionService<IChangeDeliverAction> service)
         {
             //When the DTO is created it will run the SetupSecondaryData method to build the data needed for the display
             //For the SetupSecondaryData to work it needs the orderId and UserId, so the GetDto method allow you to add these
@@ -59,17 +59,19 @@ namespace EfCoreInAction.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult ChangeDelivery(WebChangeDeliveryDto dto,
-            [FromServices]IActionService<OrderDbContext, IChangeDeliverAction> service)
+            [FromServices]IActionService<IChangeDeliverAction> service)
         {
             if (!ModelState.IsValid)
             {
-                //I have to reset the DTO, which will call SetupSecondaryData to set up the values needed for the display
+                //I have to reset the DTO, which will call SetupSecondaryData
+                //to set up the values needed for the display
                 service.ResetDto(dto);
                 //model errors so return to checkout page, showing the basket
                 return View(dto);
             }
 
-            //This runs my business logic using the service injected into the Action's parameters 
+            //This runs my business logic using the service injected in the
+            //Action's service parameter
             service.RunBizAction(dto);
 
             if (!service.Status.HasErrors)
@@ -81,7 +83,7 @@ namespace EfCoreInAction.Controllers
 
             //Otherwise errors, so I need to redisplay the basket from the cookie
             service.Status.CopyErrorsToModelState(ModelState, dto);
-            //I have to reset the DTO, which will call SetupSecondaryData to set up the values needed for the display
+            //I reset the DTO, which will call SetupSecondaryData i set up the display props
             service.ResetDto(dto);
             SetupTraceInfo();       //Used to update the logs
             return View(dto); //redisplay the page, with the errors
