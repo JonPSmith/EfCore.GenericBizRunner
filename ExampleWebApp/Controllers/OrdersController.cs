@@ -66,7 +66,7 @@ namespace EfCoreInAction.Controllers
                 //I have to reset the DTO, which will call SetupSecondaryData
                 //to set up the values needed for the display
                 service.ResetDto(dto);
-                //model errors so return to checkout page, showing the basket
+                //return to the same view to show the errors
                 return View(dto);
             }
 
