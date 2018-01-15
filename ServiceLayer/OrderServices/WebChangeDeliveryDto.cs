@@ -40,10 +40,11 @@ namespace ServiceLayer.OrderServices
         public bool HasErrors { get; private set; }
 
         /// <summary>
-        /// This is called by the BizRunner. It sets up the presentation layer properties
+        /// This is called by the BizRunner’s GetDto or ResetDto methods.
+        /// It sets up the presentation layer properties
         /// </summary>
-        /// <param name="db"></param>
-        /// <param name="status"></param>
+        /// <param name="db">The DbContext to allow access to the database</param>
+        /// <param name="status">The BizActionStatus so you can register errors</param>
         protected override void SetupSecondaryData(DbContext db, IBizActionStatus status)
         {
             if (OrderId == 0)

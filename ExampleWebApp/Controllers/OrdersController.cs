@@ -78,10 +78,11 @@ namespace EfCoreInAction.Controllers
             {
                 SetupTraceInfo();       //Used to update the logs
                 //We copy the message from the business logic to show 
-                return RedirectToAction("ConfirmOrder", "Orders", new { dto.OrderId, message = service.Status.Message });
+                return RedirectToAction("ConfirmOrder", "Orders", 
+                    new { dto.OrderId, message = service.Status.Message });
             }
 
-            //Otherwise errors, so I need to redisplay the basket from the cookie
+            //Otherwise errors, so I need to redisplay the page to the user
             service.Status.CopyErrorsToModelState(ModelState, dto);
             //I reset the DTO, which will call SetupSecondaryData i set up the display props
             service.ResetDto(dto);

@@ -15,7 +15,7 @@ namespace GenericBizRunner.Configuration
 
         /// <summary>
         /// GenericBizRunner uses a static variable to cache the decoding of bizLogic interfaces to their componnent parts
-        /// For normal use this should be false, but for unit testing it can be true 
+        /// For normal use this should be false, but for unit testing it should be true 
         /// </summary>
         bool TurnOffCaching { get; set; }
 
