@@ -8,6 +8,9 @@ using GenericBizRunner.Configuration;
 
 namespace GenericBizRunner
 {
+    /// <summary>
+    /// This interface defines all various features for error reporting and status items that the business logic must implement
+    /// </summary>
     public interface IBizActionStatus
     {
         /// <summary>

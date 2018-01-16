@@ -10,15 +10,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GenericBizRunner
 {
+    /// <summary>
+    /// This defines the ActionService using the default DbContext
+    /// </summary>
+    /// <typeparam name="TBizInstance">The instance of the business logic you are linking to</typeparam>
     public class ActionService<TBizInstance> : ActionService<DbContext, TBizInstance>, IActionService<TBizInstance>
         where TBizInstance : class, IBizActionStatus
     {
+        /// <inheritdoc />
         public ActionService(DbContext context, TBizInstance bizInstance, IMapper mapper, IGenericBizRunnerConfig config = null)
             : base(context, bizInstance, mapper, config)
         {
         }
     }
 
+    /// <summary>
+    /// This defines the ActionService where you supply the type of the DbContext you want used with the business logic
+    /// </summary>
+    /// <typeparam name="TContext">The EF Core DbContext to be used wit this business logic</typeparam>
+    /// <typeparam name="TBizInstance">The instance of the business logic you are linking to</typeparam>
     public class ActionService<TContext, TBizInstance> : IActionService<TContext, TBizInstance>
         where TContext : DbContext
         where TBizInstance : class, IBizActionStatus
@@ -28,6 +38,7 @@ namespace GenericBizRunner
         private readonly IMapper _mapper;
         private readonly TContext _context;
 
+        /// <inheritdoc />
         public ActionService(TContext context, TBizInstance bizInstance, IMapper mapper, IGenericBizRunnerConfig config = null)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));

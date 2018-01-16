@@ -25,9 +25,12 @@ namespace GenericBizRunner
         /// data to show to the user.
         /// </summary>
         /// <param name="db"></param>
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         internal protected virtual async Task SetupSecondaryOutputDataAsync(DbContext db)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
         }
+
 
         /// <summary>
         /// This copies the Business logic's output data into the GenericAction's DTO class.
@@ -37,9 +40,12 @@ namespace GenericBizRunner
         /// has already happened by the time this is called.
         /// </summary>
         /// <param name="db"></param>
+        /// <param name="mapper"></param>
         /// <param name="source"></param>
         /// <returns></returns>
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         internal protected virtual async Task<TDtoOut> CopyFromBizDataAsync(DbContext db, IMapper mapper, TBizOut source)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             return mapper.Map<TDtoOut>(source);
         }

@@ -7,6 +7,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GenericBizRunner
 {
+    /// <summary>
+    /// This defines the interface for the ActionServiceAsync that uses the default EF Core DbContext
+    /// </summary>
+    /// <typeparam name="TBizInstance">The instance of the business logic to run</typeparam>
     public interface IActionServiceAsync<TBizInstance> : IActionServiceAsync<DbContext, TBizInstance> where TBizInstance : class
     { }
 

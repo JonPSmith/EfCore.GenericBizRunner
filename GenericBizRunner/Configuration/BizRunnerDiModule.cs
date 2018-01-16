@@ -30,6 +30,10 @@ namespace GenericBizRunner.Configuration
         /// </summary>
         public IGenericBizRunnerConfig SpecificConfig { get; set; }
 
+        /// <summary>
+        /// This is the AutoFac Module's method for registering a Module
+        /// </summary>
+        /// <param name="builder"></param>
         protected override void Load(ContainerBuilder builder)
         {
             //Need to register DbContext pointing to the default DbContext that has been defined outside this module

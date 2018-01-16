@@ -17,6 +17,7 @@ namespace GenericBizRunner
         where TBizIn : class, new()
         where TDtoIn : GenericActionToBizDtoAsync<TBizIn, TDtoIn>
     {
+        // Async method lacks 'await' operators and will run synchronously
         /// <summary>
         /// Use this to setup any extra data needed when showing the dto to the user for input, e.g. supporting dropdownlists
         /// This is called a) when a dto is created by GetDto , b) when ResetDto is called and c) when the call to the business logic fails
@@ -24,9 +25,12 @@ namespace GenericBizRunner
         /// <param name="db"></param>
         /// <param name="status">You can raise an error, which will stop the biz logic from running</param>
         /// <returns></returns>
+#pragma warning disable CS1998
         internal protected virtual async Task SetupSecondaryDataAsync(DbContext db, IBizActionStatus status)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
         }
+
 
         /// <summary>
         /// This is used to copy the DTO to the biz data. You can override this if the copy requires 
@@ -37,7 +41,9 @@ namespace GenericBizRunner
         /// <param name="mapper"></param>
         /// <param name="source"></param>
         /// <returns></returns>
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         protected internal virtual async Task<TBizIn> CopyToBizDataAsync(DbContext db, IMapper mapper, TDtoIn source)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             return mapper.Map<TBizIn>(source);
         }

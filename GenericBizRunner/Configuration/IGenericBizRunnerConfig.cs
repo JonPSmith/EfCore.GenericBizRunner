@@ -2,6 +2,9 @@
 // Licensed under MIT licence. See License.txt in the project root for license information.
 namespace GenericBizRunner.Configuration
 {
+    /// <summary>
+    /// This is the interface to the configuration information for the GenericBizRunner
+    /// </summary>
     public interface IGenericBizRunnerConfig
     {
         /// <summary>
