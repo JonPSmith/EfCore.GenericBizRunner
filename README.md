@@ -7,7 +7,8 @@ for database accesses.
 Its aim is to totally isolate the business logic from other parts of the application,
 especially the user presentation/UI layers.
 
-EfCore.GenericBizRunner is available as a NuGet package, and on this GitHub repo.
+EfCore.GenericBizRunner is available as a NuGet package, and on the 
+[EfCore.GenericBizRunner](https://github.com/JonPSmith/EfCore.GenericBizRunner) GitHub repo.
 It is an open-source project under the MIT licence.
 
 It provides the following features:
@@ -38,6 +39,7 @@ EfCore.GenericBizRunner library came from.
 Please look at:
 * **[Project's Wiki](https://github.com/JonPSmith/EfCore.GenericBizRunner/wiki)**, which has a quick start guide and deeper documentation.
 * **[This article](http://www.thereformedprogrammer.net/architecture-of-business-layer-working-with-entity-framework-core-and-v6-revisited/)**, which describes my business pattern.
+* **[This article](#)** that describes the EfCore.GenericBizAction library with examples.
 * **Clone this repo**, and run the ASP.NET Core application in it to see the business logic in action.
 * **Read the example code**, in this repo.  
 
