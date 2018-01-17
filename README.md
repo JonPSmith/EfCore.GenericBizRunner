@@ -40,6 +40,7 @@ Please look at:
 * **[Project's Wiki](https://github.com/JonPSmith/EfCore.GenericBizRunner/wiki)**, which has a quick start guide and deeper documentation.
 * **[This article](http://www.thereformedprogrammer.net/architecture-of-business-layer-working-with-entity-framework-core-and-v6-revisited/)**, which describes my business pattern.
 * **[This article](#)** that describes the EfCore.GenericBizAction library with examples.
+* **[Chapter 4 of my book](http://bit.ly/2m8KRAZ)**, which covers building of business logic using this pattern.
 * **Clone this repo**, and run the ASP.NET Core application in it to see the business logic in action.
 * **Read the example code**, in this repo.  
 
