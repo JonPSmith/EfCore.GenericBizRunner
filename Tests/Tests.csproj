@@ -7,13 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="UnitTests\TestActions\Test20RunBizActionInOut.cs" />
-    <Compile Remove="UnitTests\TestActions\Test21RunBizActionIn.cs" />
-    <Compile Remove="UnitTests\TestActions\Test22RunBizActionOut.cs" />
-    <Compile Remove="UnitTests\TestActions\Test24RunBizActionInGeneric.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="3.2.0" />
     <PackageReference Include="EfCore.TestSupport" Version="1.1.5" />
