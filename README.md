@@ -34,13 +34,13 @@ Having perfected my pattern for handling business logic, then the next step was 
 automate the common parts of the pattern into a library. Which is where the
 EfCore.GenericBizRunner library came from.
 
-## More information
+## More information on the business logic pattern and library
 
-Please look at:
-* **[Project's Wiki](https://github.com/JonPSmith/EfCore.GenericBizRunner/wiki)**, which has a quick start guide and deeper documentation.
+The following links start with general descriptions and get deeper towards the end.
 * **[This article](http://www.thereformedprogrammer.net/architecture-of-business-layer-working-with-entity-framework-core-and-v6-revisited/)**, which describes my business pattern.
-* **[This article](#)** that describes the EfCore.GenericBizAction library with examples.
 * **[Chapter 4 of my book](http://bit.ly/2m8KRAZ)**, which covers building of business logic using this pattern.
+* **[This article](#)** that describes the EfCore.GenericBizAction library with examples.
+* **[Project's Wiki](https://github.com/JonPSmith/EfCore.GenericBizRunner/wiki)**, which has a quick start guide and deeper documentation.
 * **Clone this repo**, and run the ASP.NET Core application in it to see the business logic in action.
 * **Read the example code**, in this repo.  
 
