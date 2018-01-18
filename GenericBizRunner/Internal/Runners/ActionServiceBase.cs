@@ -68,19 +68,5 @@ namespace GenericBizRunner.Internal.Runners
                 Config.UpdateSuccessMessageOnGoodWrite(bizStatus);
             }
         }
-
-        protected static TOut ReturnDefaultAndResetInDto<TOut>(DbContext db, IBizActionStatus status,
-            DtoAccessGenerator inDtoAcessor, object inputdto)
-        {
-            inDtoAcessor.SetupSecondaryDataIfRequired(db, status, inputdto);
-            return default(TOut);
-        }
-
-        protected static async Task<TOut> ReturnDefaultAndResetInDtoAsync<TOut>(DbContext db, IBizActionStatus status,
-            DtoAccessGenerator inDtoAcessor, object inputdto)
-        {
-            await inDtoAcessor.SetupSecondaryDataIfRequiredAsync(db, status, inputdto).ConfigureAwait(false);
-            return default(TOut);
-        }
     }
 }
