@@ -29,8 +29,7 @@ namespace BizLogic.Orders.Concrete
         {
             if (!dto.AcceptTAndCs)                    
             {                                         
-                AddError(                             
-    "You must accept the T&Cs to place an order.");   
+                AddError("You must accept the T&Cs to place an order.");   
                 return null;                          
             }                                         
             if (!dto.LineItems.Any())                 
@@ -39,22 +38,19 @@ namespace BizLogic.Orders.Concrete
                 return null;                          
             }                                         
 
-            var booksDict =                                
-                _dbAccess.FindBooksByIdsWithPriceOffers    
+            var booksDict = _dbAccess.FindBooksByIdsWithPriceOffers    
                      (dto.LineItems.Select(x => x.BookId));
             var order = new Order                          
             {                                              
                 CustomerName = dto.UserId,    
                 ExpectedDeliveryDate = DateTime.Today.AddDays(5),
-                LineItems =                                
-                    FormLineItemsWithErrorChecking         
-                         (dto.LineItems, booksDict)        
+                LineItems = FormLineItemsWithErrorChecking(dto.LineItems, booksDict)        
             };                                             
 
-            if (!HasErrors)           //#H
-                _dbAccess.Add(order); //#H
+            if (!HasErrors)
+                _dbAccess.Add(order);
 
-            return HasErrors ? null : order; //#I
+            return HasErrors ? null : order;
         }
 
         private List<LineItem>  FormLineItemsWithErrorChecking
@@ -69,15 +65,13 @@ namespace BizLogic.Orders.Concrete
                 if (!booksDict.                             
                     ContainsKey(lineItem.BookId))           
                         throw new InvalidOperationException 
-    ("An order failed because book, " +                     
-     $"id = {lineItem.BookId} was missing.");               
+                        ($"An order failed because book, id = {lineItem.BookId} was missing.");               
 
                 var book = booksDict[lineItem.BookId];
                 var bookPrice = 
                     book.Promotion?.NewPrice ?? book.Price; 
                 if (bookPrice <= 0)                         
-                    AddError(                               
-    $"Sorry, the book '{book.Title}' is not for sale.");    
+                    AddError($"Sorry, the book '{book.Title}' is not for sale.");    
                 else
                 {
                     //Valid, so add to the order
