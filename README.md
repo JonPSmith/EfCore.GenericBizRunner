@@ -19,7 +19,7 @@ It provides the following features:
 * Very good use of Dependency Injection (DI), making calls to business logic very easy.
 
 Also, there is [good documentation](https://github.com/JonPSmith/EfCore.GenericBizRunner/wiki), 
-an [long article](#) about this library, example code that is runnable, and unit tests.
+an [long article](http://www.thereformedprogrammer.net/a-library-to-run-your-business-logic-when-using-entity-framework-core/) about this library, example code that is runnable, and unit tests.
 
 ## Why did I write this library?
 
@@ -39,7 +39,7 @@ EfCore.GenericBizRunner library came from.
 The following links start with general descriptions and get deeper towards the end.
 * **[This article](http://www.thereformedprogrammer.net/architecture-of-business-layer-working-with-entity-framework-core-and-v6-revisited/)**, which describes my business pattern.
 * **[Chapter 4 of my book](http://bit.ly/2m8KRAZ)**, which covers building of business logic using this pattern.
-* **[This article](#)** that describes the EfCore.GenericBizAction library with examples.
+* **[This article](http://www.thereformedprogrammer.net/a-library-to-run-your-business-logic-when-using-entity-framework-core/)** that describes the EfCore.GenericBizAction library with examples.
 * **[Project's Wiki](https://github.com/JonPSmith/EfCore.GenericBizRunner/wiki)**, which has a quick start guide and deeper documentation.
 * **Clone this repo**, and run the ASP.NET Core application in it to see the business logic in action.
 * **Read the example code**, in this repo.  
