@@ -7,8 +7,8 @@ for database accesses.
 Its aim is to totally isolate the business logic from other parts of the application,
 especially the user presentation/UI layers.
 
-EfCore.GenericBizRunner is available as a NuGet package, and on the 
-[EfCore.GenericBizRunner](https://github.com/JonPSmith/EfCore.GenericBizRunner) GitHub repo.
+EfCore.GenericBizRunner is available as a [NuGet package](https://www.nuget.org/packages/EfCore.GenericBizRunner/), 
+and on the [EfCore.GenericBizRunner](https://github.com/JonPSmith/EfCore.GenericBizRunner) GitHub repo.
 It is an open-source project under the MIT licence.
 
 It provides the following features:
