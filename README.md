@@ -1,11 +1,8 @@
 # EfCore.GenericBizRunner
 
-EfCore.GenericBizRunner (shorteded to GenericBizRunner) is a library to help build and
-run business logic when you are using 
-[Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/)
-for database accesses.
-Its aim is to totally isolate the business logic from other parts of the application,
-especially the user presentation/UI layers.
+EfCore.GenericBizRunner (shorteded to GenericBizRunner) is a framework to help build and
+run business logic when you are using [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/) for database accesses.
+Its aim is to totally isolate the business logic from other parts of the application, especially the user presentation/UI layers.
 
 EfCore.GenericBizRunner is available as a [NuGet package](https://www.nuget.org/packages/EfCore.GenericBizRunner/), 
 and on the [EfCore.GenericBizRunner](https://github.com/JonPSmith/EfCore.GenericBizRunner) GitHub repo.
@@ -13,10 +10,12 @@ It is an open-source project under the MIT licence.
 
 It provides the following features:
 * A standard pattern for writing business logic, including helper classes.
-* Special classes that act as a barrier between the busines logic and the user presentation/UI layers 
+* An anti-corruption layer feature that act as a barrier between the business logic and the user presentation/UI layers. 
 * The *BizRunner* handles the call to EF Core's `SaveChanges`, with optional validation.
 * A service, known as a *BizRunner*, that runs your business logic.
 * Very good use of Dependency Injection (DI), making calls to business logic very easy.
+
+![Four aspects of GenericBizRunner](https://github.com/JonPSmith/EfCore.GenericBizRunner/blob/master/GenericBizRunner1024.png)
 
 Also, there is [good documentation](https://github.com/JonPSmith/EfCore.GenericBizRunner/wiki), 
 an [long article](http://www.thereformedprogrammer.net/a-library-to-run-your-business-logic-when-using-entity-framework-core/) about this library, example code that is runnable, and unit tests.
@@ -41,7 +40,7 @@ The following links start with general descriptions and get deeper towards the e
 * **[Chapter 4 of my book](http://bit.ly/2m8KRAZ)**, which covers building of business logic using this pattern.
 * **[This article](http://www.thereformedprogrammer.net/a-library-to-run-your-business-logic-when-using-entity-framework-core/)** that describes the EfCore.GenericBizAction library with examples.
 * **[Project's Wiki](https://github.com/JonPSmith/EfCore.GenericBizRunner/wiki)**, which has a quick start guide and deeper documentation.
-* **Clone this repo**, and run the ASP.NET Core application in it to see the business logic in action.
+* **[Clone this repo](https://github.com/JonPSmith/EfCore.GenericBizRunner/)**, and run the ASP.NET Core application in it to see the business logic in action.
 * **Read the example code**, in this repo.  
 
 
