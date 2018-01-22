@@ -15,8 +15,6 @@ It provides the following features:
 * A service, known as a *BizRunner*, that runs your business logic.
 * Very good use of Dependency Injection (DI), making calls to business logic very easy.
 
-![Four aspects of GenericBizRunner](https://github.com/JonPSmith/EfCore.GenericBizRunner/blob/master/GenericBizRunner1024.png)
-
 Also, there is [good documentation](https://github.com/JonPSmith/EfCore.GenericBizRunner/wiki), 
 an [long article](http://www.thereformedprogrammer.net/a-library-to-run-your-business-logic-when-using-entity-framework-core/) about this library, example code that is runnable, and unit tests.
 
