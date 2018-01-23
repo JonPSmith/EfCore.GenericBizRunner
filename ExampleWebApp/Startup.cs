@@ -58,8 +58,6 @@ namespace EfCoreInAction
             containerBuilder.RegisterModule(new ServiceLayerModule());
             #endregion
 
-            //Now I register my business logic
-            containerBuilder.RegisterModule<ServiceLayer.ServiceLayerModule>();
             containerBuilder.Populate(services);
             var container = containerBuilder.Build();
             return new AutofacServiceProvider(container); 
