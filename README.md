@@ -15,8 +15,10 @@ It provides the following features:
 * A service, known as a *BizRunner*, that runs your business logic.
 * Very good use of Dependency Injection (DI), making calls to business logic very easy.
 
-Also, there is [good documentation](https://github.com/JonPSmith/EfCore.GenericBizRunner/wiki), 
-an [long article](http://www.thereformedprogrammer.net/a-library-to-run-your-business-logic-when-using-entity-framework-core/) about this library, example code that is runnable, and unit tests.
+The article [A library to run your business logic when using Entity Framework Core](http://www.thereformedprogrammer.net/a-library-to-run-your-business-logic-when-using-entity-framework-core/)
+gives a good overview about the library, and there is there is 
+[good documentation](https://github.com/JonPSmith/EfCore.GenericBizRunner/wiki) in the project's Wiki.
+Alos, this project contains a runnable ASP.NET Core application with two business logic examples in it.
 
 ## Why did I write this library?
 
