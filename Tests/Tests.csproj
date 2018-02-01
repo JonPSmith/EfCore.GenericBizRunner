@@ -22,4 +22,8 @@
     <ProjectReference Include="..\TestBizLayer\TestBizLayer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="UnitTests\DDDEntities\" />
+  </ItemGroup>
+
 </Project>

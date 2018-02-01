@@ -40,12 +40,8 @@ namespace BizLogic.Orders.Concrete
 
             var booksDict = _dbAccess.FindBooksByIdsWithPriceOffers    
                      (dto.LineItems.Select(x => x.BookId));
-            var order = new Order                          
-            {                                              
-                CustomerName = dto.UserId,    
-                ExpectedDeliveryDate = DateTime.Today.AddDays(5),
-                LineItems = FormLineItemsWithErrorChecking(dto.LineItems, booksDict)        
-            };                                             
+            var order = new Order(dto.UserId, DateTime.Today.AddDays(5),
+                FormLineItemsWithErrorChecking(dto.LineItems, booksDict));                                           
 
             if (!HasErrors)
                 _dbAccess.Add(order);
@@ -74,13 +70,7 @@ namespace BizLogic.Orders.Concrete
                 else
                 {
                     //Valid, so add to the order
-                    result.Add(new LineItem         
-                    {                               
-                        BookPrice = bookPrice,      
-                        ChosenBook = book,          
-                        LineNum = (byte)(i++),      
-                        NumBooks = lineItem.NumBooks
-                    });
+                    result.Add(new LineItem((byte) (i++), lineItem.NumBooks, bookPrice, book));
                 }
             }
             return result;

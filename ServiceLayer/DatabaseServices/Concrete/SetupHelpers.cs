@@ -95,22 +95,8 @@ namespace ServiceLayer.DatabaseServices.Concrete
         {
             var deliverDay = orderDate.AddDays(5);
             var bookPrice = bookOrdered.ActualPrice;
-            return new Order
-            {
-                CustomerName = userId,
-                DateOrderedUtc = orderDate,
-                ExpectedDeliveryDate = deliverDay,
-                HasBeenDelivered = deliverDay < DateTime.Today,
-                LineItems = new List<LineItem>
-                {
-                    new LineItem
-                    {
-                        BookPrice = bookPrice,
-                        ChosenBook = bookOrdered,
-                        NumBooks = 1
-                    }
-                }
-            };
+            var lineItems = new List<LineItem>() {new LineItem(0, 1, bookPrice, bookOrdered)};
+            return new Order(userId, deliverDay, lineItems);
         }
     }
 }

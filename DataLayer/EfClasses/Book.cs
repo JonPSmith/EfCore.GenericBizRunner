@@ -30,8 +30,8 @@ namespace DataLayer.EfClasses
         //-----------------------------------------------
         //relationships
 
-        public IImmutableList<Review> Reviews => _reviews?.ToImmutableList();
-        public IImmutableList<BookAuthor> AuthorsLink => _authorsLink?.ToImmutableList();
+        public IEnumerable<Review> Reviews => _reviews?.ToList();
+        public IEnumerable<BookAuthor> AuthorsLink => _authorsLink?.ToList();
 
         //-----------------------------------------------
         //ctors
