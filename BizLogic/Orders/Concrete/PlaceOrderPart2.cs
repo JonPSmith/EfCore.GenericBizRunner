@@ -48,12 +48,10 @@ namespace BizLogic.Orders.Concrete
      " Please remove that book and try again.");            
 
                 var book = booksDict[lineItem.BookId];
-                var bookPrice = 
-                    book.Promotion?.NewPrice ?? book.Price; 
                 if (book.PublishedOn > DateTime.UtcNow)     
                     AddError(                            
     $"Sorry, the book '{book.Title}' is not yet in print.");
-                else if (bookPrice <= 0)                    
+                else if (book.ActualPrice <= 0)                    
                     AddError(                            
     $"Sorry, the book '{book.Title}' is not for sale.");    
                 else
@@ -61,7 +59,7 @@ namespace BizLogic.Orders.Concrete
                     //Valid, so add to the order
                     result.Add(new LineItem                 
                     {                                       
-                        BookPrice = bookPrice,              
+                        BookPrice = book.ActualPrice,              
                         ChosenBook = book,                  
                         LineNum = (byte)(i++),              
                         NumBooks = lineItem.NumBooks        

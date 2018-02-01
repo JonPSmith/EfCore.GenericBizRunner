@@ -1,38 +1,102 @@
-﻿// Copyright (c) 2016 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+﻿// // Copyright (c) 2017 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+// // Licensed under MIT licence. See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace DataLayer.EfClasses
 {
-    public class Book                                   //#A
+    public class Book
     {
-        public int BookId { get; set; } //#B
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public DateTime PublishedOn { get; set; }
-        public string Publisher { get; set; }
-        public decimal Price { get; set; }
-        /// <summary>
-        /// Holds the url to get the image of the book
-        /// </summary>
-        public string ImageUrl { get; set; }
-        public bool SoftDeleted { get; set; }
+        public const int PromotionalTextLength = 200;
+
+        private HashSet<Review> _reviews;
+        private HashSet<BookAuthor> _authorsLink;
+
+        public int BookId { get; private set; }          
+        public string Title { get; private set; }        
+        public string Description { get; private set; }  
+        public DateTime PublishedOn { get; private set; }
+        public string Publisher { get; private set; }
+        public decimal OrgPrice { get; private set; } 
+        public decimal ActualPrice { get; private set; } 
+        [MaxLength(PromotionalTextLength)]
+        public string PromotionalText { get; private set; }  
+        public string ImageUrl { get; private set; }     
 
         //-----------------------------------------------
         //relationships
 
-        public PriceOffer Promotion { get; set; }        //#C
-        public ICollection<Review> Reviews { get; set; } //#D
-        public ICollection<BookAuthor> 
-            AuthorsLink { get; set; }                    //#E
+        public IImmutableList<Review> Reviews => _reviews?.ToImmutableList();
+        public IImmutableList<BookAuthor> AuthorsLink => _authorsLink?.ToImmutableList();
+
+        //-----------------------------------------------
+        //ctors
+
+        internal Book() { } 
+
+        public Book(string title, string description, 
+            DateTime publishedOn, string publisher, 
+            decimal price, string imageUrl,
+            ICollection<Author> authors)
+        {
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentNullException(nameof(title)); 
+
+            Title = title;
+            Description = description;
+            PublishedOn = publishedOn;
+            Publisher = publisher;
+            OrgPrice = price;
+            ImageUrl = imageUrl;
+            _reviews = new HashSet<Review>();       //We add an empty list on create. I allows reviews to be added when building test data
+
+            if (authors == null || authors.Count < 1)
+                throw new ArgumentException("You must have at least one Author for a book", nameof(authors));
+            byte order = 0;
+            _authorsLink = new HashSet<BookAuthor>(authors.Select(a => new BookAuthor(this, a, order++)));
+        }
+
+        public void ChangePubDate(DateTime newDate)
+        {
+            PublishedOn = newDate;
+        }
+
+        public void AddReview(int numStars, string comment, string voterName)
+        {
+            if (_reviews == null)
+                throw new NullReferenceException("You must use .Include(p => p.Reviews) before calling this method.");
+
+            var review = new Review(numStars, comment, voterName);
+            _reviews.Add(review); 
+        }
+
+        public void RemoveReview(Review review)                          
+        {
+            if (_reviews == null)
+                throw new NullReferenceException("You must use .Include(p => p.Reviews) before calling this method.");
+
+            _reviews.Remove(review); 
+        }
+
+        public string AddPromotion(decimal newPrice, string promotionalText)                  
+        {
+            if (promotionalText == null) 
+                return "You must provide some text to go with the promotion";
+
+            ActualPrice = newPrice;  
+            PromotionalText = promotionalText; 
+            return null; 
+        }
+
+        public void RemovePromotion() 
+        {
+            ActualPrice = OrgPrice; 
+            PromotionalText = null; 
+        }
     }
-    /****************************************************#
-    #A The Book class contains the main book information
-    #B I use EF Core's 'by convention' approach to defining the primary key of this entity class. In this case I use <ClassName>Id, and because the property if of type int EF Core assumes that the database will use the SQL IDENTITY command to create a unique key when a new row is added
-    #C This is the link to the optional PriceOffer
-    #C There can be zero to many Reviews of the book
-    #D This provides a link to the Many-to-Many linking table that links to the Authors of this book
-     * **************************************************/
+
 }

@@ -8,14 +8,15 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using DataLayer.EfClasses;
 using Newtonsoft.Json;
-using ServiceLayer.DatabaseServices.Concrete;
 
 [assembly: InternalsVisibleTo("test")]
 
-namespace EfCoreInAction.DatabaseHelpers
+namespace ServiceLayer.DatabaseServices.Concrete
 {
     public static class BookJsonLoader
     {
+        private const decimal DefaultBookPrice = 40;    //Any book without a price is set to this value
+
         public static IEnumerable<Book> LoadBooks(string fileDir, string fileSearchString)
         {
             var filePath = GetJsonFilePath(fileDir, fileSearchString);
@@ -27,7 +28,7 @@ namespace EfCoreInAction.DatabaseHelpers
                 foreach (var author in bookInfoJson.authors)
                 {
                     if (!authorDict.ContainsKey(author))
-                        authorDict[author] = new Author { Name = author};
+                        authorDict[author] = new Author(author);
                 }
             }
 
@@ -39,49 +40,36 @@ namespace EfCoreInAction.DatabaseHelpers
         //private methods
         private static Book CreateBookWithRefs(BookInfoJson bookInfoJson, Dictionary<string, Author> authorDict)
         {
-            var book = new Book
-            {
-                Title = bookInfoJson.title,
-                Description = bookInfoJson.description,
-                PublishedOn = DecodePubishDate(bookInfoJson.publishedDate),
-                Publisher = bookInfoJson.publisher,
-                Price = (decimal) (bookInfoJson.saleInfoListPriceAmount ?? -1),
-                ImageUrl = bookInfoJson.imageLinksThumbnail
-            };
-
-            byte i = 0;
-            book.AuthorsLink = new List<BookAuthor>();
-            foreach (var author in bookInfoJson.authors)
-            {
-                book.AuthorsLink.Add(new BookAuthor { Book = book, Author = authorDict[author], Order = i++});
-            }
+            var authors = bookInfoJson.authors.Select(x => new Author(x)).ToList();
+            var book = new Book(bookInfoJson.title, bookInfoJson.description, DecodePubishDate(bookInfoJson.publishedDate),
+                bookInfoJson.publisher, 
+                ((decimal?)bookInfoJson.saleInfoListPriceAmount) ?? DefaultBookPrice, 
+                bookInfoJson.imageLinksThumbnail,
+                authors);
 
             if (bookInfoJson.averageRating != null)
-                book.Reviews = CalculateReviewsToMatch((double)bookInfoJson.averageRating, (int)bookInfoJson.ratingsCount);
+                CalculateReviewsToMatch((double)bookInfoJson.averageRating, (int)bookInfoJson.ratingsCount).ToList()
+                    .ForEach(x => book.AddReview(x, null, "anonymous"));
 
             return book;
         }
 
         /// <summary>
-        /// This create the right number of reviews that add up to the average rating
+        /// This create the right number of NumStars that add up to the average rating
         /// </summary>
         /// <param name="averageRating"></param>
         /// <param name="ratingsCount"></param>
         /// <returns></returns>
-        internal static ICollection<Review> CalculateReviewsToMatch(double averageRating, int ratingsCount)
+        private static List<int> CalculateReviewsToMatch(double averageRating, int ratingsCount)
         {
-            var reviews = new List<Review>();
+            var numStars = new List<int>();
             var currentAve = averageRating;
             for (int i = 0; i < ratingsCount; i++)
             {
-                reviews.Add( new Review
-                {
-                    VoterName = "anonymous",
-                    NumStars = (int)( currentAve > averageRating ? Math.Truncate(averageRating) : Math.Ceiling(averageRating))
-                });
-                currentAve = reviews.Average(x => x.NumStars);
+                numStars.Add( (int)( currentAve > averageRating ? Math.Truncate(averageRating) : Math.Ceiling(averageRating)));
+                currentAve = numStars.Average();
             }
-            return reviews;
+            return numStars;
         }
 
         private static DateTime DecodePubishDate(string publishedDate)

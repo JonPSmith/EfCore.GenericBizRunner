@@ -68,8 +68,7 @@ namespace BizLogic.Orders.Concrete
                         ($"An order failed because book, id = {lineItem.BookId} was missing.");               
 
                 var book = booksDict[lineItem.BookId];
-                var bookPrice = 
-                    book.Promotion?.NewPrice ?? book.Price; 
+                var bookPrice = book.ActualPrice; 
                 if (bookPrice <= 0)                         
                     AddError($"Sorry, the book '{book.Title}' is not for sale.");    
                 else

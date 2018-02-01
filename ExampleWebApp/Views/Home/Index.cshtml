@@ -70,11 +70,11 @@
                     @(item.ReviewsCount == 0 ? "Be the first to review this book" : $"Votes: {item.ReviewsAverageVotes:F1} by {item.ReviewsCount} customers")
                 </div>
                 <div>
-                    <span class="h4">@(item.ActualPrice < 0 ? "- not for sale - " : $"Price: ${item.ActualPrice:F}")</span>
-                    @if (item.PromotionPromotionalText != null)
+                    <span class="h4">@(item.ActualPrice < 0 ? "- not for sale - " : $"OrgPrice: ${item.ActualPrice:F}")</span>
+                    @if (item.PromotionalText != null)
                     {
                         <span class="text-danger">
-                            <strong >&nbsp;<del>$@($"{item.Price:F}")</del>&nbsp;<i>@(item.PromotionPromotionalText)</i></strong>
+                            <strong >&nbsp;<del>$@($"{item.OrgPrice:F}")</del>&nbsp;<i>@(item.PromotionalText)</i></strong>
                         </span>
                     }                    
                 </div>

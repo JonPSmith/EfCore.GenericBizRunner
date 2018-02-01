@@ -3,13 +3,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
-using EfCoreInAction.DatabaseHelpers;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using ServiceLayer.CheckoutServices.Concrete;
@@ -46,7 +43,6 @@ namespace ServiceLayer.DatabaseServices.Concrete
                 //the database is emply so we fill it from a json file
                 var books = BookJsonLoader.LoadBooks(Path.Combine(dataDirectory, SeedFileSubDirectory),
                     SeedDataSearchName).ToList();
-                books.Where(x => x.Price == -1).ToList().ForEach(x => x.Price = DefaultBookPrice);
                 context.Books.AddRange(books);
                 context.SaveChanges();
                 numBooks = books.Count + 1;
@@ -83,7 +79,7 @@ namespace ServiceLayer.DatabaseServices.Concrete
         private static void AddDummyOrders(this EfCoreContext context, List<Book> books = null)
         {
             if (books == null)
-                books = context.Books.Include(x => x.Promotion).ToList();
+                books = context.Books.ToList();
 
             var orders = new List<Order>();
             var i = 0;
@@ -98,7 +94,7 @@ namespace ServiceLayer.DatabaseServices.Concrete
         private static Order BuildOrder(string userId, DateTime orderDate, Book bookOrdered)
         {
             var deliverDay = orderDate.AddDays(5);
-            var bookPrice = bookOrdered.Promotion?.NewPrice ?? bookOrdered.Price;
+            var bookPrice = bookOrdered.ActualPrice;
             return new Order
             {
                 CustomerName = userId,

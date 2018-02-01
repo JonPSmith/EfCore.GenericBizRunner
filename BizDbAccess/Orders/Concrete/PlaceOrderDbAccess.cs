@@ -29,7 +29,6 @@ namespace BizDbAccess.Orders.Concrete
         {
             return _context.Books                       //#D
                 .Where(x => bookIds.Contains(x.BookId)) //#D
-                .Include(r => r.Promotion)              //#E
                 .ToDictionary(key => key.BookId);       //#F
         }
 

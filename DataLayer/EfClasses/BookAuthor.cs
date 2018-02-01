@@ -1,24 +1,27 @@
-﻿// Copyright (c) 2016 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+﻿// Copyright (c) 2017 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT licence. See License.txt in the project root for license information.
+
 namespace DataLayer.EfClasses
 {
-    public class BookAuthor                    //#G
+    public class BookAuthor
     {
-        public int BookId { get; set; }        //#H
-        public int AuthorId { get; set; }      //#H
-        public byte Order { get; set; }        //#I
+        public int BookId { get; private set; }
+        public int AuthorId { get; private set; }
+        public byte Order { get; private set; }
 
         //-----------------------------
         //Relationships
 
-        public Book Book { get; set; }        //#J
-        public Author Author { get; set; }    //#K
+        public Book Book { get; private set; }
+        public Author Author { get; private set; }
+
+        internal BookAuthor() { }
+
+        internal BookAuthor(Book book, Author author, byte order)
+        {
+            Book = book;
+            Author = author;
+            Order = order;
+        }
     }
-    /**************************************************
-    #G The BookAuthor class is the Many-to-Many linking table between the Books and Authors tables
-    #H The Primary Key is made up of the two keys of the Book and Author
-    #I The order of the Authors in a book matters, so I use this to set the right order
-    #J This is the link to the Book side of the relationship
-    #K And this links to the Author side of the relationship
-     * ***********************************************/
 }
