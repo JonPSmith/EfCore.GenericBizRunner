@@ -18,12 +18,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BizDbAccess\BizDbAccess.csproj" />
+    <ProjectReference Include="..\BizLogic\BizLogic.csproj" />
+    <ProjectReference Include="..\DataLayer\DataLayer.csproj" />
+    <ProjectReference Include="..\ExampleWebApp\ExampleWebApp.csproj" />
     <ProjectReference Include="..\GenericBizRunner\GenericBizRunner.csproj" />
+    <ProjectReference Include="..\ServiceLayer\ServiceLayer.csproj" />
     <ProjectReference Include="..\TestBizLayer\TestBizLayer.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="UnitTests\DDDEntities\" />
   </ItemGroup>
 
 </Project>

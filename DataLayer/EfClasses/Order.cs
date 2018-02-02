@@ -48,6 +48,11 @@ namespace DataLayer.EfClasses
             DateOrderedUtc = DateTime.UtcNow;
             HasBeenDelivered = expectedDeliveryDate < DateTime.Today;
             _lineItems = new HashSet<LineItem>(lineItems);
+            byte lineNum = 1;
+            foreach (var lineItem in _lineItems)
+            {
+                lineItem.LineNum = lineNum++;
+            }
         }
 
         //----------------------------------------------------

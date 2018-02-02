@@ -85,17 +85,16 @@ namespace ServiceLayer.DatabaseServices.Concrete
             var i = 0;
             foreach (var usersId in DummyUsersIds)
             {
-                orders.Add(BuildOrder(usersId, DateTime.UtcNow.AddDays(-10), books[i++]));
-                orders.Add(BuildOrder(usersId, DateTime.UtcNow, books[i++]));
+                orders.Add(BuildDummyOrder(usersId, DateTime.UtcNow.AddDays(-10), books[i++]));
+                orders.Add(BuildDummyOrder(usersId, DateTime.UtcNow, books[i++]));
             }
             context.AddRange(orders);
         }
 
-        private static Order BuildOrder(string userId, DateTime orderDate, Book bookOrdered)
+        private static Order BuildDummyOrder(string userId, DateTime orderDate, Book bookOrdered)
         {
             var deliverDay = orderDate.AddDays(5);
-            var bookPrice = bookOrdered.ActualPrice;
-            var lineItems = new List<LineItem>() {new LineItem(0, 1, bookPrice, bookOrdered)};
+            var lineItems = new List<LineItem>() {new LineItem(1, bookOrdered)};
             return new Order(userId, deliverDay, lineItems);
         }
     }

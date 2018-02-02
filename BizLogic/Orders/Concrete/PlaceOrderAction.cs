@@ -54,7 +54,6 @@ namespace BizLogic.Orders.Concrete
              IDictionary<int,Book> booksDict)                 
         {
             var result = new List<LineItem>();
-            var i = 1;
             
             foreach (var lineItem in lineItems)
             {
@@ -70,7 +69,7 @@ namespace BizLogic.Orders.Concrete
                 else
                 {
                     //Valid, so add to the order
-                    result.Add(new LineItem((byte) (i++), lineItem.NumBooks, bookPrice, book));
+                    result.Add(new LineItem(lineItem.NumBooks, book));
                 }
             }
             return result;

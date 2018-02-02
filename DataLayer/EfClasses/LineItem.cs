@@ -14,7 +14,7 @@ namespace DataLayer.EfClasses
 
         [Range(1,5, ErrorMessage =                      
             "This order is over the limit of 5 books.")] 
-        public byte LineNum { get; private set; }
+        public byte LineNum { get; internal set; }
 
         public short NumBooks { get; private set; }
 
@@ -26,18 +26,17 @@ namespace DataLayer.EfClasses
 
         // relationships
 
-        public int OrderId { get; set; }
-        public int BookId { get; set; }
+        public int OrderId { get; private set; }
+        public int BookId { get; private set; }
 
         public Book ChosenBook { get; private set; }
 
 
-        public LineItem(byte lineNum, short numBooks, decimal bookPrice, Book chosenBook)
+        public LineItem(short numBooks, Book chosenBook)
         {
-            LineNum = lineNum;
             NumBooks = numBooks;
-            BookPrice = bookPrice;
             ChosenBook = chosenBook ?? throw new ArgumentNullException(nameof(chosenBook));
+            BookPrice = chosenBook.ActualPrice;
         }
 
         /// <summary>
@@ -58,13 +57,11 @@ namespace DataLayer.EfClasses
                 validationContext.GetService(typeof(DbContext));
 
             if (ChosenBook.ActualPrice < 0)                      
-                yield return new ValidationResult(         
-$"Sorry, the book '{ChosenBook.Title}' is not for sale."); 
+                yield return new ValidationResult($"Sorry, the book '{ChosenBook.Title}' is not for sale."); 
 
             if (NumBooks > 100)
-                yield return new ValidationResult(
-"If you want to order a 100 or more books"+       
-" please phone us on 01234-5678-90",              
+                yield return new ValidationResult("If you want to order a 100 or more books"+       
+                        " please phone us on 01234-5678-90",              
                     new[] { nameof(NumBooks) });  
         }
     }
