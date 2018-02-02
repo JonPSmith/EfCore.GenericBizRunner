@@ -70,7 +70,7 @@
                     @(item.ReviewsCount == 0 ? "Be the first to review this book" : $"Votes: {item.ReviewsAverageVotes:F1} by {item.ReviewsCount} customers")
                 </div>
                 <div>
-                    <span class="h4">@(item.ActualPrice < 0 ? "- not for sale - " : $"OrgPrice: ${item.ActualPrice:F}")</span>
+                    <span class="h4">@(item.ActualPrice < 0 ? "- not for sale - " : $"Price: ${item.ActualPrice:F}")</span>
                     @if (item.PromotionalText != null)
                     {
                         <span class="text-danger">
