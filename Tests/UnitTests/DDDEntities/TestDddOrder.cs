@@ -28,9 +28,9 @@ namespace Tests.UnitTests.DDDEntities
             var order = new Order("user", DateTime.Today.AddDays(3), lineItems);
 
             //VERIFY
-            order.LineItems.Count.ShouldEqual(2);
-            order.LineItems[0].LineNum.ShouldEqual((byte)1);
-            order.LineItems[1].LineNum.ShouldEqual((byte)2);
+            order.LineItems.Count().ShouldEqual(2);
+            order.LineItems.First().LineNum.ShouldEqual((byte)1);
+            order.LineItems.Last().LineNum.ShouldEqual((byte)2);
         }
 
         [Fact]
@@ -44,9 +44,9 @@ namespace Tests.UnitTests.DDDEntities
             var order = new Order("user", DateTime.Today.AddDays(3), lineItems);
 
             //VERIFY
-            order.LineItems.Count.ShouldEqual(1);
-            order.LineItems[0].NumBooks.ShouldEqual((short)3);
-            order.LineItems[0].BookPrice.ShouldEqual(book.ActualPrice);
+            order.LineItems.Count().ShouldEqual(1);
+            order.LineItems.First().NumBooks.ShouldEqual((short)3);
+            order.LineItems.First().BookPrice.ShouldEqual(book.ActualPrice);
         }
 
         [Fact]
