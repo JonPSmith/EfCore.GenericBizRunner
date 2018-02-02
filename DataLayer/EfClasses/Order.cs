@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using GenericBizRunner;
 
 namespace DataLayer.EfClasses
@@ -27,7 +28,7 @@ namespace DataLayer.EfClasses
 
         // relationships
 
-        public IImmutableList<LineItem> LineItems => _lineItems.ToImmutableList();
+        public IEnumerable<LineItem> LineItems => _lineItems?.ToList();
 
         // Extra columns not used by EF
 
@@ -60,6 +61,9 @@ namespace DataLayer.EfClasses
 
         public IGenericErrorHandler ChangeDeliveryDate(string userId, DateTime newDeliveryDate)
         {
+            if (_lineItems == null)
+                throw new NullReferenceException("You must use .Include(p => p.LineItems) before calling this method.");
+
             var status = new GenericErrorHandler();
             if (CustomerName != userId)
             {

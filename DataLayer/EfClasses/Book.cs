@@ -50,6 +50,7 @@ namespace DataLayer.EfClasses
             Description = description;
             PublishedOn = publishedOn;
             Publisher = publisher;
+            ActualPrice = price;
             OrgPrice = price;
             ImageUrl = imageUrl;
             _reviews = new HashSet<Review>();       //We add an empty list on create. I allows reviews to be added when building test data
