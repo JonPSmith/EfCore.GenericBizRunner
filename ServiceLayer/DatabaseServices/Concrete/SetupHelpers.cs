@@ -18,7 +18,7 @@ namespace ServiceLayer.DatabaseServices.Concrete
     public static class SetupHelpers
     {
 
-        private const string SeedDataSearchName = "Apress books*.json";
+        public const string SeedDataSearchName = "Apress books*.json";
         public const string SeedFileSubDirectory = "seedData";
         private const decimal DefaultBookPrice = 40;    //Any book without a price is set to this value
 
