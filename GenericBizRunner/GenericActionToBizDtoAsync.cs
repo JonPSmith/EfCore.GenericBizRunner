@@ -26,7 +26,7 @@ namespace GenericBizRunner
         /// <param name="status">You can raise an error, which will stop the biz logic from running</param>
         /// <returns></returns>
 #pragma warning disable CS1998
-        internal protected virtual async Task SetupSecondaryDataAsync(DbContext db, IBizActionStatus status)
+        protected internal virtual async Task SetupSecondaryDataAsync(DbContext db, IBizActionStatus status)
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
         }
