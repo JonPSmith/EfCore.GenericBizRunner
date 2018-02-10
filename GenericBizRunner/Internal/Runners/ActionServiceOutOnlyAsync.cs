@@ -23,7 +23,7 @@ namespace GenericBizRunner.Internal.Runners
             var result = await ((IGenericActionOutOnlyAsync<TBizOut>)bizInstance).BizActionAsync().ConfigureAwait(false);
 
             //This handles optional call of save changes
-            SaveChangedIfRequiredAndNoErrors(db, bizStatus);
+            await SaveChangedIfRequiredAndNoErrorsAsync(db, bizStatus).ConfigureAwait(false);
             if (bizStatus.HasErrors) return default(TOut);
 
             var data = await fromBizCopier.DoCopyFromBizAsync<TOut>(db, mapper, result).ConfigureAwait(false);
