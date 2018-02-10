@@ -15,7 +15,7 @@ namespace GenericBizRunner
     { }
 
     /// <summary>
-    /// This is the primary interface to the sync actions
+    /// This is the primary interface to the async actions
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     /// <typeparam name="TBizInstance"></typeparam>
@@ -50,7 +50,7 @@ namespace GenericBizRunner
 
         /// <summary>
         /// This will return a new class for input. 
-        /// If the type is based on a GenericActionsDto it will run SetupSecondaryData on it before hadning it back
+        /// If the type is based on a GenericActionsDto it will run SetupSecondaryData on it before handing it back
         /// </summary>
         /// <typeparam name="TDto"></typeparam>
         /// <param name="runBeforeSetup">An optional action to set something in the new DTO before SetupSecondaryData is called</param>
