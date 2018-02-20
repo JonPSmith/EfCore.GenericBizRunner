@@ -22,11 +22,12 @@ namespace DataLayer.EfClasses
 
         internal Review() { }
 
-        internal Review(int numStars, string comment, string voterName)
+        internal Review(int numStars, string comment, string voterName, int bookId = 0)
         {
             NumStars = numStars;
             Comment = comment;
             VoterName = voterName;
+            BookId = bookId;
         }
     }
 

@@ -63,6 +63,30 @@ namespace Tests.UnitTests.DDDEntities
         }
 
         [Fact]
+        public void TestAddReviewFasterToBookOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
+            }
+
+            using (var context = new EfCoreContext(options))
+            {
+                //ATTEMPT
+                var book = context.Books.First();
+                book.AddReviewFaster(5, "comment", "user", context);
+                context.SaveChanges();
+
+                //VERIFY
+                book.Reviews.Count().ShouldEqual(1);
+                context.Set<Review>().Count().ShouldEqual(3);
+            }
+        }
+
+        [Fact]
         public void TestAddPromotionBookOk()
         {
             //SETUP

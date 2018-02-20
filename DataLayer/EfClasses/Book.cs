@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataLayer.EfClasses
 {
@@ -74,6 +75,15 @@ namespace DataLayer.EfClasses
             var review = new Review(numStars, comment, voterName);
             _reviews.Add(review); 
         }
+
+        public void AddReviewFaster(int numStars, string comment, string voterName, DbContext context)
+        {
+            if (BookId == default(int))
+                throw new InvalidOperationException("You can only add a review to a book that is already in the database.");
+
+            context.Add(new Review(numStars, comment, voterName, BookId));
+        }
+
 
         public void RemoveReview(Review review)                          
         {
