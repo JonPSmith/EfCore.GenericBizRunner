@@ -53,7 +53,7 @@ namespace GenericBizRunner
         public IBizActionStatus Status => _bizInstance;
 
         /// <summary>
-        /// This will run a business action that takes and input and produces a result
+        /// This will run a business action that takes an input and produces a result
         /// </summary>
         /// <typeparam name="TOut">The type of the result to return. Should either be the Business logic output type or class which inherits fromm GenericActionFromBizDto</typeparam>
         /// <param name="inputData">The input data. It should be Should either be the Business logic input type or class which inherits form GenericActionToBizDto</param>
@@ -70,7 +70,7 @@ namespace GenericBizRunner
         /// This will run a business action that does not take an input but does produces a result
         /// </summary>
         /// <typeparam name="TOut">The type of the result to return. Should either be the Business logic output type or class which inherits fromm GenericActionFromBizDto</typeparam>
-        /// <returns>The returned data after the run, or default value is thewre was an error</returns>
+        /// <returns>The returned data after the run, or default value if there was an error</returns>
         public async Task<TOut> RunBizActionAsync<TOut>()
         {
             var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.Out | RequestedInOut.Async, _config.TurnOffCaching);
