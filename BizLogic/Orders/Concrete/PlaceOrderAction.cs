@@ -14,7 +14,7 @@ namespace BizLogic.Orders.Concrete
     {
         private readonly IPlaceOrderDbAccess _dbAccess;
 
-        public PlaceOrderAction(IPlaceOrderDbAccess dbAccess)//#C
+        public PlaceOrderAction(IPlaceOrderDbAccess dbAccess)
         {
             _dbAccess = dbAccess;
         }
@@ -36,12 +36,16 @@ namespace BizLogic.Orders.Concrete
             {                                         
                 AddError("No items in your basket."); 
                 return null;                          
-            }                                         
+            }
 
-            var booksDict = _dbAccess.FindBooksByIdsWithPriceOffers    
-                     (dto.LineItems.Select(x => x.BookId));
-            var order = new Order(dto.UserId, DateTime.Today.AddDays(5),
-                FormLineItemsWithErrorChecking(dto.LineItems, booksDict));                                           
+            var lineItems = dto.LineItems.Select(  
+                x => new LineItem(x.NumBooks,   
+                    _dbAccess.FindBook(x.BookId)));              
+            var order = new Order(         
+                dto.UserId,        
+                DateTime.Today.AddDays(5),
+                lineItems,                    
+                s => AddError(s));                                                       
 
             if (!HasErrors)
                 _dbAccess.Add(order);

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using DataLayer.EfClasses;
@@ -95,7 +96,7 @@ namespace ServiceLayer.DatabaseServices.Concrete
         {
             var deliverDay = orderDate.AddDays(5);
             var lineItems = new List<LineItem>() {new LineItem(1, bookOrdered)};
-            return new Order(userId, deliverDay, lineItems);
+            return new Order(userId, deliverDay, lineItems, s => throw new Exception());
         }
     }
 }

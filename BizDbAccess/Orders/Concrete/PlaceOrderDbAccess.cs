@@ -18,18 +18,9 @@ namespace BizDbAccess.Orders.Concrete
             _context = context;
         }
 
-        /// <summary>
-        /// This finds any books that fits the BookIds given to it, with any optional promotion
-        /// </summary>
-        /// <param name="bookIds"></param>
-        /// <returns>A dictionary with the BookId as the key, and the Book as the value</returns>
-        public IDictionary<int, Book> 
-            FindBooksByIdsWithPriceOffers               //#B
-               (IEnumerable<int> bookIds)               //#C
+        public Book FindBook(int bookId)
         {
-            return _context.Books                       //#D
-                .Where(x => bookIds.Contains(x.BookId)) //#D
-                .ToDictionary(key => key.BookId);       //#F
+            return _context.Find<Book>(bookId);
         }
 
         public void Add(Order newOrder)                 //#G

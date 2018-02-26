@@ -41,7 +41,8 @@ namespace DataLayer.EfClasses
         {
         }
 
-        public Order(string customerName, DateTime expectedDeliveryDate, IEnumerable<LineItem> lineItems)
+        public Order(string customerName, DateTime expectedDeliveryDate, IEnumerable<LineItem> lineItems,
+            Action<string> addError)
         {
             CustomerName = customerName;
             ExpectedDeliveryDate = expectedDeliveryDate;
@@ -49,6 +50,8 @@ namespace DataLayer.EfClasses
             DateOrderedUtc = DateTime.UtcNow;
             HasBeenDelivered = expectedDeliveryDate < DateTime.Today;
             _lineItems = new HashSet<LineItem>(lineItems);
+            if (!_lineItems.Any())
+                addError("No items in your basket.");
             byte lineNum = 1;
             foreach (var lineItem in _lineItems)
             {

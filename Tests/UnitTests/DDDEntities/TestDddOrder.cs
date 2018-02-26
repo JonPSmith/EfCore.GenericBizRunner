@@ -25,7 +25,7 @@ namespace Tests.UnitTests.DDDEntities
 
             //ATTEMPT
             var lineItems = new List<LineItem> { new LineItem(1, book1), new LineItem(2, book2) };
-            var order = new Order("user", DateTime.Today.AddDays(3), lineItems);
+            var order = new Order("user", DateTime.Today.AddDays(3), lineItems, s => throw new Exception());
 
             //VERIFY
             order.LineItems.Count().ShouldEqual(2);
@@ -41,7 +41,7 @@ namespace Tests.UnitTests.DDDEntities
 
             //ATTEMPT
             var lineItems = new List<LineItem> { new LineItem(3, book) };
-            var order = new Order("user", DateTime.Today.AddDays(3), lineItems);
+            var order = new Order("user", DateTime.Today.AddDays(3), lineItems, s => throw new Exception());
 
             //VERIFY
             order.LineItems.Count().ShouldEqual(1);
@@ -50,12 +50,25 @@ namespace Tests.UnitTests.DDDEntities
         }
 
         [Fact]
+        public void TestCreateOrderNoLineItemsOk()
+        {
+            //SETUP
+
+            //ATTEMPT
+            string errMessage = null;
+            var order = new Order("user", DateTime.Today.AddDays(3), new LineItem[]{}, s => errMessage = s);
+
+            //VERIFY
+            errMessage.ShouldEqual("No items in your basket.");
+        }
+
+        [Fact]
         public void TestChangeDeliveryDateOk()
         {
             //SETUP
             var book = DddEfTestData.CreateDummyBookOneAuthor();
             var lineItems = new List<LineItem> { new LineItem(3, book) };
-            var order = new Order("user", DateTime.Today.AddDays(1), lineItems);
+            var order = new Order("user", DateTime.Today.AddDays(1), lineItems, s => throw new Exception());
 
             //ATTEMPT
             var newDeliverDate = DateTime.Today.AddDays(2);
@@ -84,7 +97,7 @@ namespace Tests.UnitTests.DDDEntities
                 //ATTEMPT
                 var book = context.Books.First();
                 var lineItems = new List<LineItem> {new LineItem(1, book)};
-                context.Add( new Order("user", DateTime.Today.AddDays(3), lineItems));
+                context.Add( new Order("user", DateTime.Today.AddDays(3), lineItems, s => throw new Exception()));
                 context.SaveChanges();
 
                 //VERIFY
