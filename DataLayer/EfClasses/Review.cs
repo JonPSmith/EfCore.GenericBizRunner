@@ -20,7 +20,7 @@ namespace DataLayer.EfClasses
 
         public int BookId { get; private set; }
 
-        internal Review() { }
+        private Review() { }
 
         internal Review(int numStars, string comment, string voterName, int bookId = 0)
         {

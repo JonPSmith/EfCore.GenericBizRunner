@@ -15,7 +15,7 @@ namespace DataLayer.EfClasses
         public Book Book { get; private set; }
         public Author Author { get; private set; }
 
-        internal BookAuthor() { }
+        private BookAuthor() { }
 
         internal BookAuthor(Book book, Author author, byte order)
         {

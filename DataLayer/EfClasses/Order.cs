@@ -37,7 +37,7 @@ namespace DataLayer.EfClasses
         /// <summary>
         /// Use by EF Core
         /// </summary>
-        internal Order()
+        private Order()
         {
         }
 

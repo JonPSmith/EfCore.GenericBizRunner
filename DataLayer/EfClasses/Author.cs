@@ -22,8 +22,8 @@ namespace DataLayer.EfClasses
             BooksLink
         { get; set; }
 
-        //Needed by EF Core
-        internal Author() { }
+        //used by EF Core
+        private Author() { }
 
         public Author(string name)
         {

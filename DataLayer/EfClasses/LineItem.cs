@@ -42,7 +42,7 @@ namespace DataLayer.EfClasses
         /// <summary>
         /// Used by EF Core
         /// </summary>
-        internal LineItem() { }
+        private LineItem() { }
 
 
         /// <summary>

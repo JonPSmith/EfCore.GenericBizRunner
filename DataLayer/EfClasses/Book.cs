@@ -37,7 +37,7 @@ namespace DataLayer.EfClasses
         //-----------------------------------------------
         //ctors
 
-        internal Book() { } 
+        private Book() { } 
 
         public Book(string title, string description, 
             DateTime publishedOn, string publisher, 
