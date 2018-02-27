@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
@@ -12,12 +8,12 @@ using GenericBizRunner.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ServiceLayer;
-using ServiceLayer.DatabaseServices.Concrete;
 
 namespace EfCoreInAction
 {
@@ -40,10 +36,15 @@ namespace EfCoreInAction
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            var connection = Configuration.GetConnectionString("DefaultConnection");
-            if (Configuration["ENVIRONMENT"] == "Development")
-            services.AddDbContext<EfCoreContext>(options => options.UseSqlServer(connection));
-            services.AddDbContext<OrderDbContext>(options => options.UseSqlServer(connection));
+            //--------------------------------------------------------------------
+            //var connection = Configuration.GetConnectionString("DefaultConnection");
+            //Swapped over to sqlite in-memory database
+            var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = ":memory:" };  
+            var connectionString = connectionStringBuilder.ToString(); 
+            var connection = new SqliteConnection(connectionString); 
+            connection.Open();  //see https://github.com/aspnet/EntityFramework/issues/6968
+            services.AddDbContext<EfCoreContext>(options => options.UseSqlite(connection));
+            //--------------------------------------------------------------------
 
             //Now I use AutoFac to do some of the more complex registering of services
             var containerBuilder = new ContainerBuilder();
