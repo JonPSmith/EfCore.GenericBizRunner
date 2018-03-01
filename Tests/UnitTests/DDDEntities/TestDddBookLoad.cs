@@ -17,7 +17,8 @@ namespace Tests.UnitTests.DDDEntities
         {
             //SETUP
             var testsDir = TestData.GetCallingAssemblyTopLevelDir();
-            var dataDir = Path.GetFullPath($"{testsDir}\\..\\{nameof(ExampleWebApp)}\\wwwroot\\{SetupHelpers.SeedFileSubDirectory}");
+            var dataDir = Path.GetFullPath($"{testsDir}{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}"+
+                $"{nameof(ExampleWebApp)}{Path.DirectorySeparatorChar}wwwroot{Path.DirectorySeparatorChar}{SetupHelpers.SeedFileSubDirectory}");
 
             //ATTEMPT
             var books = BookJsonLoader.LoadBooks(dataDir,
