@@ -53,7 +53,10 @@ namespace EfCoreInAction.DatabaseHelpers
             book.AuthorsLink = new List<BookAuthor>();
             foreach (var author in bookInfoJson.authors)
             {
-                book.AuthorsLink.Add(new BookAuthor { Book = book, Author = authorDict[author], Order = i++});
+                book.AuthorsLink.Add(new BookAuthor
+                {
+                    Book = book, Author = authorDict[author], Order = i++
+                });
             }
 
             if (bookInfoJson.averageRating != null)
