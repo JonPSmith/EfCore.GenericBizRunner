@@ -61,7 +61,7 @@ namespace DataLayer.EfClasses
             _authorsLink = new HashSet<BookAuthor>(authors.Select(a => new BookAuthor(this, a, order++)));
         }
 
-        public void ChangePubDate(DateTime newDate)
+        public void ChangePublicationDate(DateTime newDate)
         {
             PublishedOn = newDate;
         }
@@ -74,7 +74,8 @@ namespace DataLayer.EfClasses
             }
             else if (context == null)
             {
-                throw new ArgumentNullException(nameof(context), "You must provide a context if the Reviews collection isn't valid.");
+                throw new ArgumentNullException(nameof(context), 
+                    "You must provide a context if the Reviews collection isn't valid.");
             }
             else if (context.Entry(this).IsKeySet)  
             {
