@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT licence. See License.txt in the project root for license information.
 
+using System;
 using System.Linq;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
@@ -60,6 +61,28 @@ namespace Tests.UnitTests.DDDEntities
                 //VERIFY
                 book.Reviews.Count().ShouldEqual(1);
                 context.Set<Review>().Count().ShouldEqual(3);
+            }
+        }
+
+        [Fact]
+        public void TestAddReviewToBookNoIncludeError()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
+            }
+
+            using (var context = new EfCoreContext(options))
+            {
+                //ATTEMPT
+                var book = context.Books.First();
+                var ex = Assert.Throws<ArgumentNullException>(() => book.AddReview(5, "comment", "user"));
+
+                //VERIFY
+                ex.Message.ShouldStartWith("You must provide a context if the Reviews collection isn't valid.");
             }
         }
 

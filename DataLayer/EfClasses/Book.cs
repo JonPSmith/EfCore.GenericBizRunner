@@ -74,7 +74,7 @@ namespace DataLayer.EfClasses
             }
             else if (context == null)
             {
-                throw new ArgumentNullException("You must provide a context if the Reviews collection isn't valid.");
+                throw new ArgumentNullException(nameof(context), "You must provide a context if the Reviews collection isn't valid.");
             }
             else if (context.Entry(this).IsKeySet)  
             {
@@ -82,8 +82,7 @@ namespace DataLayer.EfClasses
             }
             else                                     
             {                                        
-                throw new InvalidOperationException( 
-                    "Could not add a new review.");  
+                throw new InvalidOperationException("Could not add a new review.");  
             }
         }
 
