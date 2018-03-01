@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using GenericBizRunner;
 using Microsoft.EntityFrameworkCore;
 
 namespace DataLayer.EfClasses
@@ -12,9 +13,6 @@ namespace DataLayer.EfClasses
     public class Book
     {
         public const int PromotionalTextLength = 200;
-
-        private HashSet<Review> _reviews;
-        private HashSet<BookAuthor> _authorsLink;
 
         public int BookId { get; private set; }          
         public string Title { get; private set; }        
@@ -25,10 +23,14 @@ namespace DataLayer.EfClasses
         public decimal ActualPrice { get; private set; } 
         [MaxLength(PromotionalTextLength)]
         public string PromotionalText { get; private set; }  
-        public string ImageUrl { get; private set; }     
+        public string ImageUrl { get; private set; }
 
         //-----------------------------------------------
         //relationships
+
+        //Use uninitialised backing fields - this means we can detect if the collection was loaded
+        private HashSet<Review> _reviews;
+        private HashSet<BookAuthor> _authorsLink;
 
         public IEnumerable<Review> Reviews => _reviews?.ToList();
         public IEnumerable<BookAuthor> AuthorsLink => _authorsLink?.ToList();
@@ -38,10 +40,8 @@ namespace DataLayer.EfClasses
 
         private Book() { } 
 
-        public Book(string title, string description, 
-            DateTime publishedOn, string publisher, 
-            decimal price, string imageUrl,
-            ICollection<Author> authors)
+        public Book(string title, string description, DateTime publishedOn, 
+            string publisher, decimal price, string imageUrl, ICollection<Author> authors)
         {
             if (string.IsNullOrWhiteSpace(title))
                 throw new ArgumentNullException(nameof(title)); 
@@ -55,7 +55,7 @@ namespace DataLayer.EfClasses
             ImageUrl = imageUrl;
             _reviews = new HashSet<Review>();       //We add an empty list on create. I allows reviews to be added when building test data
 
-            if (authors == null || authors.Count < 1)
+            if (authors == null || !authors.Any())
                 throw new ArgumentException("You must have at least one Author for a book", nameof(authors));
             byte order = 0;
             _authorsLink = new HashSet<BookAuthor>(authors.Select(a => new BookAuthor(this, a, order++)));
@@ -95,14 +95,18 @@ namespace DataLayer.EfClasses
             _reviews.Remove(review); 
         }
 
-        public string AddPromotion(decimal newPrice, string promotionalText)                  
+        public IGenericErrorHandler AddPromotion(decimal newPrice, string promotionalText)                  
         {
-            if (promotionalText == null) 
-                return "You must provide some text to go with the promotion";
+            var status = new GenericErrorHandler();
+            if (string.IsNullOrWhiteSpace(promotionalText))
+            {
+                status.AddError("You must provide some text to go with the promotion.", nameof(promotionalText));
+                return status;
+            }
 
             ActualPrice = newPrice;  
             PromotionalText = promotionalText; 
-            return null; 
+            return status; 
         }
 
         public void RemovePromotion() 

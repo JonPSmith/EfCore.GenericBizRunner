@@ -102,11 +102,35 @@ namespace Tests.UnitTests.DDDEntities
             {
                 //ATTEMPT
                 var book = context.Books.First();
-                book.AddPromotion(book.OrgPrice / 2, "Half price today");
+                var status = book.AddPromotion(book.OrgPrice / 2, "Half price today");
                 context.SaveChanges();
 
                 //VERIFY
+                status.HasErrors.ShouldBeFalse();
                 book.ActualPrice.ShouldEqual(book.OrgPrice / 2);
+            }
+        }
+
+        [Fact]
+        public void TestAddPromotionBookWithError()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
+            }
+
+            using (var context = new EfCoreContext(options))
+            {
+                //ATTEMPT
+                var book = context.Books.First();
+                var status = book.AddPromotion(book.OrgPrice / 2, "");
+
+                //VERIFY
+                status.HasErrors.ShouldBeTrue();
+                status.Errors.Single().ErrorMessage.ShouldEqual("You must provide some text to go with the promotion.");
             }
         }
 
