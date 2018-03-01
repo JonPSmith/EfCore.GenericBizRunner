@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using DataLayer.Dtos;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -95,8 +96,8 @@ namespace ServiceLayer.DatabaseServices.Concrete
         private static Order BuildDummyOrder(string userId, DateTime orderDate, Book bookOrdered)
         {
             var deliverDay = orderDate.AddDays(5);
-            var lineItems = new List<LineItem>() {new LineItem(1, bookOrdered)};
-            return new Order(userId, deliverDay, lineItems, s => throw new Exception());
+            var bookOrders = new List<OrderBooksDto>() {new OrderBooksDto(1, bookOrdered, 1)};
+            return new Order(userId, deliverDay, bookOrders, s => throw new Exception());
         }
     }
 }

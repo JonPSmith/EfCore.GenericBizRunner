@@ -15,7 +15,7 @@ namespace Tests.UnitTests.DDDEntities
     public class TestDddBook
     {
         [Fact]
-        public void TestAddReviewToBookOk()
+        public void TestAddReviewToBookWithIncludeOk()
         {
             //SETUP
             var options = SqliteInMemory.CreateOptions<EfCoreContext>();
@@ -30,6 +30,31 @@ namespace Tests.UnitTests.DDDEntities
                 //ATTEMPT
                 var book = context.Books.Include(x => x.Reviews).First();
                 book.AddReview(5, "comment", "user");
+                context.SaveChanges();
+
+                //VERIFY
+                book.Reviews.Count().ShouldEqual(1);
+                context.Set<Review>().Count().ShouldEqual(3);
+            }
+        }
+
+
+        [Fact]
+        public void TestAddReviewToBookNoIncludeOk()
+        {
+            //SETUP
+            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
+            using (var context = new EfCoreContext(options))
+            {
+                context.Database.EnsureCreated();
+                context.SeedDatabaseFourBooks();
+            }
+
+            using (var context = new EfCoreContext(options))
+            {
+                //ATTEMPT
+                var book = context.Books.First();
+                book.AddReview(5, "comment", "user", context);
                 context.SaveChanges();
 
                 //VERIFY
@@ -59,30 +84,6 @@ namespace Tests.UnitTests.DDDEntities
                 //VERIFY
                 book.Reviews.Count().ShouldEqual(1);
                 context.Set<Review>().Count().ShouldEqual(1);
-            }
-        }
-
-        [Fact]
-        public void TestAddReviewFasterToBookOk()
-        {
-            //SETUP
-            var options = SqliteInMemory.CreateOptions<EfCoreContext>();
-            using (var context = new EfCoreContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.SeedDatabaseFourBooks();
-            }
-
-            using (var context = new EfCoreContext(options))
-            {
-                //ATTEMPT
-                var book = context.Books.First();
-                book.AddReviewFaster(5, "comment", "user", context);
-                context.SaveChanges();
-
-                //VERIFY
-                book.Reviews.Count().ShouldEqual(1);
-                context.Set<Review>().Count().ShouldEqual(3);
             }
         }
 

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using DataLayer.Dtos;
 using GenericBizRunner;
 
 namespace DataLayer.EfClasses
@@ -41,7 +42,7 @@ namespace DataLayer.EfClasses
         {
         }
 
-        public Order(string customerName, DateTime expectedDeliveryDate, IEnumerable<LineItem> lineItems,
+        public Order(string customerName, DateTime expectedDeliveryDate, IEnumerable<OrderBooksDto> bookOrders,
             Action<string> addError)
         {
             CustomerName = customerName;
@@ -49,14 +50,11 @@ namespace DataLayer.EfClasses
 
             DateOrderedUtc = DateTime.UtcNow;
             HasBeenDelivered = expectedDeliveryDate < DateTime.Today;
-            _lineItems = new HashSet<LineItem>(lineItems);
+
+            byte lineNum = 1;
+            _lineItems = new HashSet<LineItem>(bookOrders.Select(x => new LineItem(x.numBooks, x.ChosenBook, lineNum++)));
             if (!_lineItems.Any())
                 addError("No items in your basket.");
-            byte lineNum = 1;
-            foreach (var lineItem in _lineItems)
-            {
-                lineItem.LineNum = lineNum++;
-            }
         }
 
         //----------------------------------------------------

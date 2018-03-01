@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -67,23 +66,26 @@ namespace DataLayer.EfClasses
             PublishedOn = newDate;
         }
 
-        public void AddReview(int numStars, string comment, string voterName)
+        public void AddReview(int numStars, string comment, string voterName, DbContext context = null) 
         {
-            if (_reviews == null)
-                throw new NullReferenceException("You must use .Include(p => p.Reviews) before calling this method.");
-
-            var review = new Review(numStars, comment, voterName);
-            _reviews.Add(review); 
+            if (_reviews != null)    
+            {
+                _reviews.Add(new Review(numStars, comment, voterName));   
+            }
+            else if (context == null)
+            {
+                throw new ArgumentNullException("You must provide a context if the Reviews collection isn't valid.");
+            }
+            else if (context.Entry(this).IsKeySet)  
+            {
+                context.Add(new Review(numStars, comment, voterName, BookId));
+            }
+            else                                     
+            {                                        
+                throw new InvalidOperationException( 
+                    "Could not add a new review.");  
+            }
         }
-
-        public void AddReviewFaster(int numStars, string comment, string voterName, DbContext context)
-        {
-            if (BookId == default(int))
-                throw new InvalidOperationException("You can only add a review to a book that is already in the database.");
-
-            context.Add(new Review(numStars, comment, voterName, BookId));
-        }
-
 
         public void RemoveReview(Review review)                          
         {

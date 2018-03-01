@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using DataLayer.Dtos;
 using DataLayer.EfClasses;
 
 namespace BizDbAccess.Orders
 {
     public interface IPlaceOrderDbAccess
     {
-        Book FindBook(int bookId);
+        OrderBooksDto BuildBooksDto(int bookId, byte numBooks);
 
         void Add(Order newOrder);
     }

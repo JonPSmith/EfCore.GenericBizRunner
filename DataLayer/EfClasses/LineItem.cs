@@ -14,7 +14,7 @@ namespace DataLayer.EfClasses
 
         [Range(1,5, ErrorMessage =                      
             "This order is over the limit of 5 books.")] 
-        public byte LineNum { get; internal set; }
+        public byte LineNum { get; private set; }
 
         public short NumBooks { get; private set; }
 
@@ -31,12 +31,12 @@ namespace DataLayer.EfClasses
 
         public Book ChosenBook { get; private set; }
 
-
-        public LineItem(short numBooks, Book chosenBook)
+        internal LineItem(short numBooks, Book chosenBook, byte lineNum)
         {
             NumBooks = numBooks;
             ChosenBook = chosenBook ?? throw new ArgumentNullException(nameof(chosenBook));
             BookPrice = chosenBook.ActualPrice;
+            LineNum = lineNum;
         }
 
         /// <summary>
@@ -44,20 +44,16 @@ namespace DataLayer.EfClasses
         /// </summary>
         private LineItem() { }
 
-
         /// <summary>
-        /// Extra validation rules: shows how IValidatableObject can add to the validation of a class
+        /// Extra validation rules: These are checked by using the SaveChangesWithValidation method when saving to the database
         /// </summary>
         /// <param name="validationContext"></param>
         /// <returns></returns>
         IEnumerable<ValidationResult> IValidatableObject.Validate 
             (ValidationContext validationContext)                 
         {
-            var currContext = 
-                validationContext.GetService(typeof(DbContext));
-
-            if (ChosenBook.ActualPrice < 0)                      
-                yield return new ValidationResult($"Sorry, the book '{ChosenBook.Title}' is not for sale."); 
+            if (BookPrice < 0)
+                yield return new ValidationResult($"Sorry, the book '{ChosenBook.Title}' is not for sale.");
 
             if (NumBooks > 100)
                 yield return new ValidationResult("If you want to order a 100 or more books"+       

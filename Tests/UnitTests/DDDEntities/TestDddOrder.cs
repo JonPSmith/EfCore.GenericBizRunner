@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DataLayer.Dtos;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
@@ -24,8 +25,8 @@ namespace Tests.UnitTests.DDDEntities
             var book2 = DddEfTestData.CreateDummyBookOneAuthor();
 
             //ATTEMPT
-            var lineItems = new List<LineItem> { new LineItem(1, book1), new LineItem(2, book2) };
-            var order = new Order("user", DateTime.Today.AddDays(3), lineItems, s => throw new Exception());
+            var bookOrders = new List<OrderBooksDto>() { new OrderBooksDto(book1.BookId, book1, 1), new OrderBooksDto(book2.BookId, book2, 2) };
+            var order = new Order("user", DateTime.Today.AddDays(3), bookOrders, s => throw new Exception());
 
             //VERIFY
             order.LineItems.Count().ShouldEqual(2);
@@ -40,7 +41,7 @@ namespace Tests.UnitTests.DDDEntities
             var book = DddEfTestData.CreateDummyBookOneAuthor();
 
             //ATTEMPT
-            var lineItems = new List<LineItem> { new LineItem(3, book) };
+            var lineItems = new List<OrderBooksDto> { new OrderBooksDto(book.BookId, book, 3) };
             var order = new Order("user", DateTime.Today.AddDays(3), lineItems, s => throw new Exception());
 
             //VERIFY
@@ -56,7 +57,7 @@ namespace Tests.UnitTests.DDDEntities
 
             //ATTEMPT
             string errMessage = null;
-            var order = new Order("user", DateTime.Today.AddDays(3), new LineItem[]{}, s => errMessage = s);
+            var order = new Order("user", DateTime.Today.AddDays(3), new OrderBooksDto[]{}, s => errMessage = s);
 
             //VERIFY
             errMessage.ShouldEqual("No items in your basket.");
@@ -67,7 +68,7 @@ namespace Tests.UnitTests.DDDEntities
         {
             //SETUP
             var book = DddEfTestData.CreateDummyBookOneAuthor();
-            var lineItems = new List<LineItem> { new LineItem(3, book) };
+            var lineItems = new List<OrderBooksDto> { new OrderBooksDto(book.BookId, book, 3) };
             var order = new Order("user", DateTime.Today.AddDays(1), lineItems, s => throw new Exception());
 
             //ATTEMPT
@@ -96,7 +97,7 @@ namespace Tests.UnitTests.DDDEntities
             {
                 //ATTEMPT
                 var book = context.Books.First();
-                var lineItems = new List<LineItem> {new LineItem(1, book)};
+                var lineItems = new List<OrderBooksDto> { new OrderBooksDto(book.BookId, book, 1) };
                 context.Add( new Order("user", DateTime.Today.AddDays(3), lineItems, s => throw new Exception()));
                 context.SaveChanges();
 
