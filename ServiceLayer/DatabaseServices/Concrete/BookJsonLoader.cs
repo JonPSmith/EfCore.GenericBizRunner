@@ -41,7 +41,9 @@ namespace ServiceLayer.DatabaseServices.Concrete
         private static Book CreateBookWithRefs(BookInfoJson bookInfoJson, Dictionary<string, Author> authorDict)
         {
             var authors = bookInfoJson.authors.Select(x => new Author(x)).ToList();
-            var book = new Book(bookInfoJson.title, bookInfoJson.description, DecodePubishDate(bookInfoJson.publishedDate),
+            var book = new Book(bookInfoJson.title, 
+                bookInfoJson.description, 
+                DecodePubishDate(bookInfoJson.publishedDate),
                 bookInfoJson.publisher, 
                 ((decimal?)bookInfoJson.saleInfoListPriceAmount) ?? DefaultBookPrice, 
                 bookInfoJson.imageLinksThumbnail,
