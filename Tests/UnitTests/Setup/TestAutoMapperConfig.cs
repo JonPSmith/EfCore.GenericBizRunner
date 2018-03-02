@@ -1,6 +1,8 @@
 ﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT licence. See License.txt in the project root for license information.
 
+using System.Collections.Generic;
+using System.Reflection;
 using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using TestBizLayer.BizDTOs;
@@ -35,7 +37,7 @@ namespace Tests.UnitTests.Setup
         {
             //SETUP
             IServiceCollection services = new ServiceCollection();
-            services.AddAutoMapper();
+            services.AddAutoMapper(null, new List<Assembly>{Assembly.GetAssembly(typeof(ServiceLayerBizInDto))});
 
             var mapper = ((MapperConfiguration) services[0].ImplementationInstance).CreateMapper();
 
