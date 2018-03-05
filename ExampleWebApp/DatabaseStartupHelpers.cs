@@ -12,7 +12,7 @@ namespace EfCoreInAction
     public static class DatabaseStartupHelpers
     {
 
-        private const string WwwRootDirectory = "wwwroot\\";
+        private static readonly string WwwRootDirectory = $"wwwroot{Path.DirectorySeparatorChar}";
 
         public static string GetWwwRootPath()
         {

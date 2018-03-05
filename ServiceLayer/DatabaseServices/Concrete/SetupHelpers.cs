@@ -3,12 +3,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using DataLayer.Dtos;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
-using EfCoreInAction.DatabaseHelpers;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using ServiceLayer.CheckoutServices.Concrete;
@@ -20,7 +20,7 @@ namespace ServiceLayer.DatabaseServices.Concrete
     public static class SetupHelpers
     {
 
-        private const string SeedDataSearchName = "Apress books*.json";
+        public const string SeedDataSearchName = "Apress books*.json";
         public const string SeedFileSubDirectory = "seedData";
         private const decimal DefaultBookPrice = 40;    //Any book without a price is set to this value
 
@@ -45,7 +45,6 @@ namespace ServiceLayer.DatabaseServices.Concrete
                 //the database is emply so we fill it from a json file
                 var books = BookJsonLoader.LoadBooks(Path.Combine(dataDirectory, SeedFileSubDirectory),
                     SeedDataSearchName).ToList();
-                books.Where(x => x.Price == -1).ToList().ForEach(x => x.Price = DefaultBookPrice);
                 context.Books.AddRange(books);
                 context.SaveChanges();
                 numBooks = books.Count + 1;
@@ -82,38 +81,23 @@ namespace ServiceLayer.DatabaseServices.Concrete
         private static void AddDummyOrders(this EfCoreContext context, List<Book> books = null)
         {
             if (books == null)
-                books = context.Books.Include(x => x.Promotion).ToList();
+                books = context.Books.ToList();
 
             var orders = new List<Order>();
             var i = 0;
             foreach (var usersId in DummyUsersIds)
             {
-                orders.Add(BuildOrder(usersId, DateTime.UtcNow.AddDays(-10), books[i++]));
-                orders.Add(BuildOrder(usersId, DateTime.UtcNow, books[i++]));
+                orders.Add(BuildDummyOrder(usersId, DateTime.UtcNow.AddDays(-10), books[i++]));
+                orders.Add(BuildDummyOrder(usersId, DateTime.UtcNow, books[i++]));
             }
             context.AddRange(orders);
         }
 
-        private static Order BuildOrder(string userId, DateTime orderDate, Book bookOrdered)
+        private static Order BuildDummyOrder(string userId, DateTime orderDate, Book bookOrdered)
         {
             var deliverDay = orderDate.AddDays(5);
-            var bookPrice = bookOrdered.Promotion?.NewPrice ?? bookOrdered.Price;
-            return new Order
-            {
-                CustomerName = userId,
-                DateOrderedUtc = orderDate,
-                ExpectedDeliveryDate = deliverDay,
-                HasBeenDelivered = deliverDay < DateTime.Today,
-                LineItems = new List<LineItem>
-                {
-                    new LineItem
-                    {
-                        BookPrice = bookPrice,
-                        ChosenBook = bookOrdered,
-                        NumBooks = 1
-                    }
-                }
-            };
+            var bookOrders = new List<OrderBooksDto>() {new OrderBooksDto(1, bookOrdered, 1)};
+            return new Order(userId, deliverDay, bookOrders, s => throw new Exception());
         }
     }
 }

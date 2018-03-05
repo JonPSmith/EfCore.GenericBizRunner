@@ -2,10 +2,7 @@
 // Licensed under MIT licence. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
-using BizLogic.Orders;
-using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using Microsoft.AspNetCore.Http;
 
@@ -43,7 +40,7 @@ namespace ServiceLayer.CheckoutServices.Concrete
                         book.AuthorsLink
                             .OrderBy(q => q.Order)
                             .Select(q => q.Author.Name)),
-                    BookPrice = book.Promotion == null ? book.Price : book.Promotion.NewPrice,
+                    BookPrice = book.ActualPrice,
                     ImageUrl = book.ImageUrl,
                     NumBooks = lineItem.NumBooks
                 }).Single(y => y.BookId == lineItem.BookId));

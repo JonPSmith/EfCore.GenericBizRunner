@@ -13,35 +13,27 @@ namespace EfCoreInAction.Controllers
     {
         private readonly EfCoreContext _context;
 
-        public HomeController(EfCoreContext context)   //#A
-        {                                              //#A
-            _context = context;                        //#A
-        }                                              //#A
+        public HomeController(EfCoreContext context)   
+        {                                              
+            _context = context;                        
+        }                                              
 
-        public IActionResult Index                     //#B
-            (SortFilterPageOptions options)            //#C
+        public IActionResult Index                     
+            (SortFilterPageOptions options)            
         {
-            var listService =                          //#D
-                new ListBooksService(_context);        //#D
+            var listService =                          
+                new ListBooksService(_context);        
 
-            var bookList = listService                 //#E
-                .SortFilterPage(options)               //#E
-                .ToList();                             //#F
+            var bookList = listService                 
+                .SortFilterPage(options)               
+                .ToList();                             
 
-            SetupTraceInfo();           //REMOVE THIS FOR BOOK as it could be confusing
+            SetupTraceInfo();           //Thsi makes the logging display work
 
-            return View(new BookListCombinedDto         //#G
-                (options, bookList));                   //#G
+            return View(new BookListCombinedDto         
+                (options, bookList));                   
         }
-        /***************************************************
-        #A The applications's DbContext is provided by ASP.NET Core
-        #B This is an ASP.NET action. It is called when the Home page is called up by the user
-        #C The options parameter is filled with various sort, filter, page options via the URL
-        #D The ListBooksService is created using the applications's DbContext in the field _context
-        #E The SortFilterPage method is called with the sort, filter, page options provided
-        #F The .ToList() is what executes the LINQ commands, which causes EF Core to translate the LINQ into the appropriate SQL to access the database
-        #G It then sends the options (to fill in the various controls at the top of the page) and the actual list of BookListDTo's to display as a HTML table
-          * *************************************************/
+
 
         /// <summary>
         /// This provides the filter search dropdown content
@@ -49,27 +41,18 @@ namespace EfCoreInAction.Controllers
         /// <param name="options"></param>
         /// <returns></returns>
         [HttpGet]
-        public JsonResult GetFilterSearchContent    //#A
-            (SortFilterPageOptions options)         //#B
+        public JsonResult GetFilterSearchContent(SortFilterPageOptions options)         
         {
-            var service = new                       //#C
-                BookFilterDropdownService(_context);//#C
+            var service = new BookFilterDropdownService(_context);
 
-            var traceIdent = HttpContext.TraceIdentifier; //REMOVE THIS FOR BOOK as it could be confusing
+            var traceIdent = HttpContext.TraceIdentifier; //This makes the logging display work
 
-            return Json(                            //#D
+            return Json(                            
                 new TraceIndentGeneric<IEnumerable<DropdownTuple>>(
                 traceIdent,
-                service.GetFilterDropDownValues(    //#E
-                    options.FilterBy)));            //#E
+                service.GetFilterDropDownValues(    
+                    options.FilterBy)));            
         }
-        /****************************************************
-        #A This method is called by the URL Home/GetFilterSearchContent
-        #B It also gets the sort, filter, page options from the URL
-        #C We create the BookFilterDropdownService using the applications's DbContext provided by ASP.NET Core
-        #D This converts normal .NET objects into JSON format to send back to the AJAX Get call
-        #E The GetFilterDropDownValues method calculates the right data needed for the chosen filter type 
-         * **************************************************/
 
 
         public IActionResult About()

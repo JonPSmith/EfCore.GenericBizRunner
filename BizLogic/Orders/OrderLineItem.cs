@@ -7,7 +7,7 @@ namespace BizLogic.Orders
     {
         public int BookId { get; set; }
 
-        public short NumBooks { get; set; }
+        public byte NumBooks { get; set; }
     }
 
 

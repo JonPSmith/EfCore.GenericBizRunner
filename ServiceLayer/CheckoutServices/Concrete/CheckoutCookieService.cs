@@ -96,7 +96,7 @@ namespace ServiceLayer.CheckoutServices.Concrete
                 _lineItems.Add(new OrderLineItem
                 {
                     BookId = int.Parse(parts[i * 2 + 1]),
-                    NumBooks = short.Parse(parts[i * 2 + 2])
+                    NumBooks = byte.Parse(parts[i * 2 + 2])
                 });
             }
         }

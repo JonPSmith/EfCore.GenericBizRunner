@@ -8,53 +8,58 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataLayer.EfClasses
 {
-    public class LineItem : IValidatableObject //#A
+    public class LineItem : IValidatableObject 
     {
-        public int LineItemId { get; set; }
+        public int LineItemId { get; private set; }
 
-        [Range(1,5, ErrorMessage =                      //#B
-            "This order is over the limit of 5 books.")] //#B
-        public byte LineNum { get; set; }
+        [Range(1,5, ErrorMessage =                      
+            "This order is over the limit of 5 books.")] 
+        public byte LineNum { get; private set; }
 
-        public short NumBooks { get; set; }
+        public short NumBooks { get; private set; }
 
         /// <summary>
         /// This holds a copy of the book price. We do this in case the price of the book changes,
         /// e.g. if the price was discounted in the future the order is still correct.
         /// </summary>
-        public decimal BookPrice { get; set; }
+        public decimal BookPrice { get; private set; }
 
         // relationships
 
-        public int OrderId { get; set; }
-        public int BookId { get; set; }
+        public int OrderId { get; private set; }
+        public int BookId { get; private set; }
 
-        public Book ChosenBook { get; set; }
+        public Book ChosenBook { get; private set; }
 
-        IEnumerable<ValidationResult> IValidatableObject.Validate //#C
-            (ValidationContext validationContext)                 //#C
+        internal LineItem(short numBooks, Book chosenBook, byte lineNum)
         {
-            var currContext = 
-                validationContext.GetService(typeof(DbContext));//#D
+            NumBooks = numBooks;
+            ChosenBook = chosenBook ?? throw new ArgumentNullException(nameof(chosenBook));
+            BookPrice = chosenBook.ActualPrice;
+            LineNum = lineNum;
+        }
 
-            if (ChosenBook.Price < 0)                      //#E
-                yield return new ValidationResult(         //#E
-$"Sorry, the book '{ChosenBook.Title}' is not for sale."); //#E
+        /// <summary>
+        /// Used by EF Core
+        /// </summary>
+        private LineItem() { }
+
+        /// <summary>
+        /// Extra validation rules: These are checked by using the SaveChangesWithValidation method when saving to the database
+        /// </summary>
+        /// <param name="validationContext"></param>
+        /// <returns></returns>
+        IEnumerable<ValidationResult> IValidatableObject.Validate 
+            (ValidationContext validationContext)                 
+        {
+            if (BookPrice < 0)
+                yield return new ValidationResult($"Sorry, the book '{ChosenBook.Title}' is not for sale.");
 
             if (NumBooks > 100)
-                yield return new ValidationResult(//#F
-"If you want to order a 100 or more books"+       //#F
-" please phone us on 01234-5678-90",              //#F
-                    new[] { nameof(NumBooks) });  //#F
+                yield return new ValidationResult("If you want to order a 100 or more books"+       
+                        " please phone us on 01234-5678-90",              
+                    new[] { nameof(NumBooks) });  
         }
     }
-    /**********************************************************
-    #A By applying the IValidatableObject interface then the validation will call the method the interface defines
-    #B This is one of the validation DataAnnotations. The validator will show my error message if the LineNum property is not in range
-    #C This is the method that the IValidatableObject interface requires me to create
-    #D I can access the current DbContext that this database access is using. In this case I don't use it, but you could use it to get better error feedback information for the user
-    #D Here I use the ChosenBook link to look at the date the book was published. I can also format my own error message, which is helpful
-    #E This moves the Price check out of the business logic
-    #F This tests a property in this class so I can return that property with the error.
-     * *******************************************************/
+
 }

@@ -14,7 +14,7 @@ namespace BizLogic.Orders.Concrete
     {
         private readonly IPlaceOrderDbAccess _dbAccess;
 
-        public PlaceOrderAction(IPlaceOrderDbAccess dbAccess)//#C
+        public PlaceOrderAction(IPlaceOrderDbAccess dbAccess)
         {
             _dbAccess = dbAccess;
         }
@@ -32,59 +32,18 @@ namespace BizLogic.Orders.Concrete
                 AddError("You must accept the T&Cs to place an order.");   
                 return null;                          
             }                                         
-            if (!dto.LineItems.Any())                 
-            {                                         
-                AddError("No items in your basket."); 
-                return null;                          
-            }                                         
 
-            var booksDict = _dbAccess.FindBooksByIdsWithPriceOffers    
-                     (dto.LineItems.Select(x => x.BookId));
-            var order = new Order                          
-            {                                              
-                CustomerName = dto.UserId,    
-                ExpectedDeliveryDate = DateTime.Today.AddDays(5),
-                LineItems = FormLineItemsWithErrorChecking(dto.LineItems, booksDict)        
-            };                                             
+            var bookOrders = 
+                dto.LineItems.Select(  
+                    x => _dbAccess.BuildBooksDto(x.BookId, x.NumBooks));              
+            var order = new Order( dto.UserId, DateTime.Today.AddDays(5),
+                bookOrders,                 
+                s => AddError(s));                                                       
 
             if (!HasErrors)
                 _dbAccess.Add(order);
 
             return HasErrors ? null : order;
-        }
-
-        private List<LineItem>  FormLineItemsWithErrorChecking
-            (IEnumerable<OrderLineItem> lineItems,            
-             IDictionary<int,Book> booksDict)                 
-        {
-            var result = new List<LineItem>();
-            var i = 1;
-            
-            foreach (var lineItem in lineItems)
-            {
-                if (!booksDict.                             
-                    ContainsKey(lineItem.BookId))           
-                        throw new InvalidOperationException 
-                        ($"An order failed because book, id = {lineItem.BookId} was missing.");               
-
-                var book = booksDict[lineItem.BookId];
-                var bookPrice = 
-                    book.Promotion?.NewPrice ?? book.Price; 
-                if (bookPrice <= 0)                         
-                    AddError($"Sorry, the book '{book.Title}' is not for sale.");    
-                else
-                {
-                    //Valid, so add to the order
-                    result.Add(new LineItem         
-                    {                               
-                        BookPrice = bookPrice,      
-                        ChosenBook = book,          
-                        LineNum = (byte)(i++),      
-                        NumBooks = lineItem.NumBooks
-                    });
-                }
-            }
-            return result;
         }
     }
 }

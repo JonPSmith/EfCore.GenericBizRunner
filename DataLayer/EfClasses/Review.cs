@@ -1,22 +1,34 @@
-﻿// Copyright (c) 2016 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
+﻿// Copyright (c) 2017 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT licence. See License.txt in the project root for license information.
+
+using System.ComponentModel.DataAnnotations;
 
 namespace DataLayer.EfClasses
 {
-    public class Review                      //#L
+    public class Review
     {
-        public int ReviewId { get; set; }
-        public string VoterName { get; set; }
-        public int NumStars { get; set; }
-        public string Comment { get; set; }
+        public const int NameLength = 100;
+
+        public int ReviewId { get; private set; }
+        [MaxLength(NameLength)]
+        public string VoterName { get; private set; }
+        public int NumStars { get; private set; }
+        public string Comment { get; private set; }
 
         //-----------------------------------------
         //Relationships
 
-        public int BookId { get; set; }       //#M
+        public int BookId { get; private set; }
+
+        private Review() { }
+
+        internal Review(int numStars, string comment, string voterName, int bookId = 0)
+        {
+            NumStars = numStars;
+            Comment = comment;
+            VoterName = voterName;
+            BookId = bookId;
+        }
     }
-    /*******************************************************
-    #L This holds customer reviews with their rating
-    #M This foreign key holds the key of the book this review belongs to
-     * *****************************************************/
+
 }
