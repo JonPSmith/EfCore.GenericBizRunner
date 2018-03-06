@@ -11,9 +11,8 @@ namespace ServiceLayer.BookServices
         public decimal OrgPrice { get; set; }
         public string Title { get; set; }
 
-
         public decimal ActualPrice { get; set; }
-        [Required(AllowEmptyStrings = false)]
+        //[Required(AllowEmptyStrings = false)]
         public string PromotionalText { get; set; }
     }
 
