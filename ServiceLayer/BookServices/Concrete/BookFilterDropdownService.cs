@@ -32,21 +32,21 @@ namespace ServiceLayer.BookServices.Concrete
                 case BooksFilterBy.ByVotes:
                     return FormVotesDropDown();
                 case BooksFilterBy.ByPublicationYear:
-                    var comingSoon = _db.Books.                     //#A
-                        Any(x => x.PublishedOn > DateTime.UtcNow);  //#A
-                    var nextYear = DateTime.UtcNow.AddYears(1).Year;//#B
-                    var result = _db.Books                          //#C
-                        .Select(x => x.PublishedOn.Year)            //#C
-                        .Distinct()                                 //#C
-                        .Where(x => x < nextYear)                   //#C
-                        .OrderByDescending(x => x)                  //#C
-                        .Select(x => new DropdownTuple              //#D
-                        {                                           //#D
-                            Value = x.ToString(),                   //#D
-                            Text = x.ToString()                     //#D
-                        }).ToList();                                //#D
-                    if (comingSoon)                                 //#E
-                        result.Insert(0, new DropdownTuple          //#E
+                    var comingSoon = _db.Books.                     
+                        Any(x => x.PublishedOn > DateTime.UtcNow);  
+                    var nextYear = DateTime.UtcNow.AddYears(1).Year;
+                    var result = _db.Books                          
+                        .Select(x => x.PublishedOn.Year)            
+                        .Distinct()                                 
+                        .Where(x => x < nextYear)                   
+                        .OrderByDescending(x => x)                  
+                        .Select(x => new DropdownTuple              
+                        {                                           
+                            Value = x.ToString(),                   
+                            Text = x.ToString()                     
+                        }).ToList();                                
+                    if (comingSoon)                                 
+                        result.Insert(0, new DropdownTuple          
                         {
                             Value = BookListDtoFilter.AllBooksNotPublishedString,
                             Text = BookListDtoFilter.AllBooksNotPublishedString

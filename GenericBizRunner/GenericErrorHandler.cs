@@ -12,7 +12,7 @@ namespace GenericBizRunner
     /// <summary>
     /// This contains the error hanlding part of the GenericBizRunner
     /// </summary>
-    public class GenericErrorHandler : IGenericErrorHandler
+    public class GenericErrorHandler : IGenericStatus
     {
         private readonly List<ValidationResult> _errors = new List<ValidationResult>();
         private string _successMessage;
@@ -73,7 +73,7 @@ namespace GenericBizRunner
         /// This allows statuses to be combined
         /// </summary>
         /// <param name="status"></param>
-        public void CombineErrors(IGenericErrorHandler status)
+        public void CombineErrors(IGenericStatus status)
         {
             _errors.AddRange(status.Errors);
             if (!HasErrors && status.Message != null)

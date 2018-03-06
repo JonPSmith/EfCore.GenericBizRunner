@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GenericBizRunner
 {
-    public interface IGenericErrorHandler
+    public interface IGenericStatus
     {
         /// <summary>
         /// This holds the list of ValidationResult errors. If the collection is empty, then there were no errors
@@ -45,6 +45,6 @@ namespace GenericBizRunner
         /// This allows statuses to be combined
         /// </summary>
         /// <param name="status"></param>
-        void CombineErrors(IGenericErrorHandler status);
+        void CombineErrors(IGenericStatus status);
     }
 }

@@ -22,17 +22,17 @@ namespace ServiceLayer.BookServices.Concrete
         public IQueryable<BookListDto> SortFilterPage
             (SortFilterPageOptions options)
         {
-            var booksQuery = _context.Books            //#A
-                .AsNoTracking()                        //#B
-                .MapBookToDto()                        //#C
-                .OrderBooksBy(options.OrderByOptions)  //#D
-                .FilterBooksBy(options.FilterBy,       //#E
-                               options.FilterValue);   //#E
+            var booksQuery = _context.Books            
+                .AsNoTracking()                        
+                .MapBookToDto()                        
+                .OrderBooksBy(options.OrderByOptions)  
+                .FilterBooksBy(options.FilterBy,       
+                               options.FilterValue);   
 
-            options.SetupRestOfDto(booksQuery);        //#F
+            options.SetupRestOfDto(booksQuery);        
 
-            return booksQuery.Page(options.PageNum-1,  //#G
-                                   options.PageSize);  //#G
+            return booksQuery.Page(options.PageNum-1,  
+                                   options.PageSize);  
         }
     }
     /*********************************************************

@@ -105,7 +105,7 @@ namespace Tests.UnitTests.TestActions
         //------------------------------------------------------------
         //Errors
 
-        //GetDto
+        //GetOriginal
 
         [Fact]
         public void TestGetDtoGenericActionsDtoBad()

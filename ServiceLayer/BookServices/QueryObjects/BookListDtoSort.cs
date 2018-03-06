@@ -30,20 +30,20 @@ namespace ServiceLayer.BookServices.QueryObjects
         {
             switch (orderByOptions)
             {
-                case OrderByOptions.SimpleOrder:          //#A
-                    return books.OrderByDescending(       //#A
-                        x => x.BookId);                   //#A
-                case OrderByOptions.ByVotes:              //#B
-                    return books.OrderByDescending(x =>   //#B
-                        x.ReviewsAverageVotes);           //#B
-                case OrderByOptions.ByPublicationDate:    //#C
-                    return books.OrderByDescending(       //#C
-                        x => x.PublishedOn);              //#C
-                case OrderByOptions.ByPriceLowestFirst:   //#D
-                    return books.OrderBy(x => x.ActualPrice);//#D
-                case OrderByOptions.ByPriceHigestFirst:   //#D
-                    return books.OrderByDescending(       //#D
-                        x => x.ActualPrice);              //#D
+                case OrderByOptions.SimpleOrder:          
+                    return books.OrderByDescending(       
+                        x => x.BookId);                   
+                case OrderByOptions.ByVotes:              
+                    return books.OrderByDescending(x =>   
+                        x.ReviewsAverageVotes);           
+                case OrderByOptions.ByPublicationDate:    
+                    return books.OrderByDescending(       
+                        x => x.PublishedOn);              
+                case OrderByOptions.ByPriceLowestFirst:   
+                    return books.OrderBy(x => x.ActualPrice);
+                case OrderByOptions.ByPriceHigestFirst:   
+                    return books.OrderByDescending(       
+                        x => x.ActualPrice);              
                 default:
                     throw new ArgumentOutOfRangeException(
                         nameof(orderByOptions), orderByOptions, null);

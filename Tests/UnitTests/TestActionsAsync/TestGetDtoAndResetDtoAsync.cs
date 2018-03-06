@@ -127,7 +127,7 @@ namespace Tests.UnitTests.TestActionsAsync
         //------------------------------------------------------------
         //Errors
 
-        //GetDto
+        //GetOriginal
 
         [Fact]
         public async Task TestGetDtoGenericActionsDtoBad()

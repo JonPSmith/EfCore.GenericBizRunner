@@ -43,7 +43,7 @@ namespace EfCoreInAction.Controllers
             [FromServices]IActionService<IChangeDeliverAction> service)
         {
             //When the DTO is created it will run the SetupSecondaryData method to build the data needed for the display
-            //For the SetupSecondaryData to work it needs the orderId and UserId, so the GetDto method allow you to add these
+            //For the SetupSecondaryData to work it needs the orderId and UserId, so the GetOriginal method allow you to add these
             //via the optional parameter. This sets these properties before the SetupSecondaryData method is called
             var dto = service.GetDto<WebChangeDeliveryDto>(x =>
             {

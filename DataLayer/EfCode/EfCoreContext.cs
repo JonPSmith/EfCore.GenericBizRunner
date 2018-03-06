@@ -17,7 +17,6 @@ namespace DataLayer.EfCode
     {
         public DbSet<Book> Books { get; set; }            
         public DbSet<Author> Authors { get; set; }        
-        public DbSet<PriceOffer> PriceOffers { get; set; }
         public DbSet<Order> Orders { get; set; }
 
         public EfCoreContext(                             
@@ -28,8 +27,7 @@ namespace DataLayer.EfCode
             OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new BookConfig());       
-            modelBuilder.ApplyConfiguration(new BookAuthorConfig()); 
-            modelBuilder.ApplyConfiguration(new PriceOfferConfig());
+            modelBuilder.ApplyConfiguration(new BookAuthorConfig());
             modelBuilder.ApplyConfiguration(new OrderConfig());
             modelBuilder.ApplyConfiguration(new LineItemConfig());   
         }

@@ -60,7 +60,7 @@ namespace DataLayer.EfClasses
         //----------------------------------------------------
         //aggregate methods
 
-        public IGenericErrorHandler ChangeDeliveryDate(string userId, DateTime newDeliveryDate)
+        public IGenericStatus ChangeDeliveryDate(string userId, DateTime newDeliveryDate)
         {
             if (_lineItems == null)
                 throw new NullReferenceException("You must use .Include(p => p.LineItems) before calling this method.");

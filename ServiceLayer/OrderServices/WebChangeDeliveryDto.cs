@@ -40,7 +40,7 @@ namespace ServiceLayer.OrderServices
         public bool HasErrors { get; private set; }
 
         /// <summary>
-        /// This is called by the BizRunner’s GetDto or ResetDto methods.
+        /// This is called by the BizRunner’s GetOriginal or ResetDto methods.
         /// It sets up the presentation layer properties
         /// </summary>
         /// <param name="db">The DbContext to allow access to the database</param>

@@ -24,28 +24,28 @@ namespace ServiceLayer.BookServices.QueryObjects
 
         public static IQueryable<BookListDto> FilterBooksBy(
             this IQueryable<BookListDto> books, 
-            BooksFilterBy filterBy, string filterValue)         //#A
+            BooksFilterBy filterBy, string filterValue)         
         {
-            if (string.IsNullOrEmpty(filterValue))              //#B
-                return books;                                   //#B
+            if (string.IsNullOrEmpty(filterValue))              
+                return books;                                   
 
             switch (filterBy)
             {
-                case BooksFilterBy.NoFilter:                    //#C
-                    return books;                               //#C
+                case BooksFilterBy.NoFilter:                    
+                    return books;                               
                 case BooksFilterBy.ByVotes:
-                    var filterVote = int.Parse(filterValue);     //#D
-                    return books.Where(x =>                      //#D
-                          x.ReviewsAverageVotes > filterVote);   //#D
+                    var filterVote = int.Parse(filterValue);     
+                    return books.Where(x =>                      
+                          x.ReviewsAverageVotes > filterVote);   
                 case BooksFilterBy.ByPublicationYear:             
-                    if (filterValue == AllBooksNotPublishedString)//#E
-                        return books.Where(                       //#E
-                            x => x.PublishedOn > DateTime.UtcNow);//#E
+                    if (filterValue == AllBooksNotPublishedString)
+                        return books.Where(                       
+                            x => x.PublishedOn > DateTime.UtcNow);
 
-                    var filterYear = int.Parse(filterValue);      //#F
-                    return books.Where(                           //#F
-                        x => x.PublishedOn.Year == filterYear     //#F
-                          && x.PublishedOn <= DateTime.UtcNow);   //#F
+                    var filterYear = int.Parse(filterValue);      
+                    return books.Where(                           
+                        x => x.PublishedOn.Year == filterYear     
+                          && x.PublishedOn <= DateTime.UtcNow);   
                 default:
                     throw new ArgumentOutOfRangeException
                         (nameof(filterBy), filterBy, null);

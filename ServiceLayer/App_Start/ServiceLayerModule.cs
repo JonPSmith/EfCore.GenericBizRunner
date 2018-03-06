@@ -4,9 +4,6 @@
 using Autofac;
 using BizDbAccess;
 using BizLogic;
-using GenericBizRunner;
-using DataLayer.EfCode;
-using Microsoft.EntityFrameworkCore;
 
 namespace ServiceLayer
 {
@@ -14,6 +11,8 @@ namespace ServiceLayer
     {
         protected override void Load(ContainerBuilder builder)
         {
+            //Autowire the classes with interfaces
+            builder.RegisterAssemblyTypes(GetType().Assembly).AsImplementedInterfaces();
 
             //-----------------------------
             //Now register the other layers

@@ -26,7 +26,6 @@ namespace DataLayer.EfCode
             modelBuilder.ApplyConfiguration(new LineItemConfig());
 
             modelBuilder.Ignore<Review>(); 
-            modelBuilder.Ignore<PriceOffer>();
             modelBuilder.Ignore<Author>();
             modelBuilder.Ignore<BookAuthor>(); 
         }

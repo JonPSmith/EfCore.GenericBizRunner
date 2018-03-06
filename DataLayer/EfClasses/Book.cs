@@ -61,7 +61,7 @@ namespace DataLayer.EfClasses
             _authorsLink = new HashSet<BookAuthor>(authors.Select(a => new BookAuthor(this, a, order++)));
         }
 
-        public void ChangePublicationDate(DateTime newDate)
+        public void UpdatePublishedOn(DateTime newDate)
         {
             PublishedOn = newDate;
         }
@@ -96,7 +96,7 @@ namespace DataLayer.EfClasses
             _reviews.Remove(review); 
         }
 
-        public IGenericErrorHandler AddPromotion(decimal newPrice, string promotionalText)                  
+        public IGenericStatus AddPromotion(decimal newPrice, string promotionalText)                  
         {
             var status = new GenericErrorHandler();
             if (string.IsNullOrWhiteSpace(promotionalText))
