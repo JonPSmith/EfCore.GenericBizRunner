@@ -5,7 +5,7 @@ namespace ServiceLayer.BookServices
 {
     public interface IAddRemovePromotionService
     {
-        IGenericStatus Status { get; }
+        IStatusGeneric Status { get; }
 
         AddRemovePromotionDto GetOriginal(int id);
 

@@ -29,11 +29,11 @@ namespace DataLayer.EfClasses
 
         private Order() { }
 
-        public static GenericErrorHandler<Order> CreateOrderFactory(
+        public static IStatusGeneric<Order> CreateOrderFactory(
             string customerName, DateTime expectedDeliveryDate,
             IEnumerable<OrderBooksDto> bookOrders)
         {
-            var status = new GenericErrorHandler<Order>();
+            var status = new StatusGenericHandler<Order>();
             var order = new Order
             {
                 CustomerName = customerName,
@@ -52,12 +52,9 @@ namespace DataLayer.EfClasses
             return status;
         }
 
-        public IGenericStatus ChangeDeliveryDate(string userId, DateTime newDeliveryDate)
+        public IStatusGeneric ChangeDeliveryDate(string userId, DateTime newDeliveryDate)
         {
-            if (_lineItems == null)
-                throw new NullReferenceException("You must use .Include(p => p.LineItems) before calling this method.");
-
-            var status = new GenericErrorHandler();
+            var status = new StatusGenericHandler();
             if (CustomerName != userId)
             {
                 status.AddError("I'm sorry, but that order does not belong to you");

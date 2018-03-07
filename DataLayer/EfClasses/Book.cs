@@ -96,9 +96,9 @@ namespace DataLayer.EfClasses
             _reviews.Remove(review); 
         }
 
-        public IGenericStatus AddPromotion(decimal newPrice, string promotionalText)                  
+        public IStatusGeneric AddPromotion(decimal newPrice, string promotionalText)                  
         {
-            var status = new GenericErrorHandler();
+            var status = new StatusGenericHandler();
             if (string.IsNullOrWhiteSpace(promotionalText))
             {
                 status.AddError("You must provide some text to go with the promotion.", nameof(PromotionalText));

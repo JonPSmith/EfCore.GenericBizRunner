@@ -20,7 +20,7 @@ namespace ExampleWebApp.Helpers
         /// <param name="status">The status that came back from the BizRunner</param>
         /// <param name="modelState">The MVC modelState to add errors to</param>
         /// <param name="displayDto">This is the Dto that will be used to display the error messages</param>
-        public static void CopyErrorsToModelState<T>(this IGenericStatus status, ModelStateDictionary modelState, T displayDto) 
+        public static void CopyErrorsToModelState<T>(this IStatusGeneric status, ModelStateDictionary modelState, T displayDto) 
         {
             if (!status.HasErrors) return;
 
@@ -42,7 +42,7 @@ namespace ExampleWebApp.Helpers
         /// </summary>
         /// <param name="status"></param>
         /// <param name="modelState"></param>
-        public static void CopyErrorsToModelState(this IGenericStatus status, ModelStateDictionary modelState)
+        public static void CopyErrorsToModelState(this IStatusGeneric status, ModelStateDictionary modelState)
         {
             if (!status.HasErrors) return;
 

@@ -34,7 +34,7 @@ namespace GenericBizRunner
     /// This abstract class provides all various features for error reporting and oher status items
     /// </summary>
     [DebuggerDisplay("Message = {Message}")]
-    public abstract class BizActionStatus : GenericErrorHandler, IBizActionStatus
+    public abstract class BizActionStatus : StatusGenericHandler, IBizActionStatus
     {
 
         /// <summary>

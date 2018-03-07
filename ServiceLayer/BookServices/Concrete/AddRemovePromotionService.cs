@@ -13,7 +13,7 @@ namespace ServiceLayer.BookServices.Concrete
     {
         private readonly EfCoreContext _context;
 
-        public IGenericStatus Status { get; private set; } = new GenericErrorHandler();
+        public IStatusGeneric Status { get; private set; } = new StatusGenericHandler();
 
         public AddRemovePromotionService(EfCoreContext context)
         {

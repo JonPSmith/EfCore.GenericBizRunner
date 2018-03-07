@@ -12,7 +12,7 @@ namespace GenericBizRunner
     /// <summary>
     /// This contains the error hanlding part of the GenericBizRunner
     /// </summary>
-    public class GenericErrorHandler<T> : GenericErrorHandler
+    public class StatusGenericHandler<T> : StatusGenericHandler, IStatusGeneric<T>
     {
         private T _result;
 

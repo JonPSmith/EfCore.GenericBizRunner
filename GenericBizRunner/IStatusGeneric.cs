@@ -4,7 +4,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GenericBizRunner
 {
-    public interface IGenericStatus
+    /// <summary>
+    /// This is the interface for creating and returning 
+    /// </summary>
+    public interface IStatusGeneric
     {
         /// <summary>
         /// This holds the list of ValidationResult errors. If the collection is empty, then there were no errors
@@ -45,6 +48,6 @@ namespace GenericBizRunner
         /// This allows statuses to be combined
         /// </summary>
         /// <param name="status"></param>
-        void CombineErrors(IGenericStatus status);
+        void CombineErrors(IStatusGeneric status);
     }
 }
