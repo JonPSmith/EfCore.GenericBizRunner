@@ -101,7 +101,7 @@ namespace DataLayer.EfClasses
             var status = new GenericErrorHandler();
             if (string.IsNullOrWhiteSpace(promotionalText))
             {
-                status.AddError("You must provide some text to go with the promotion.", "PromotionalText");
+                status.AddError("You must provide some text to go with the promotion.", nameof(PromotionalText));
                 return status;
             }
 
