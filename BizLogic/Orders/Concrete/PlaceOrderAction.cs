@@ -34,7 +34,7 @@ namespace BizLogic.Orders.Concrete
             }                                         
 
             var bookOrders = 
-                dto.LineItems.Select(  
+                dto.CheckoutLineItems.Select(  
                     x => _dbAccess.BuildBooksDto(x.BookId, x.NumBooks)); 
             var orderStatus = Order.CreateOrderFactory(
                 dto.UserId, DateTime.Today.AddDays(5),

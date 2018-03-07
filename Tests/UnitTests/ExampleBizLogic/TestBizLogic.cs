@@ -31,7 +31,7 @@ namespace Tests.UnitTests.ExampleBizLogic
                 var dto = new PlaceOrderInDto
                 {
                     AcceptTAndCs = true,
-                    LineItems = new List<OrderLineItem>
+                    CheckoutLineItems = new List<OrderLineItem>
                     {
                         new OrderLineItem {BookId = 1, NumBooks = 2}
                     }

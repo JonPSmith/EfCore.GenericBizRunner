@@ -12,15 +12,15 @@ namespace BizLogic.Orders
 
         public string UserId { get; set; }
 
-        public List<OrderLineItem> LineItems { get; set; }
+        public List<OrderLineItem> CheckoutLineItems { get; set; }
 
         public PlaceOrderInDto () { }
 
-        public PlaceOrderInDto(bool acceptTAndCs, string userId, List<OrderLineItem> lineItems)
+        public PlaceOrderInDto(bool acceptTAndCs, string userId, List<OrderLineItem> checkoutLineItems)
         {
             AcceptTAndCs = acceptTAndCs;
             UserId = userId;
-            LineItems = lineItems;
+            CheckoutLineItems = checkoutLineItems;
         }
     }
 }

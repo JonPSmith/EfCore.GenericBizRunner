@@ -73,7 +73,8 @@ namespace EfCoreInAction.Controllers
                 //If successful I need to clear the line items from the basket cookie
                 ClearCheckoutCookie(HttpContext);
                 SetupTraceInfo();       //Used to update the logs
-                return RedirectToAction("ConfirmOrder", "Orders", new { order.OrderId, Message = "Your order is confirmed" });
+                return RedirectToAction("ConfirmOrder", "Orders", 
+                    new { order.OrderId, Message = "Your order is confirmed" });
             }
 
             //Otherwise errors, so I need to redisplay the basket from the cookie
