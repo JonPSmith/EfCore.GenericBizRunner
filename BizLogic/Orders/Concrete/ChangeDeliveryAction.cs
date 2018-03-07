@@ -22,7 +22,8 @@ namespace BizLogic.Orders.Concrete
             if (order == null)
                 throw new NullReferenceException("Could not find the order. Someone entering illegal ids?");
 
-
+            var status = order.ChangeDeliveryDate(dto.UserId, dto.NewDeliveryDate);
+            CombineErrors(status);
             
             Message = $"Your new delivery date is {dto.NewDeliveryDate.ToShortDateString()}.";
         }
