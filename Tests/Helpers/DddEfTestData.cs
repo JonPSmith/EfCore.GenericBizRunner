@@ -3,6 +3,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using DataLayer.Dtos;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
 
@@ -10,6 +12,7 @@ namespace Tests.Helpers
 {
     public static class DddEfTestData
     {
+        public const string DummyUserId = "UnitTestUserId";
         public static readonly DateTime DummyBookStartDate = new DateTime(2010, 1, 1);
 
         public static void SeedDatabaseDummyBooks(this EfCoreContext context, int numBooks = 10)
@@ -129,6 +132,22 @@ namespace Tests.Helpers
             books.Add(book4);
 
             return books;
+        }
+
+        public static void SeedDummyOrder(this EfCoreContext context, DateTime orderDate = new DateTime())
+        {
+            if (orderDate == new DateTime())
+                orderDate = DateTime.Today;
+            var books = context.Books.ToList();
+            context.AddRange(BuildDummyOrder(DummyUserId, orderDate, books.First()));
+            context.SaveChanges();
+        }
+
+        private static Order BuildDummyOrder(string userId, DateTime orderDate, Book bookOrdered)
+        {
+            var deliverDay = orderDate.AddDays(5);
+            var bookOrders = new List<OrderBooksDto>() { new OrderBooksDto(1, bookOrdered, 1) };
+            return Order.CreateOrderFactory(userId, deliverDay, bookOrders)?.Result;
         }
     }
 }
