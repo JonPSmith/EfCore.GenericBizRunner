@@ -26,12 +26,13 @@ namespace Tests.UnitTests.DDDEntities
 
             //ATTEMPT
             var bookOrders = new List<OrderBooksDto>() { new OrderBooksDto(book1.BookId, book1, 1), new OrderBooksDto(book2.BookId, book2, 2) };
-            var order = new Order("user", DateTime.Today.AddDays(3), bookOrders, s => throw new Exception());
+            var status = Order.CreateOrderFactory("user", DateTime.Today.AddDays(3), bookOrders);
 
             //VERIFY
-            order.LineItems.Count().ShouldEqual(2);
-            order.LineItems.First().LineNum.ShouldEqual((byte)1);
-            order.LineItems.Last().LineNum.ShouldEqual((byte)2);
+            status.HasErrors.ShouldBeFalse();
+            status.Result.LineItems.Count().ShouldEqual(2);
+            status.Result.LineItems.First().LineNum.ShouldEqual((byte)1);
+            status.Result.LineItems.Last().LineNum.ShouldEqual((byte)2);
         }
 
         [Fact]
@@ -42,12 +43,13 @@ namespace Tests.UnitTests.DDDEntities
 
             //ATTEMPT
             var lineItems = new List<OrderBooksDto> { new OrderBooksDto(book.BookId, book, 3) };
-            var order = new Order("user", DateTime.Today.AddDays(3), lineItems, s => throw new Exception());
+            var status = Order.CreateOrderFactory("user", DateTime.Today.AddDays(3), lineItems);
 
             //VERIFY
-            order.LineItems.Count().ShouldEqual(1);
-            order.LineItems.First().NumBooks.ShouldEqual((short)3);
-            order.LineItems.First().BookPrice.ShouldEqual(book.ActualPrice);
+            status.HasErrors.ShouldBeFalse();
+            status.Result.LineItems.Count().ShouldEqual(1);
+            status.Result.LineItems.First().NumBooks.ShouldEqual((short)3);
+            status.Result.LineItems.First().BookPrice.ShouldEqual(book.ActualPrice);
         }
 
         [Fact]
@@ -56,11 +58,11 @@ namespace Tests.UnitTests.DDDEntities
             //SETUP
 
             //ATTEMPT
-            string errMessage = null;
-            var order = new Order("user", DateTime.Today.AddDays(3), new OrderBooksDto[]{}, s => errMessage = s);
+            var status = Order.CreateOrderFactory("user", DateTime.Today.AddDays(3), new OrderBooksDto[]{});
 
             //VERIFY
-            errMessage.ShouldEqual("No items in your basket.");
+            status.HasErrors.ShouldBeTrue();
+            status.Errors.Single().ErrorMessage.ShouldEqual("No items in your basket.");
         }
 
         [Fact]
@@ -69,7 +71,7 @@ namespace Tests.UnitTests.DDDEntities
             //SETUP
             var book = DddEfTestData.CreateDummyBookOneAuthor();
             var lineItems = new List<OrderBooksDto> { new OrderBooksDto(book.BookId, book, 3) };
-            var order = new Order("user", DateTime.Today.AddDays(1), lineItems, s => throw new Exception());
+            var order = Order.CreateOrderFactory("user", DateTime.Today.AddDays(1), lineItems).Result;
 
             //ATTEMPT
             var newDeliverDate = DateTime.Today.AddDays(2);
@@ -98,7 +100,7 @@ namespace Tests.UnitTests.DDDEntities
                 //ATTEMPT
                 var book = context.Books.First();
                 var lineItems = new List<OrderBooksDto> { new OrderBooksDto(book.BookId, book, 1) };
-                context.Add( new Order("user", DateTime.Today.AddDays(3), lineItems, s => throw new Exception()));
+                context.Add(Order.CreateOrderFactory("user", DateTime.Today.AddDays(3), lineItems).Result);
                 context.SaveChanges();
 
                 //VERIFY

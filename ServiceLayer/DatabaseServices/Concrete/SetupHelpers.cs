@@ -97,7 +97,7 @@ namespace ServiceLayer.DatabaseServices.Concrete
         {
             var deliverDay = orderDate.AddDays(5);
             var bookOrders = new List<OrderBooksDto>() {new OrderBooksDto(1, bookOrdered, 1)};
-            return new Order(userId, deliverDay, bookOrders, s => throw new Exception());
+            return Order.CreateOrderFactory(userId, deliverDay, bookOrders)?.Result;
         }
     }
 }

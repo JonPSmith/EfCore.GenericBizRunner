@@ -35,15 +35,16 @@ namespace BizLogic.Orders.Concrete
 
             var bookOrders = 
                 dto.LineItems.Select(  
-                    x => _dbAccess.BuildBooksDto(x.BookId, x.NumBooks));              
-            var order = new Order( dto.UserId, DateTime.Today.AddDays(5),
-                bookOrders,                 
-                s => AddError(s));                                                       
+                    x => _dbAccess.BuildBooksDto(x.BookId, x.NumBooks)); 
+            var orderStatus = Order.CreateOrderFactory(
+                dto.UserId, DateTime.Today.AddDays(5),
+                bookOrders);
+            CombineErrors(orderStatus);
 
             if (!HasErrors)
-                _dbAccess.Add(order);
+                _dbAccess.Add(orderStatus.Result);
 
-            return HasErrors ? null : order;
+            return HasErrors ? null : orderStatus.Result;
         }
     }
 }

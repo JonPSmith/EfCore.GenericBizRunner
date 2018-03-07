@@ -15,50 +15,42 @@ namespace DataLayer.EfClasses
         private HashSet<LineItem> _lineItems;
 
         public int OrderId { get; private set; }
-
         public DateTime DateOrderedUtc { get; private set; }
-
         public DateTime ExpectedDeliveryDate { get; private set; }
-
         public bool HasBeenDelivered { get; private set; }
-
-        /// <summary>
-        /// In this simple example the cookie holds a GUID for everyone that 
-        /// </summary>
         public string CustomerName { get; private set; }
 
         // relationships
 
         public IEnumerable<LineItem> LineItems => _lineItems?.ToList();
 
-        // Extra columns not used by EF
-
         public string OrderNumber => $"SO{OrderId:D6}";
 
-        /// <summary>
-        /// Use by EF Core
-        /// </summary>
-        private Order()
-        {
-        }
 
-        public Order(string customerName, DateTime expectedDeliveryDate, IEnumerable<OrderBooksDto> bookOrders,
-            Action<string> addError)
-        {
-            CustomerName = customerName;
-            ExpectedDeliveryDate = expectedDeliveryDate;
+        private Order() { }
 
-            DateOrderedUtc = DateTime.UtcNow;
-            HasBeenDelivered = expectedDeliveryDate < DateTime.Today;
+        public static GenericErrorHandler<Order> CreateOrderFactory(
+            string customerName, DateTime expectedDeliveryDate,
+            IEnumerable<OrderBooksDto> bookOrders)
+        {
+            var status = new GenericErrorHandler<Order>();
+            var order = new Order
+            {
+                CustomerName = customerName,
+                ExpectedDeliveryDate = expectedDeliveryDate,
+                DateOrderedUtc = DateTime.UtcNow,
+                HasBeenDelivered = expectedDeliveryDate < DateTime.Today
+            };
 
             byte lineNum = 1;
-            _lineItems = new HashSet<LineItem>(bookOrders.Select(x => new LineItem(x.numBooks, x.ChosenBook, lineNum++)));
-            if (!_lineItems.Any())
-                addError("No items in your basket.");
-        }
+            order._lineItems = new HashSet<LineItem>(bookOrders
+                .Select(x => new LineItem(x.numBooks, x.ChosenBook, lineNum++)));
+            if (!order._lineItems.Any())
+                status.AddError("No items in your basket.");
 
-        //----------------------------------------------------
-        //aggregate methods
+            status.Result = order;
+            return status;
+        }
 
         public IGenericStatus ChangeDeliveryDate(string userId, DateTime newDeliveryDate)
         {
