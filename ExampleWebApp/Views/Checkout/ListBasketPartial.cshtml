@@ -32,7 +32,7 @@
                     @{int i = 0;
         foreach (var lineItem in @Model)
         {
-                <input name="LineItems[@i].BookId" asp-for="@lineItem.BookId" type="hidden" alt="" />
+                <input name="CheckoutLineItems[@i].BookId" asp-for="@lineItem.BookId" type="hidden" alt="" />
                 <div class="row">
                     <div class="col-xs-2">
                         <img class="img-responsive" src="@(lineItem.ImageUrl ?? "#")">
@@ -53,7 +53,7 @@
                         </div>
                         <div class="col-xs-4">
                             <span class="form-control input-sm">
-                                <input name="LineItems[@i].NumBooks" asp-for="@lineItem.NumBooks" type="hidden" alt="" />
+                                <input name="CheckoutLineItems[@i].NumBooks" asp-for="@lineItem.NumBooks" type="hidden" alt="" />
                                 @lineItem.NumBooks
                             </span>
 
