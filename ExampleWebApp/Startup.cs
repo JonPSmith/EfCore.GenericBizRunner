@@ -75,7 +75,6 @@ namespace EfCoreInAction
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseBrowserLink();
             }
             else
             {
