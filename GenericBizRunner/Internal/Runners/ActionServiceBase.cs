@@ -42,7 +42,7 @@ namespace GenericBizRunner.Internal.Runners
                     db.SaveChanges();
                 }
 
-                Config.UpdateSuccessMessageOnGoodWrite(bizStatus);
+                Config.UpdateSuccessMessageOnGoodWrite(bizStatus, Config);
             }
         }
 
@@ -65,7 +65,7 @@ namespace GenericBizRunner.Internal.Runners
                     await db.SaveChangesAsync().ConfigureAwait(false);
                 }
 
-                Config.UpdateSuccessMessageOnGoodWrite(bizStatus);
+                Config.UpdateSuccessMessageOnGoodWrite(bizStatus, Config);
             }
         }
     }

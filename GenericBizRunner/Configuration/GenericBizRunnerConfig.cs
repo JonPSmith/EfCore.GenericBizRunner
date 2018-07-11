@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT licence. See License.txt in the project root for license information.
 
+using System;
 using System.Linq;
 
 namespace GenericBizRunner.Configuration
@@ -44,17 +45,9 @@ namespace GenericBizRunner.Configuration
 
 
         /// <summary>
-        /// This updates the message on a successful write
+        /// This action updates the message on a successful write to the database
         /// </summary>
-        /// <param name="bizStatus"></param>
-        public void UpdateSuccessMessageOnGoodWrite(IBizActionStatus bizStatus)
-        {
-            if (bizStatus.HasErrors) return;
-
-            if (bizStatus.Message != null && bizStatus.Message == DefaultSuccessMessage)
-                bizStatus.Message = DefaultSuccessAndWriteMessage;
-            else if (bizStatus.Message.LastOrDefault() != '.' && AppendToMessageOnGoodWriteToDb != null)
-                bizStatus.Message += AppendToMessageOnGoodWriteToDb;
-        }
+        public Action<IBizActionStatus, IGenericBizRunnerConfig> UpdateSuccessMessageOnGoodWrite { get; set; } =
+            DefaultMessageUpdater.UpdateSuccessMessageOnGoodWrite;
     }
 }

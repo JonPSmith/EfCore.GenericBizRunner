@@ -1,5 +1,8 @@
 ﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT licence. See License.txt in the project root for license information.
+
+using System;
+
 namespace GenericBizRunner.Configuration
 {
     /// <summary>
@@ -39,9 +42,10 @@ namespace GenericBizRunner.Configuration
         string AppendToMessageOnGoodWriteToDb { get; set; }
 
         /// <summary>
-        /// This updates the message on a successful write
+        /// This updates the message on a successful write to the database
         /// </summary>
-        /// <param name="bizStatus"></param>
-        void UpdateSuccessMessageOnGoodWrite(IBizActionStatus bizStatus);
+        Action<IBizActionStatus, IGenericBizRunnerConfig> UpdateSuccessMessageOnGoodWrite { get; }
+
+
     }
 }
