@@ -4,6 +4,7 @@
 
 - New Feature: Added SqlErrorHandler to configuration and called in SaveChangesWithValidation/Async.
 Allows you to intercept `DbUpdateException` and turn SQL errors into user-friendly error messages.
+- New Feature: A version of the GenericBizRunner dependency injection registration that works with NET Core DI provider 
 - Minor change: added GetAllErrors method to IBizActionStatus to get all errors in one go.
 Mainly useful for unit testing. 
 

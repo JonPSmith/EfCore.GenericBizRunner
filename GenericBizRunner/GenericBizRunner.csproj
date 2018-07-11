@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>EfCore.GenericBizRunner</PackageId>
-    <PackageVersion>1.1.1-preview1</PackageVersion>
+    <PackageVersion>1.1.1</PackageVersion>
     <Version>1.1.1</Version>
     <AssemblyVersion>1.1.1.0</AssemblyVersion>
     <FileVersion>1.1.1.0</FileVersion>
@@ -16,6 +16,7 @@
     <PackageTags>Entity Framework Core, Business Logic, ServiceLayer</PackageTags>
     <PackageReleaseNotes>
       - New Feature: Added SqlErrorHandler to allow you to catch SQL errors (such as unique index violation) and turn them into user-friendly error messages
+      - New Feature: A version of the GenericBizRunner dependency injection registration that works with NET Core DI provider
       - Minor change: The status returned by the biz runner now has a method called GetAllErrors(), which returns all errors as one string - useful in unit testing
     </PackageReleaseNotes>
     <PackageIconUrl>https://raw.githubusercontent.com/JonPSmith/EfCore.GenericBizRunner/master/GenericBizRunnerNuGetIcon128.png</PackageIconUrl>
