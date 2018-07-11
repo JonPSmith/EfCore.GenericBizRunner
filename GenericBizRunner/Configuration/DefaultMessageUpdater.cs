@@ -5,6 +5,9 @@ using System.Linq;
 
 namespace GenericBizRunner.Configuration
 {
+    /// <summary>
+    /// This holds the default UpdateSuccessMessageOnGoodWrite implementation
+    /// </summary>
     public static class DefaultMessageUpdater
     {
         public static void UpdateSuccessMessageOnGoodWrite(IBizActionStatus bizStatus, IGenericBizRunnerConfig config)

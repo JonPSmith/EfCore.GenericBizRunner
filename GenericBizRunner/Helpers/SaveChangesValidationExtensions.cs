@@ -6,6 +6,7 @@ using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using GenericBizRunner.Configuration;
 using Microsoft.EntityFrameworkCore;
 
 namespace GenericBizRunner.Helpers
@@ -23,8 +24,9 @@ namespace GenericBizRunner.Helpers
         /// If the validation does not produce any errors then SaveChangesAsync will be called 
         /// </summary>
         /// <param name="context"></param>
+        /// <param name="config"></param>
         /// <returns>List of errors, empty if there were no errors</returns>
-        public static async Task<ImmutableList<ValidationResult>> SaveChangesWithValidationAsync(this DbContext context)
+        public static async Task<ImmutableList<ValidationResult>> SaveChangesWithValidationAsync(this DbContext context, IGenericBizRunnerConfig config = null)
         {
             var result = context.ExecuteValidation();
             if (result.Any()) return result;
@@ -33,6 +35,12 @@ namespace GenericBizRunner.Helpers
             try
             {
                 await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+            catch (DbUpdateException e)
+            {
+                var error = config?.SqlErrorHandler(e);
+                if (error == null) throw;       //error wasn't handled, so rethrow
+                result = new List<ValidationResult>(new[] { error }).ToImmutableList();
             }
             finally
             {
@@ -50,8 +58,9 @@ namespace GenericBizRunner.Helpers
         /// If the validation does not produce any errors then SaveChanges will be called 
         /// </summary>
         /// <param name="context"></param>
+        /// <param name="config"></param>
         /// <returns>List of errors, empty if there were no errors</returns>
-        public static ImmutableList<ValidationResult> SaveChangesWithValidation(this DbContext context)
+        public static ImmutableList<ValidationResult> SaveChangesWithValidation(this DbContext context, IGenericBizRunnerConfig config = null)
         {
             var result = context.ExecuteValidation();
             if (result.Any()) return result;
@@ -61,6 +70,12 @@ namespace GenericBizRunner.Helpers
             {
                 context.SaveChanges();
             }
+            catch (DbUpdateException e)
+            {
+                var error = config?.SqlErrorHandler(e);
+                if (error == null) throw;       //error wasn't handled, so rethrow
+                result = new List<ValidationResult>(new[] {error}).ToImmutableList();
+            }
             finally
             {
                 context.ChangeTracker.AutoDetectChangesEnabled = true;
@@ -68,6 +83,11 @@ namespace GenericBizRunner.Helpers
 
             return result;
         }
+
+
+        //-------------------------------------------------------------------
+        //private methods
+
 
         private static ImmutableList<ValidationResult> ExecuteValidation(this DbContext context)
         {

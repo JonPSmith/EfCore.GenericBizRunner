@@ -2,6 +2,10 @@
 // Licensed under MIT licence. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace GenericBizRunner.Configuration
 {
@@ -46,6 +50,13 @@ namespace GenericBizRunner.Configuration
         /// </summary>
         Action<IBizActionStatus, IGenericBizRunnerConfig> UpdateSuccessMessageOnGoodWrite { get; }
 
-
+        /// <summary>
+        /// When SaveChangesWithValidation is called if there is a DbUpdateException then this method
+        /// is called. If it returns null then the error is rethrown, but if it returns a ValidationResult
+        /// then that is turned into a error message that is shown to the user via the IBizActionStatus
+        /// See section 10.7.3 of my book "Entity Framework Core in Action" on how to use this to turn
+        /// SQL errors into user-friendly errors
+        /// </summary>
+        Func<DbUpdateException, ValidationResult> SqlErrorHandler { get; }
     }
 }

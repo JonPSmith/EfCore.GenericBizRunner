@@ -7,10 +7,19 @@ namespace TestBizLayer.DbForTransactions
 {
     public class TestDbContext : DbContext
     {
+        public DbSet<LogEntry> LogEntries { get; set; }
+        public DbSet<UniqueEntity> UniqueEntities { get; set; }
+
         public TestDbContext(
             DbContextOptions<TestDbContext> options)
             : base(options) { }
 
-        public DbSet<LogEntry> LogEntries { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<UniqueEntity>().HasIndex(p => p.UniqueString).IsUnique().HasName("UniqueError_UniqueEntity_UniqueString");
+        }
+
+
     }
 }

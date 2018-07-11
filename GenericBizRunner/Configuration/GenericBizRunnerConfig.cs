@@ -2,7 +2,11 @@
 // Licensed under MIT licence. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace GenericBizRunner.Configuration
 {
@@ -12,42 +16,26 @@ namespace GenericBizRunner.Configuration
     /// </summary>
     public class GenericBizRunnerConfig : IGenericBizRunnerConfig
     {
-        /// <summary>
-        /// By default the call to SaveChanges will have validation added to it, as its often useful to validate 
-        /// the data that your business logic writes to the database 
-        /// (Validation inspects data attributes like [MaxLength], plus the IValidatableObject interface if present)
-        /// However, validation does take longer, so you can turn it off globally by setting this to true.
-        /// Alternatively you can add the IDoNotValidateSaveChanges interface to individual business logic interface definitions
-        /// </summary>
+        /// <inheritdoc />
         public bool DoNotValidateSaveChanges { get; set; }
 
-        /// <summary>
-        /// GenericBizRunner uses a static variable to cache the decoding of bizLogic interfaces to their componnent parts
-        /// For normal use this should be false, but for unit testing it should be true 
-        /// </summary>
+        /// <inheritdoc />
         public bool TurnOffCaching { get; set; }
 
-        /// <summary>
-        /// If the business logic does not set a success message then this default message will be returned on a success.
-        /// </summary>
+        /// <inheritdoc />
         public string DefaultSuccessMessage { get; set; } = "Success.";
 
-        /// <summary>
-        /// If the business logic writes to the database and does not set a success message then this default message will be returned on a success.
-        /// </summary>
+        /// <inheritdoc />
         public string DefaultSuccessAndWriteMessage { get; set; } = "Successfully saved.";
 
-        /// <summary>
-        /// If the business logic writes to the database and its success the message does not end with a full stop, 
-        /// then this message will be appended this message to the end of the message.
-        /// </summary>
+        /// <inheritdoc />
         public string AppendToMessageOnGoodWriteToDb { get; set; } = " saved.";
 
 
-        /// <summary>
-        /// This action updates the message on a successful write to the database
-        /// </summary>
+        /// <inheritdoc />
         public Action<IBizActionStatus, IGenericBizRunnerConfig> UpdateSuccessMessageOnGoodWrite { get; set; } =
             DefaultMessageUpdater.UpdateSuccessMessageOnGoodWrite;
+
+        public Func<DbUpdateException, ValidationResult> SqlErrorHandler { get; set; } = (exception) => null; // default is to return null
     }
 }
