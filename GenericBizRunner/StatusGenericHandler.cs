@@ -78,7 +78,13 @@ namespace GenericBizRunner
             _errors.AddRange(status.Errors);
             if (!HasErrors && status.Message != null)
                 Message = status.Message;
+        }
 
+        public string GetAllErrors(string seperator = "\n")
+        {
+            return _errors.Any()
+                ? string.Join(seperator, Errors)
+                : null;
         }
     }
 }
