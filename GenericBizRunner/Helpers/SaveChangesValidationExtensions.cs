@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT licence. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
@@ -26,28 +27,28 @@ namespace GenericBizRunner.Helpers
         /// <param name="context"></param>
         /// <param name="config"></param>
         /// <returns>List of errors, empty if there were no errors</returns>
-        public static async Task<ImmutableList<ValidationResult>> SaveChangesWithValidationAsync(this DbContext context, IGenericBizRunnerConfig config = null)
+        public static async Task<IStatusGeneric> SaveChangesWithValidationAsync(this DbContext context, IGenericBizRunnerConfig config = null)
         {
-            var result = context.ExecuteValidation();
-            if (result.Any()) return result;
+            var status = context.ExecuteValidation();
+            if (status.HasErrors) return status;
 
             context.ChangeTracker.AutoDetectChangesEnabled = false;
             try
             {
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
-            catch (DbUpdateException e)
+            catch (Exception e)
             {
-                var error = config?.SqlErrorHandler(e);
-                if (error == null) throw;       //error wasn't handled, so rethrow
-                result = new List<ValidationResult>(new[] { error }).ToImmutableList();
+                var exStatus = config?.SaveChangesExceptionHandler(e, context);
+                if (exStatus == null) throw;       //error wasn't handled, so rethrow
+                status.CombineErrors(exStatus);
             }
             finally
             {
                 context.ChangeTracker.AutoDetectChangesEnabled = true;
             }
 
-            return result;
+            return status;
         }
 
         //see https://blogs.msdn.microsoft.com/dotnet/2016/09/29/implementing-seeding-custom-conventions-and-interceptors-in-ef-core-1-0/
@@ -60,28 +61,28 @@ namespace GenericBizRunner.Helpers
         /// <param name="context"></param>
         /// <param name="config"></param>
         /// <returns>List of errors, empty if there were no errors</returns>
-        public static ImmutableList<ValidationResult> SaveChangesWithValidation(this DbContext context, IGenericBizRunnerConfig config = null)
+        public static IStatusGeneric SaveChangesWithValidation(this DbContext context, IGenericBizRunnerConfig config = null)
         {
-            var result = context.ExecuteValidation();
-            if (result.Any()) return result;
+            var status = context.ExecuteValidation();
+            if (status.HasErrors) return status;
 
             context.ChangeTracker.AutoDetectChangesEnabled = false;
             try
             {
                 context.SaveChanges();
             }
-            catch (DbUpdateException e)
+            catch (Exception e)
             {
-                var error = config?.SqlErrorHandler(e);
-                if (error == null) throw;       //error wasn't handled, so rethrow
-                result = new List<ValidationResult>(new[] {error}).ToImmutableList();
+                var exStatus = config?.SaveChangesExceptionHandler(e, context);
+                if (exStatus == null) throw;       //error wasn't handled, so rethrow
+                status.CombineErrors(exStatus);
             }
             finally
             {
                 context.ChangeTracker.AutoDetectChangesEnabled = true;
             }
 
-            return result;
+            return status;
         }
 
 
@@ -89,9 +90,9 @@ namespace GenericBizRunner.Helpers
         //private methods
 
 
-        private static ImmutableList<ValidationResult> ExecuteValidation(this DbContext context)
+        private static IStatusGeneric ExecuteValidation(this DbContext context)
         {
-            var result = new List<ValidationResult>();
+            var status = new StatusGenericHandler();
             foreach (var entry in
                 context.ChangeTracker.Entries()
                     .Where(e =>
@@ -105,11 +106,11 @@ namespace GenericBizRunner.Helpers
                 if (!Validator.TryValidateObject(
                     entity, valContext, entityErrors, true))
                 {
-                    result.AddRange(entityErrors);
+                    status.AddValidationResults(entityErrors);
                 }
             }
 
-            return result.ToImmutableList();
+            return status;
         }
     }
 }

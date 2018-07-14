@@ -45,7 +45,7 @@ namespace Tests.UnitTests.Setup
 
                 //VERIFY
                 context.LogEntries.Count().ShouldEqual(0);
-                errors.Any().ShouldBeTrue();
+                errors.HasErrors.ShouldBeTrue();
             }
         }
 
@@ -64,7 +64,7 @@ namespace Tests.UnitTests.Setup
 
                 //VERIFY
                 context.LogEntries.Count().ShouldEqual(1);
-                errors.Any().ShouldBeFalse();
+                errors.HasErrors.ShouldBeFalse();
             }
         }
     }

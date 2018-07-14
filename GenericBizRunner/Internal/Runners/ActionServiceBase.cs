@@ -36,7 +36,7 @@ namespace GenericBizRunner.Internal.Runners
             if (!bizStatus.HasErrors && RequiresSaveChanges)
             {
                 if (bizStatus.ValidateSaveChanges(Config))
-                    bizStatus.AddValidationResults(db.SaveChangesWithValidation(Config));
+                    bizStatus.CombineErrors(db.SaveChangesWithValidation(Config));
                 else
                 {
                     db.SaveChanges();
@@ -58,7 +58,7 @@ namespace GenericBizRunner.Internal.Runners
             if (!bizStatus.HasErrors && RequiresSaveChanges)
             {
                 if (bizStatus.ValidateSaveChanges(Config))
-                    bizStatus.AddValidationResults(await db.SaveChangesWithValidationAsync(Config));
+                    bizStatus.CombineErrors(await db.SaveChangesWithValidationAsync(Config));
                 else
                 {
                     await db.SaveChangesAsync().ConfigureAwait(false);

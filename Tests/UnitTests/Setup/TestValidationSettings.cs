@@ -134,12 +134,13 @@ namespace Tests.UnitTests.Setup
         [InlineData(19, false)]
         public void TestSqlErrorHandlerWorksOk(int sqlErrorCode, bool shouldThrowException)
         {
-            ValidationResult CatchUniqueError(DbUpdateException e)
+            IStatusGeneric CatchUniqueError(Exception e, DbContext context)
             {
-                var sqliteError = e.InnerException as SqliteException;
-                if (sqliteError?.SqliteErrorCode == sqlErrorCode)
-                    return new ValidationResult("Unique constraint failed");
-                return null;
+                var dbUpdateEx = e as DbUpdateException;
+                var sqliteError = dbUpdateEx?.InnerException as SqliteException;
+                return sqliteError?.SqliteErrorCode == sqlErrorCode
+                    ? new StatusGenericHandler().AddError("Unique constraint failed")
+                    : null;
             }
 
             //SETUP  
@@ -153,7 +154,7 @@ namespace Tests.UnitTests.Setup
                 var config = new GenericBizRunnerConfig
                 {
                     TurnOffCaching = true,
-                    SqlErrorHandler = CatchUniqueError
+                    SaveChangesExceptionHandler = CatchUniqueError
                 };
                 var bizInstance = new BizActionCheckSqlErrorHandlerWriteDb(context);
                 var runner = new ActionService<IBizActionCheckSqlErrorHandlerWriteDb>(context, bizInstance, _mapper, config);
@@ -180,12 +181,13 @@ namespace Tests.UnitTests.Setup
         [InlineData(19, false)]
         public async Task TestSqlErrorHandlerWorksOkAsync(int sqlErrorCode, bool shouldThrowException)
         {
-            ValidationResult CatchUniqueError(DbUpdateException e)
+            IStatusGeneric CatchUniqueError(Exception e, DbContext context)
             {
-                var sqliteError = e.InnerException as SqliteException;
-                if (sqliteError?.SqliteErrorCode == sqlErrorCode)
-                    return new ValidationResult("Unique constraint failed");
-                return null;
+                var dbUpdateEx = e as DbUpdateException;
+                var sqliteError = dbUpdateEx?.InnerException as SqliteException;
+                return sqliteError?.SqliteErrorCode == sqlErrorCode
+                    ? new StatusGenericHandler().AddError("Unique constraint failed")
+                    : null;
             }
 
             //SETUP  
@@ -199,7 +201,7 @@ namespace Tests.UnitTests.Setup
                 var config = new GenericBizRunnerConfig
                 {
                     TurnOffCaching = true,
-                    SqlErrorHandler = CatchUniqueError
+                    SaveChangesExceptionHandler = CatchUniqueError
                 };
                 var bizInstance = new BizActionCheckSqlErrorHandlerWriteDbAsync(context);
                 var runner = new ActionServiceAsync<IBizActionCheckSqlErrorHandlerWriteDbAsync>(context, bizInstance, _mapper, config);

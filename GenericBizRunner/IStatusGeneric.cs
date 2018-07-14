@@ -30,7 +30,7 @@ namespace GenericBizRunner
         /// </summary>
         /// <param name="errorMessage">The text of the error message</param>
         /// <param name="propertyNames">optional. A list of property names that this error applies to</param>
-        void AddError(string errorMessage, params string[] propertyNames);
+        IStatusGeneric AddError(string errorMessage, params string[] propertyNames);
 
         /// <summary>
         /// This adds one ValidationResult to the Errors collection

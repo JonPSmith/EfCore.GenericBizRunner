@@ -31,11 +31,11 @@ namespace GenericBizRunner.Configuration
         /// <inheritdoc />
         public string AppendToMessageOnGoodWriteToDb { get; set; } = " saved.";
 
-
         /// <inheritdoc />
         public Action<IBizActionStatus, IGenericBizRunnerConfig> UpdateSuccessMessageOnGoodWrite { get; set; } =
             DefaultMessageUpdater.UpdateSuccessMessageOnGoodWrite;
 
-        public Func<DbUpdateException, ValidationResult> SqlErrorHandler { get; set; } = (exception) => null; // default is to return null
+        /// <inheritdoc />
+        public Func<Exception, DbContext, IStatusGeneric> SaveChangesExceptionHandler { get; set; } = (exception, context) => null; // default is to return null
     }
 }
