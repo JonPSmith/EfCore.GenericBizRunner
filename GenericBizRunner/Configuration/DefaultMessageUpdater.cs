@@ -14,7 +14,7 @@ namespace GenericBizRunner.Configuration
         {
             if (bizStatus.HasErrors) return;
 
-            if (bizStatus.Message != null && bizStatus.Message == config.DefaultSuccessMessage)
+            if (bizStatus.Message != null && (bizStatus.Message == config.DefaultSuccessMessage || bizStatus.Message == StatusGenericHandler.ConstDefaultMessage))
                 bizStatus.Message = config.DefaultSuccessAndWriteMessage;
             else if (bizStatus.Message.LastOrDefault() != '.' && config.AppendToMessageOnGoodWriteToDb != null)
                 bizStatus.Message += config.AppendToMessageOnGoodWriteToDb;

@@ -14,6 +14,8 @@ namespace GenericBizRunner
     /// </summary>
     public class StatusGenericHandler : IStatusGeneric
     {
+        internal const string ConstDefaultMessage = "Success";
+
         private readonly List<ValidationResult> _errors = new List<ValidationResult>();
         private string _successMessage;
 
@@ -35,7 +37,7 @@ namespace GenericBizRunner
         {
             get => HasErrors
                 ? $"Failed with {_errors.Count} error" + (_errors.Count == 1 ? "" : "s")
-                : _successMessage ?? "<not run yet>";
+                : _successMessage ?? ConstDefaultMessage;
             set => _successMessage = value;
         }
 
@@ -77,7 +79,7 @@ namespace GenericBizRunner
         public void CombineErrors(IStatusGeneric status)
         {
             _errors.AddRange(status.Errors);
-            if (!HasErrors && status.Message != null)
+            if (!HasErrors && status.Message != ConstDefaultMessage)
                 Message = status.Message;
         }
 

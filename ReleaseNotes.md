@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.0.1
+
+- Bug Fix: Fixed a error in StatusGenericHandler where `CombineErrors` didn't copy over the `Message` properly
+
 ## 2.0.0
 
 - Breaking Change: The SaveChangesWithValidation/Async interface has changed to accomodate the new SaveChangesExceptionHandler
