@@ -1,6 +1,6 @@
 # EfCore.GenericBizRunner
 
-EfCore.GenericBizRunner (shorteded to GenericBizRunner) is a framework to help build and
+EfCore.GenericBizRunner (shortened to GenericBizRunner) is a framework to help build and
 run business logic when you are using [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/) for database accesses.
 Its aim is to totally isolate the business logic from other parts of the application, especially the user presentation/UI layers.
 
