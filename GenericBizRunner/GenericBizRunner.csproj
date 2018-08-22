@@ -3,10 +3,10 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>EfCore.GenericBizRunner</PackageId>
-    <PackageVersion>2.0.1</PackageVersion>
-    <Version>2.0.1</Version>
-    <AssemblyVersion>2.0.1.0</AssemblyVersion>
-    <FileVersion>2.0.1.0</FileVersion>
+    <PackageVersion>2.0.2-preview01</PackageVersion>
+    <Version>2.0.2</Version>
+    <AssemblyVersion>2.0.2.0</AssemblyVersion>
+    <FileVersion>2.0.2.0</FileVersion>
     <Authors>Jon P Smith</Authors>
     <Description>Library to run business logic when using Entity Framework Core for database accesses</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
@@ -15,7 +15,7 @@
     <RepositoryUrl>https://github.com/JonPSmith/EfCore.GenericBizRunner</RepositoryUrl>
     <PackageTags>Entity Framework Core, Business Logic, ServiceLayer</PackageTags>
     <PackageReleaseNotes>
-      - Bug Fix: Fixed a error in StatusGenericHandler where `CombineErrors` didn't copy over the `Message` properly
+      - Bug Fix: The ActionServiceAsync service had the wrong interface definitions for version that takes in DbContext
     </PackageReleaseNotes>
     <PackageIconUrl>https://raw.githubusercontent.com/JonPSmith/EfCore.GenericBizRunner/master/GenericBizRunnerNuGetIcon128.png</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/JonPSmith/EfCore.GenericBizRunner/blob/master/LICENCE</PackageLicenseUrl>

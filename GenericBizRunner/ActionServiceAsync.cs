@@ -14,7 +14,7 @@ namespace GenericBizRunner
     /// This defines the ActionServiceAsync using the default DbContext
     /// </summary>
     /// <typeparam name="TBizInstance">The instance of the business logic you are linking to</typeparam>
-    public class ActionServiceAsync<TBizInstance> : ActionServiceAsync<DbContext, TBizInstance>
+    public class ActionServiceAsync<TBizInstance> : ActionServiceAsync<DbContext, TBizInstance>, IActionServiceAsync<TBizInstance>
         where TBizInstance : class, IBizActionStatus
     {
         /// <inheritdoc />
@@ -29,7 +29,7 @@ namespace GenericBizRunner
     /// </summary>
     /// <typeparam name="TContext">The EF Core DbContext to be used wit this business logic</typeparam>
     /// <typeparam name="TBizInstance">The instance of the business logic you are linking to</typeparam>
-    public class ActionServiceAsync<TContext, TBizInstance> : IActionServiceAsync<TBizInstance>
+    public class ActionServiceAsync<TContext, TBizInstance> : IActionServiceAsync<TContext, TBizInstance>
         where TContext : DbContext
         where TBizInstance : class, IBizActionStatus
     {
