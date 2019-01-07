@@ -2,6 +2,7 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using AutoMapper;
+using GenericBizRunner.Configuration;
 using TestBizLayer.BizDTOs;
 using Tests.DTOs;
 using Xunit;
@@ -15,15 +16,11 @@ namespace Tests.UnitTests.Setup
         public void TestDtoWithOverrideOfAutoMapperSetup()
         {
             //SETUP
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile(new ServiceLayerBizOutWithMappingDto());
-            });
-            var mapper = config.CreateMapper();
+            var utData = NonDiSetup.SetupBizOutDtoMapping<ServiceLayerBizOutWithMappingDto>();
 
             //ATTEMPT
             var input = new BizDataOut { Output = "Hello" };
-            var data = mapper.Map<ServiceLayerBizOutWithMappingDto>(input);
+            var data = utData.WrappedConfig.FromBizIMapper.Map<ServiceLayerBizOutWithMappingDto>(input);
 
             //VERIFY
             data.MappedOutput.ShouldEqual("Hello with suffix.");

@@ -18,11 +18,11 @@ namespace Tests.UnitTests.DDDEntities
             //SETUP
             var testsDir = TestData.GetCallingAssemblyTopLevelDir();
             var dataDir = Path.GetFullPath($"{testsDir}{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}"+
-                $"{nameof(ExampleWebApp)}{Path.DirectorySeparatorChar}wwwroot{Path.DirectorySeparatorChar}{SetupHelpers.SeedFileSubDirectory}");
+                $"{nameof(ExampleWebApp)}{Path.DirectorySeparatorChar}wwwroot{Path.DirectorySeparatorChar}{DbSetupHelpers.SeedFileSubDirectory}");
 
             //ATTEMPT
             var books = BookJsonLoader.LoadBooks(dataDir,
-                    SetupHelpers.SeedDataSearchName).ToList();
+                    DbSetupHelpers.SeedDataSearchName).ToList();
 
             //VERIFY
             books.Count.ShouldEqual(53);

@@ -3,26 +3,27 @@
 
 using AutoMapper;
 using GenericBizRunner.Configuration;
+using GenericBizRunner.PublicButHidden;
 using Microsoft.EntityFrameworkCore;
 
 namespace GenericBizRunner.Internal.Runners
 {
     internal class ActionServiceInOnly<TBizInterface, TBizIn> : ActionServiceBase
     {
-        public ActionServiceInOnly(bool requiresSaveChanges, IGenericBizRunnerConfig config)
-            : base(requiresSaveChanges, config)
+        public ActionServiceInOnly(bool requiresSaveChanges, IWrappedBizRunnerConfigAndMappings wrappedConfig)
+            : base(requiresSaveChanges, wrappedConfig)
         {
         }
 
-        public void RunBizActionDbAndInstance(DbContext db, TBizInterface bizInstance, IMapper mapper, object inputData)
+        public void RunBizActionDbAndInstance(DbContext db, TBizInterface bizInstance, object inputData)
         {
-            var toBizCopier = DtoAccessGenerator.BuildCopier(inputData.GetType(), typeof(TBizIn), true, false, Config);
+            var toBizCopier = DtoAccessGenerator.BuildCopier(inputData.GetType(), typeof(TBizIn), true, false, WrappedConfig.Config.TurnOffCaching);
             var bizStatus = (IBizActionStatus)bizInstance;
 
             //The SetupSecondaryData produced errors
             if (bizStatus.HasErrors) return;
 
-            var inData = toBizCopier.DoCopyToBiz<TBizIn>(db, mapper, inputData);
+            var inData = toBizCopier.DoCopyToBiz<TBizIn>(db, WrappedConfig.ToBizIMapper, inputData);
 
             ((IGenericActionInOnly<TBizIn>)bizInstance).BizAction(inData);
 

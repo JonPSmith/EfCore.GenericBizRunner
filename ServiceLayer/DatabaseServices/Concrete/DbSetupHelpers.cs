@@ -17,7 +17,7 @@ namespace ServiceLayer.DatabaseServices.Concrete
 {
     public enum DbStartupModes { UseExisting, EnsureCreated, EnsureDeletedCreated, UseMigrations}
 
-    public static class SetupHelpers
+    public static class DbSetupHelpers
     {
 
         public const string SeedDataSearchName = "Apress books*.json";

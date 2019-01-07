@@ -4,7 +4,6 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using GenericBizRunner;
 using GenericBizRunner.Configuration;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +12,6 @@ using TestBizLayer.ActionsAsync.Concrete;
 using TestBizLayer.BizDTOs;
 using TestBizLayer.DbForTransactions;
 using Tests.DTOs;
-using Tests.Helpers;
 using TestSupport.EfHelpers;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
@@ -27,15 +25,13 @@ namespace Tests.UnitTests.TestActionsAsync
         //This action does not access the database, but the ActionService checks that the dbContext isn't null
         private readonly DbContext _emptyDbContext = new TestDbContext(SqliteInMemory.CreateOptions<TestDbContext>());
 
-        //Beacause this is ValueInOut then there is no need for a mapper, but the ActionService checks that the Mapper isn't null
-        private readonly IMapper _mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto, ServiceLayerBizOutDto>();
-
         [Fact]
         public async Task TestActionServiceOutOnlyDirectOk()
         {
             //SETUP 
+            var utData = new NonDiSetup(_noCachingConfig);
             var bizInstance = new BizActionOutOnlyAsync();
-            var runner = new ActionServiceAsync<IBizActionOutOnlyAsync>(_emptyDbContext, bizInstance, _mapper, _noCachingConfig);
+            var runner = new ActionServiceAsync<IBizActionOutOnlyAsync>(_emptyDbContext, bizInstance, utData.WrappedConfig);
 
             //ATTEMPT
             var data = await runner.RunBizActionAsync<BizDataOut>();
@@ -49,9 +45,10 @@ namespace Tests.UnitTests.TestActionsAsync
         public async Task TestActionServiceOutOnlyDtosAsyncOk()
         {
             //SETUP 
-            var mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDtoAsync, ServiceLayerBizOutDtoAsync>();
+            var utData = NonDiSetup.SetupBizInDtoMapping<ServiceLayerBizInDtoAsync>(_noCachingConfig);
+            utData.AddBizOutDtoMapping<ServiceLayerBizOutDtoAsync>();
             var bizInstance = new BizActionOutOnlyAsync();
-            var runner = new ActionServiceAsync<IBizActionOutOnlyAsync>(_emptyDbContext, bizInstance, mapper, _noCachingConfig);
+            var runner = new ActionServiceAsync<IBizActionOutOnlyAsync>(_emptyDbContext, bizInstance, utData.WrappedConfig);
 
             //ATTEMPT
             var data = await runner.RunBizActionAsync<ServiceLayerBizOutDtoAsync>();
@@ -69,10 +66,11 @@ namespace Tests.UnitTests.TestActionsAsync
             using (var context = new TestDbContext(options))
             {
                 context.Database.EnsureCreated();
-                var mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto, ServiceLayerBizOutDto>();
+                var utData = NonDiSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
+                utData.AddBizOutDtoMapping<ServiceLayerBizOutDto>();
                 var bizInstance = new BizActionOutOnlyWriteDbAsync(context);
                 var runner =
-                    new ActionServiceAsync<IBizActionOutOnlyWriteDbAsync>(context, bizInstance, mapper, _noCachingConfig);
+                    new ActionServiceAsync<IBizActionOutOnlyWriteDbAsync>(context, bizInstance, utData.WrappedConfig);
 
                 //ATTEMPT
                 var data = await runner.RunBizActionAsync<ServiceLayerBizOutDto>();
@@ -87,9 +85,10 @@ namespace Tests.UnitTests.TestActionsAsync
         public async Task TestActionServiceOutOnlyDtosOk()
         {
             //SETUP 
-            var mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto, ServiceLayerBizOutDto>();
+            var utData = NonDiSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
+            utData.AddBizOutDtoMapping<ServiceLayerBizOutDto>();
             var bizInstance = new BizActionOutOnlyAsync();
-            var runner = new ActionServiceAsync<IBizActionOutOnlyAsync>(_emptyDbContext, bizInstance, mapper, _noCachingConfig);
+            var runner = new ActionServiceAsync<IBizActionOutOnlyAsync>(_emptyDbContext, bizInstance, utData.WrappedConfig);
 
             //ATTEMPT
             var data = await runner.RunBizActionAsync<ServiceLayerBizOutDto>();
@@ -103,8 +102,9 @@ namespace Tests.UnitTests.TestActionsAsync
         public async Task TestCallHasNoOutputBad()
         {
             //SETUP 
+            var utData = new NonDiSetup(_noCachingConfig);
             var bizInstance = new BizActionOutOnlyAsync();
-            var runner = new ActionServiceAsync<IBizActionOutOnlyAsync>(_emptyDbContext, bizInstance, _mapper, _noCachingConfig);
+            var runner = new ActionServiceAsync<IBizActionOutOnlyAsync>(_emptyDbContext, bizInstance, utData.WrappedConfig);
             var input = "string";
 
             //ATTEMPT
@@ -121,8 +121,9 @@ namespace Tests.UnitTests.TestActionsAsync
         public async Task TestInputIsBad()
         {
             //SETUP 
+            var utData = new NonDiSetup(_noCachingConfig);
             var bizInstance = new BizActionOutOnlyAsync();
-            var runner = new ActionServiceAsync<IBizActionOutOnlyAsync>(_emptyDbContext, bizInstance, _mapper, _noCachingConfig);
+            var runner = new ActionServiceAsync<IBizActionOutOnlyAsync>(_emptyDbContext, bizInstance, utData.WrappedConfig);
             var input = "string";
 
             //ATTEMPT

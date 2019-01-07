@@ -14,13 +14,12 @@ namespace Tests.UnitTests.Internals
 {
     public class TestDtoAccessGenerator
     {
-        private readonly IGenericBizRunnerConfig _noCachingConfig = new GenericBizRunnerConfig { TurnOffCaching = true };
 
         [Fact]
         public void Test01DirectCopyOk()
         {
             //SETUP 
-            var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataIn), typeof(BizDataIn), true, false, _noCachingConfig);
+            var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataIn), typeof(BizDataIn), true, false, true);
             var input = new BizDataIn { Num = 234 };
 
             //ATTEMPT
@@ -34,16 +33,12 @@ namespace Tests.UnitTests.Internals
         public void TestBizInCopyOk()
         {
             //SETUP
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile(new ServiceLayerBizInDto());
-            });
-            var mapper = config.CreateMapper();
-            var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDto), typeof(BizDataIn), true, false, _noCachingConfig);
+            var utData = NonDiSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>();
+            var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDto), typeof(BizDataIn), true, false, true);
             var input = new ServiceLayerBizInDto { Num = 234 };
 
             //ATTEMPT
-            var data = copier.DoCopyToBiz<BizDataIn>(null, mapper, input);
+            var data = copier.DoCopyToBiz<BizDataIn>(null, utData.WrappedConfig.ToBizIMapper, input);
 
             //VERIFY    
             data.Num.ShouldEqual(234);
@@ -54,17 +49,13 @@ namespace Tests.UnitTests.Internals
         [Fact]
         public void TestBizOutCopyOk()
         {
-            //SETUP 
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile(new ServiceLayerBizOutDto());
-            });
-            var mapper = config.CreateMapper();
-            var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataOut), typeof(ServiceLayerBizOutDto), false, false, _noCachingConfig);
+            //SETUP
+            var utData = NonDiSetup.SetupBizOutDtoMapping<ServiceLayerBizOutDto>();
+            var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataOut), typeof(ServiceLayerBizOutDto), false, false, true);
             var input = new BizDataOut { Output = "test copy" };
 
             //ATTEMPT
-            var data = copier.DoCopyFromBiz<ServiceLayerBizOutDto>(null, mapper, input);
+            var data = copier.DoCopyFromBiz<ServiceLayerBizOutDto>(null, utData.WrappedConfig.FromBizIMapper, input);
 
             //VERIFY    
             data.Output.ShouldEqual("test copy");
@@ -79,7 +70,7 @@ namespace Tests.UnitTests.Internals
         public void TestBizOutDirectOk()
         {
             //SETUP 
-            var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataOut), typeof(BizDataOut), false, false, _noCachingConfig);
+            var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataOut), typeof(BizDataOut), false, false, true);
             var input = new BizDataOut { Output = "test copy"};
 
             //ATTEMPT
@@ -96,7 +87,7 @@ namespace Tests.UnitTests.Internals
         public void TestCreateDataWithPossibleSetupDirectOk()
         {
             //SETUP 
-            var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataIn), typeof(BizDataIn), true, false, _noCachingConfig);
+            var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataIn), typeof(BizDataIn), true, false, true);
             var status = new TestBizActionStatus();
             
             //ATTEMPT
@@ -110,7 +101,7 @@ namespace Tests.UnitTests.Internals
         public void TestCreateDataWithPossibleSetupDtoOk()
         {
             //SETUP 
-            var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDto), typeof(BizDataIn), true, false, _noCachingConfig);
+            var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDto), typeof(BizDataIn), true, false, true);
             var status = new TestBizActionStatus();
 
             //ATTEMPT
@@ -125,7 +116,7 @@ namespace Tests.UnitTests.Internals
         public void TestCreateDataWithPossibleSetupDtoWithActionOk()
         {
             //SETUP 
-            var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDto), typeof(BizDataIn), true, false, _noCachingConfig);
+            var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDto), typeof(BizDataIn), true, false, true);
             var status = new TestBizActionStatus();
 
             //ATTEMPT
@@ -143,7 +134,7 @@ namespace Tests.UnitTests.Internals
         public void TestSetupSecondaryDataDirectOk()
         {
             //SETUP 
-            var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataIn), typeof(BizDataIn), true, false, _noCachingConfig);
+            var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataIn), typeof(BizDataIn), true, false, true);
             var input = new BizDataIn { Num = 234 };
             var status = new TestBizActionStatus();
 
@@ -158,7 +149,7 @@ namespace Tests.UnitTests.Internals
         public void TestSetupSecondaryDataDtoOk()
         {
             //SETUP 
-            var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDto), typeof(BizDataIn), true, false, _noCachingConfig);
+            var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDto), typeof(BizDataIn), true, false, true);
             var input = new ServiceLayerBizInDto { Num = 234 };
             var status = new TestBizActionStatus();
 

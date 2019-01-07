@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using GenericBizRunner;
 using GenericBizRunner.Configuration;
+using GenericBizRunner.PublicButHidden;
 using Microsoft.EntityFrameworkCore;
 using TestBizLayer.ActionsAsync;
 using TestBizLayer.ActionsAsync.Concrete;
@@ -22,11 +23,17 @@ namespace Tests.UnitTests.TestActionsAsync
 {
     public class TestActionServiceInOnlyAsync
     {
-        private readonly IGenericBizRunnerConfig _noCachingConfig = new GenericBizRunnerConfig { TurnOffCaching = true };
-
         //This action does not access the database, but the ActionServiceAsync checks that the dbContext isn't null
         private readonly DbContext _emptyDbContext = new TestDbContext(SqliteInMemory.CreateOptions<TestDbContext>());
-        readonly IMapper _mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto, ServiceLayerBizOutDto>();
+        private readonly IWrappedBizRunnerConfigAndMappings _wrappedConfig;
+
+        public TestActionServiceInOnlyAsync()
+        {
+            var config = new GenericBizRunnerConfig { TurnOffCaching = true };
+            var utData = NonDiSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(config);
+            utData.AddBizOutDtoMapping<ServiceLayerBizOutDto>();
+            _wrappedConfig = utData.WrappedConfig;
+        }
 
         [Theory]
         [InlineData(123, false)]
@@ -35,7 +42,7 @@ namespace Tests.UnitTests.TestActionsAsync
         {
             //SETUP         
             var bizInstance = new BizActionInOnlyAsync();
-            var runner = new ActionServiceAsync<IBizActionInOnlyAsync>(_emptyDbContext, bizInstance, _mapper, _noCachingConfig);
+            var runner = new ActionServiceAsync<IBizActionInOnlyAsync>(_emptyDbContext, bizInstance, _wrappedConfig);
             var input = new BizDataIn { Num = num};
 
             //ATTEMPT
@@ -58,7 +65,7 @@ namespace Tests.UnitTests.TestActionsAsync
         {
             //SETUP         
             var bizInstance = new BizActionInOnlyAsync();
-            var runner = new ActionServiceAsync<IBizActionInOnlyAsync>(_emptyDbContext, bizInstance, _mapper, _noCachingConfig);
+            var runner = new ActionServiceAsync<IBizActionInOnlyAsync>(_emptyDbContext, bizInstance, _wrappedConfig);
             var input = new ServiceLayerBizInDto { Num = num };
 
             //ATTEMPT
@@ -80,9 +87,8 @@ namespace Tests.UnitTests.TestActionsAsync
         public async Task TestActionServiceInOutDtosAsyncOk(int num, bool hasErrors)
         {
             //SETUP 
-            var mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDtoAsync>();
             var bizInstance = new BizActionInOnlyAsync();
-            var runner = new ActionServiceAsync<IBizActionInOnlyAsync>(_emptyDbContext, bizInstance, mapper, _noCachingConfig);
+            var runner = new ActionServiceAsync<IBizActionInOnlyAsync>(_emptyDbContext, bizInstance, _wrappedConfig);
             var input = new ServiceLayerBizInDtoAsync { Num = num };
 
             //ATTEMPT
@@ -103,7 +109,7 @@ namespace Tests.UnitTests.TestActionsAsync
         {
             //SETUP         
             var bizInstance = new BizActionInOnlyAsync();
-            var runner = new ActionServiceAsync<IBizActionInOnlyAsync>(_emptyDbContext, bizInstance, _mapper, _noCachingConfig);
+            var runner = new ActionServiceAsync<IBizActionInOnlyAsync>(_emptyDbContext, bizInstance, _wrappedConfig);
             var input = await runner.GetDtoAsync<ServiceLayerBizInDto>(x => { x.RaiseErrorInSetupSecondaryData = true; });
 
             //ATTEMPT
@@ -126,7 +132,7 @@ namespace Tests.UnitTests.TestActionsAsync
                 context.Database.EnsureCreated();
                 var bizInstance = new BizActionInOnlyWriteDbAsync(context);
                 var runner =
-                    new ActionServiceAsync<IBizActionInOnlyWriteDbAsync>(context, bizInstance, _mapper, _noCachingConfig);
+                    new ActionServiceAsync<IBizActionInOnlyWriteDbAsync>(context, bizInstance, _wrappedConfig);
                 var input = new ServiceLayerBizInDto {Num = num};
 
                 //ATTEMPT
@@ -158,7 +164,7 @@ namespace Tests.UnitTests.TestActionsAsync
                 context.Database.EnsureCreated();
                 var bizInstance = new BizActionInOnlyWriteDbAsync(context);
                 var runner =
-                    new ActionServiceAsync<IBizActionInOnlyWriteDbAsync>(context, bizInstance, _mapper, _noCachingConfig);
+                    new ActionServiceAsync<IBizActionInOnlyWriteDbAsync>(context, bizInstance, _wrappedConfig);
                 var input = new ServiceLayerBizInDto { Num = num };
 
                 //ATTEMPT
@@ -183,7 +189,7 @@ namespace Tests.UnitTests.TestActionsAsync
         {
             //SETUP 
             var bizInstance = new BizActionInOnlyAsync();
-            var runner = new ActionServiceAsync<IBizActionInOnlyAsync>(_emptyDbContext, bizInstance, _mapper, _noCachingConfig);
+            var runner = new ActionServiceAsync<IBizActionInOnlyAsync>(_emptyDbContext, bizInstance, _wrappedConfig);
             var input = "string";
 
             //ATTEMPT
@@ -201,7 +207,7 @@ namespace Tests.UnitTests.TestActionsAsync
         {
             //SETUP 
             var bizInstance = new BizActionInOnlyAsync();
-            var runner = new ActionServiceAsync<IBizActionInOnlyAsync>(_emptyDbContext, bizInstance, _mapper, _noCachingConfig);
+            var runner = new ActionServiceAsync<IBizActionInOnlyAsync>(_emptyDbContext, bizInstance, _wrappedConfig);
             var input = "string";
 
             //ATTEMPT

@@ -4,16 +4,17 @@
 using System.Threading.Tasks;
 using GenericBizRunner.Configuration;
 using GenericBizRunner.Helpers;
+using GenericBizRunner.PublicButHidden;
 using Microsoft.EntityFrameworkCore;
 
 namespace GenericBizRunner.Internal.Runners
 {
     internal abstract class ActionServiceBase
     {
-        protected ActionServiceBase(bool requiresSaveChanges, IGenericBizRunnerConfig config)
+        protected ActionServiceBase(bool requiresSaveChanges, IWrappedBizRunnerConfigAndMappings wrappedConfig)
         {
             RequiresSaveChanges = requiresSaveChanges;
-            Config = config;
+            WrappedConfig = wrappedConfig;
         }
 
         /// <summary>
@@ -21,7 +22,7 @@ namespace GenericBizRunner.Internal.Runners
         /// </summary>
         private bool RequiresSaveChanges { get; }
 
-        protected IGenericBizRunnerConfig Config { get; }
+        protected IWrappedBizRunnerConfigAndMappings WrappedConfig { get; }
 
         /// <summary>
         /// This a) handled optional save to database and b) calling SetupSecondaryData if there are any errors
@@ -35,13 +36,13 @@ namespace GenericBizRunner.Internal.Runners
         {
             if (!bizStatus.HasErrors && RequiresSaveChanges)
             {
-                if (bizStatus.ValidateSaveChanges(Config))
-                    bizStatus.CombineErrors(db.SaveChangesWithValidation(Config));
+                if (bizStatus.ValidateSaveChanges(WrappedConfig.Config))
+                    bizStatus.CombineErrors(db.SaveChangesWithValidation(WrappedConfig.Config));
                 else
                 {
                     db.SaveChanges();
                 }
-                Config.UpdateSuccessMessageOnGoodWrite(bizStatus, Config);
+                WrappedConfig.Config.UpdateSuccessMessageOnGoodWrite(bizStatus, WrappedConfig.Config);
             }
         }
 
@@ -57,14 +58,14 @@ namespace GenericBizRunner.Internal.Runners
         {
             if (!bizStatus.HasErrors && RequiresSaveChanges)
             {
-                if (bizStatus.ValidateSaveChanges(Config))
-                    bizStatus.CombineErrors(await db.SaveChangesWithValidationAsync(Config));
+                if (bizStatus.ValidateSaveChanges(WrappedConfig.Config))
+                    bizStatus.CombineErrors(await db.SaveChangesWithValidationAsync(WrappedConfig.Config));
                 else
                 {
                     await db.SaveChangesAsync().ConfigureAwait(false);
                 }
 
-                Config.UpdateSuccessMessageOnGoodWrite(bizStatus, Config);
+                WrappedConfig.Config.UpdateSuccessMessageOnGoodWrite(bizStatus, WrappedConfig.Config);
             }
         }
     }

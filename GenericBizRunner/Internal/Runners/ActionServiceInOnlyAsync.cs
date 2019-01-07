@@ -3,27 +3,27 @@
 
 using System.Threading.Tasks;
 using AutoMapper;
-using GenericBizRunner.Configuration;
+using GenericBizRunner.PublicButHidden;
 using Microsoft.EntityFrameworkCore;
 
 namespace GenericBizRunner.Internal.Runners
 {
     internal class ActionServiceInOnlyAsync<TBizInterface, TBizIn> : ActionServiceBase
     {
-        public ActionServiceInOnlyAsync(bool requiresSaveChanges, IGenericBizRunnerConfig config)
-            : base(requiresSaveChanges, config)
+        public ActionServiceInOnlyAsync(bool requiresSaveChanges, IWrappedBizRunnerConfigAndMappings wrappedConfig)
+            : base(requiresSaveChanges, wrappedConfig)
         {
         }
 
-        public async Task RunBizActionDbAndInstanceAsync(DbContext db, TBizInterface bizInstance, IMapper mapper, object inputData)
+        public async Task RunBizActionDbAndInstanceAsync(DbContext db, TBizInterface bizInstance, object inputData)
         {
-            var toBizCopier = DtoAccessGenerator.BuildCopier(inputData.GetType(), typeof(TBizIn), true, true, Config);
+            var toBizCopier = DtoAccessGenerator.BuildCopier(inputData.GetType(), typeof(TBizIn), true, true, WrappedConfig.Config.TurnOffCaching);
             var bizStatus = (IBizActionStatus)bizInstance;
 
             //The SetupSecondaryData produced errors
             if (bizStatus.HasErrors) return;
 
-            var inData = await toBizCopier.DoCopyToBizAsync<TBizIn>(db, mapper, inputData).ConfigureAwait(false);
+            var inData = await toBizCopier.DoCopyToBizAsync<TBizIn>(db, WrappedConfig.ToBizIMapper, inputData).ConfigureAwait(false);
 
             await ((IGenericActionInOnlyAsync<TBizIn>) bizInstance).BizActionAsync(inData).ConfigureAwait(false);
 

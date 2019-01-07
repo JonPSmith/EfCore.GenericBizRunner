@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using AutoMapper;
+using GenericBizRunner.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TestBizLayer.BizDTOs;
 using Tests.DTOs;
@@ -18,32 +19,11 @@ namespace Tests.UnitTests.Setup
         public void TestProfileOnDto()
         {
             //SETUP
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile(new ServiceLayerBizInDto());
-            });
-            var mapper = config.CreateMapper();
+            var utData = NonDiSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>();
 
             //ATTEMPT
             var input = new ServiceLayerBizInDto { Num = 234 };
-            var data = mapper.Map<BizDataIn>(input);
-
-            //VERIFY
-            data.Num.ShouldEqual(234);
-        }
-
-        [Fact]
-        public void TestViaAddAutoMapper()
-        {
-            //SETUP
-            IServiceCollection services = new ServiceCollection();
-            services.AddAutoMapper(null, new List<Assembly>{Assembly.GetAssembly(typeof(ServiceLayerBizInDto))});
-
-            var mapper = ((MapperConfiguration) services[0].ImplementationInstance).CreateMapper();
-
-            //ATTEMPT
-            var input = new ServiceLayerBizInDto { Num = 234 };
-            var data = mapper.Map<BizDataIn>(input);
+            var data = utData.WrappedConfig.ToBizIMapper.Map<BizDataIn>(input);
 
             //VERIFY
             data.Num.ShouldEqual(234);

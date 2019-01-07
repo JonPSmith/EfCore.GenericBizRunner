@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,32 +14,67 @@ namespace GenericBizRunner.Configuration
     public static class NetCoreBizRunnerDi
     {
         /// <summary>
-        /// This is the method for registering GeneriBizRunner with .NET Core DI provider
+        /// This is the method for registering GenericBizRunner with .NET Core DI provider
         /// </summary>
         /// <typeparam name="TDefaultDbContext"></typeparam>
         /// <param name="services"></param>
-        /// <param name="config"></param>
-        public static void RegisterGenericBizRunnerBasic<TDefaultDbContext>(this IServiceCollection services, IGenericBizRunnerConfig config = null)
+        /// <param name="assembliesToScan">These are the assemblies to scan for DTOs</param>
+        public static void RegisterGenericBizRunnerBasic<TDefaultDbContext>(this IServiceCollection services, params Assembly[] assembliesToScan)
             where TDefaultDbContext : DbContext
         {
             services.AddScoped<DbContext>(sp => sp.GetService<TDefaultDbContext>());
             services.AddTransient(typeof(IActionService<>), typeof(ActionService<>));
             services.AddTransient(typeof(IActionServiceAsync<>), typeof(ActionServiceAsync<>));
-
-
-            //Register the GenericBizRunnerConfig if given
-            if (config != null)
-                services.AddSingleton(config);
         }
 
-        public static void RegisterGenericBizRunnerMultiDbContext(this IServiceCollection services, IGenericBizRunnerConfig config = null)
+        /// <summary>
+        /// This is the method for registering GenericBizRunner with .NET Core DI provider with config
+        /// </summary>
+        /// <typeparam name="TDefaultDbContext"></typeparam>
+        /// <param name="services"></param>
+        /// <param name="config"></param>
+        /// <param name="assembliesToScan">These are the assemblies to scan for DTOs</param>
+        public static void RegisterGenericBizRunnerBasic<TDefaultDbContext>(this IServiceCollection services, IGenericBizRunnerConfig config,
+            params Assembly[] assembliesToScan)
+            where TDefaultDbContext : DbContext
+        {
+            if (config == null) throw new ArgumentNullException(nameof(config));
+
+            services.AddScoped<DbContext>(sp => sp.GetService<TDefaultDbContext>());
+            services.AddTransient(typeof(IActionService<>), typeof(ActionService<>));
+            services.AddTransient(typeof(IActionServiceAsync<>), typeof(ActionServiceAsync<>));
+
+            //Register the GenericBizRunnerConfig if given
+            services.AddSingleton(config);
+        }
+
+        /// <summary>
+        /// This is used to register GenericBizRunner with .NET Core DI provider to work with multiple DbContexts
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="assembliesToScan">These are the assemblies to scan for DTOs</param>
+        public static void RegisterGenericBizRunnerMultiDbContext(this IServiceCollection services, params Assembly[] assembliesToScan)
         {
             services.AddTransient(typeof(IActionService<,>), typeof(ActionService<,>));
             services.AddTransient(typeof(IActionServiceAsync<,>), typeof(ActionServiceAsync<,>));
+        }
 
-            //Register the GenericBizRunnerConfig if given and not already registered
-            if (config != null && 
-                    !services.Contains(
+        /// <summary>
+        /// This is used to register GenericBizRunner with .NET Core DI provider to work with multiple DbContexts
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="config"></param>
+        /// <param name="assembliesToScan">These are the assemblies to scan for DTOs</param>
+        public static void RegisterGenericBizRunnerMultiDbContext(this IServiceCollection services, IGenericBizRunnerConfig config,
+            params Assembly[] assembliesToScan)
+        {
+            if (config == null) throw new ArgumentNullException(nameof(config));
+
+            services.AddTransient(typeof(IActionService<,>), typeof(ActionService<,>));
+            services.AddTransient(typeof(IActionServiceAsync<,>), typeof(ActionServiceAsync<,>));
+
+            //Register the GenericBizRunnerConfig if not already registered
+            if (!services.Contains(
                     new ServiceDescriptor(typeof(IGenericBizRunnerConfig), config), new CheckDescriptor()))
             {
                 services.AddSingleton(config);
