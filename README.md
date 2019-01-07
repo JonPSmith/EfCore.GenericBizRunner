@@ -6,7 +6,7 @@ Its aim is to totally isolate the business logic from other parts of the applica
 
 EfCore.GenericBizRunner is available as a [NuGet package](https://www.nuget.org/packages/EfCore.GenericBizRunner/), 
 and on the [EfCore.GenericBizRunner](https://github.com/JonPSmith/EfCore.GenericBizRunner) GitHub repo.
-It is an open-source project under the MIT licence.
+It is an open-source project under the MIT license.
 
 It provides the following features:
 * A standard pattern for writing business logic, including helper classes.
