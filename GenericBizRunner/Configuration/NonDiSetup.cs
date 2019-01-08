@@ -41,28 +41,28 @@ namespace GenericBizRunner.Configuration
             _bizOutProfile = new BizRunnerProfile();
         }
 
-        public static NonDiSetup SetupBizInDtoMapping<TbizInDto>(IGenericBizRunnerConfig publicConfig = null)
+        public static NonDiSetup SetupBizInDtoMapping<TBizInDto>(IGenericBizRunnerConfig publicConfig = null)
         {
             var nonDiConf = new NonDiSetup(publicConfig);
-            SetupDtoMappings.SetupMappingForDto(typeof(TbizInDto), nonDiConf._bizInProfile, true);
+            SetupDtoMappings.SetupMappingForDto(typeof(TBizInDto), nonDiConf._bizInProfile, true);
             return nonDiConf;
         }
 
-        public void AddBizInDtoMapping<TbizInDto>()
+        public void AddBizInDtoMapping<TBizInDto>()
         {
-            SetupDtoMappings.SetupMappingForDto(typeof(TbizInDto), _bizInProfile, true);
+            SetupDtoMappings.SetupMappingForDto(typeof(TBizInDto), _bizInProfile, true);
         }
 
-        public static NonDiSetup SetupBizOutDtoMapping<TbizOutDto>(IGenericBizRunnerConfig publicConfig = null)
+        public static NonDiSetup SetupBizOutDtoMapping<TBizOutDto>(IGenericBizRunnerConfig publicConfig = null)
         {
             var nonDiConf = new NonDiSetup(publicConfig);
-            SetupDtoMappings.SetupMappingForDto(typeof(TbizOutDto), nonDiConf._bizOutProfile, false);
+            SetupDtoMappings.SetupMappingForDto(typeof(TBizOutDto), nonDiConf._bizOutProfile, false);
             return nonDiConf;
         }
 
-        public void AddBizOutDtoMapping<TbizOutDto>(IGenericBizRunnerConfig publicConfig = null)
+        public void AddBizOutDtoMapping<TBizOutDto>(IGenericBizRunnerConfig publicConfig = null)
         {
-            SetupDtoMappings.SetupMappingForDto(typeof(TbizOutDto), _bizOutProfile, false);
+            SetupDtoMappings.SetupMappingForDto(typeof(TBizOutDto), _bizOutProfile, false);
         }
     }
 }

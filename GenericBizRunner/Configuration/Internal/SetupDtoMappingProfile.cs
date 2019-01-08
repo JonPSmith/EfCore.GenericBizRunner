@@ -4,6 +4,7 @@
 using System;
 using AutoMapper;
 using GenericBizRunner.PublicButHidden;
+using Remotion.Linq.Parsing.ExpressionVisitors.MemberBindings;
 
 namespace GenericBizRunner.Configuration.Internal
 {
@@ -24,7 +25,13 @@ namespace GenericBizRunner.Configuration.Internal
             public SetupFromBizDtoProfile(BizRunnerProfile profile)
             {
                 dynamic dto = Activator.CreateInstance(typeof(TDtoOut));
-                dto.SetDtoMapping(profile.CreateMap<TBizOut, TDtoOut>().IgnoreAllPropertiesWithAnInaccessibleSetter());
+                var alterMapExp = dto.AlterDtoMapping;
+                if (alterMapExp == null)
+                    profile.CreateMap<TBizOut, TDtoOut>().IgnoreAllPropertiesWithAnInaccessibleSetter();
+                else
+                {
+                    alterMapExp(profile.CreateMap<TBizOut, TDtoOut>().IgnoreAllPropertiesWithAnInaccessibleSetter());
+                }
             }
         }
 
@@ -35,7 +42,13 @@ namespace GenericBizRunner.Configuration.Internal
             public SetupToBizDtoProfile(BizRunnerProfile profile)
             {
                 dynamic dto = Activator.CreateInstance(typeof(TDtoIn));
-                dto.SetDtoMapping(profile.CreateMap<TDtoIn, TBizIn>().IgnoreAllPropertiesWithAnInaccessibleSetter());
+                var alterMapExp = dto.AlterDtoMapping;
+                if (alterMapExp == null)
+                    profile.CreateMap<TDtoIn, TBizIn>().IgnoreAllPropertiesWithAnInaccessibleSetter();
+                else
+                {
+                    alterMapExp(profile.CreateMap<TDtoIn, TBizIn>().IgnoreAllPropertiesWithAnInaccessibleSetter());
+                }
             }
         }
     }

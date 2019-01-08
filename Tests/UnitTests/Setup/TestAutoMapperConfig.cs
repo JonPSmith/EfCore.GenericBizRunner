@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using AutoMapper;
@@ -38,7 +39,7 @@ namespace Tests.UnitTests.Setup
 
             //ATTEMPT
             var input = new BizDataOut { Output = "hello"};
-            var data = utData.WrappedConfig.ToBizIMapper.Map<ServiceLayerBizOutDto>(input);
+            var data = utData.WrappedConfig.FromBizIMapper.Map<ServiceLayerBizOutDto>(input);
 
             //VERIFY
             data.Output.ShouldEqual("hello");
@@ -58,6 +59,33 @@ namespace Tests.UnitTests.Setup
 
             //VERIFY
             data.MappedOutput.ShouldEqual("Hello with suffix.");
+        }
+
+        //---------------------------------------------------------------------
+        //errors
+
+        [Fact]
+        public void TestDtoInWrongMapperSetup()
+        {
+            //SETUP
+
+            //ATTEMPT
+            var ex = Assert.Throws<InvalidOperationException>(() => NonDiSetup.SetupBizOutDtoMapping<ServiceLayerBizInDto>());
+
+            //VERIFY
+            ex.Message.ShouldEqual("You registered the DTO ServiceLayerBizInDto, as a bizOutDto, but it doesn't inherit from GenericBizRunner.PublicButHidden.GenericActionFromBizDtoSetup.");
+        }
+
+        [Fact]
+        public void TestDtoOutWrongMapperSetup()
+        {
+            //SETUP
+
+            //ATTEMPT
+            var ex = Assert.Throws<InvalidOperationException>(() => NonDiSetup.SetupBizInDtoMapping<ServiceLayerBizOutDto>());
+
+            //VERIFY
+            ex.Message.ShouldEqual("You registered the DTO ServiceLayerBizOutDto, as a bizInDto, but it doesn't inherit from GenericBizRunner.PublicButHidden.GenericActionToBizDtoSetup.");
         }
     }
 }
