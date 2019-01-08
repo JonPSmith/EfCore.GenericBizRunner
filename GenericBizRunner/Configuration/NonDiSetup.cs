@@ -44,13 +44,13 @@ namespace GenericBizRunner.Configuration
         public static NonDiSetup SetupBizInDtoMapping<TbizInDto>(IGenericBizRunnerConfig publicConfig = null)
         {
             var nonDiConf = new NonDiSetup(publicConfig);
-            SetupDtoMappings.SetupMappingForDto(typeof(TbizInDto), nonDiConf._bizOutProfile, true);
+            SetupDtoMappings.SetupMappingForDto(typeof(TbizInDto), nonDiConf._bizInProfile, true);
             return nonDiConf;
         }
 
         public void AddBizInDtoMapping<TbizInDto>()
         {
-            SetupDtoMappings.SetupMappingForDto(typeof(TbizInDto), _bizOutProfile, true);
+            SetupDtoMappings.SetupMappingForDto(typeof(TbizInDto), _bizInProfile, true);
         }
 
         public static NonDiSetup SetupBizOutDtoMapping<TbizOutDto>(IGenericBizRunnerConfig publicConfig = null)

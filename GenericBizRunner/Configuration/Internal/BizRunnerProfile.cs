@@ -5,7 +5,7 @@ using AutoMapper;
 
 namespace GenericBizRunner.Configuration.Internal
 {
-    public class BizRunnerProfile : Profile
+    internal class BizRunnerProfile : Profile
     {
         
     }
