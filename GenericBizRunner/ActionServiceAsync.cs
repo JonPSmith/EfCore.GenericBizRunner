@@ -3,8 +3,6 @@
 
 using System;
 using System.Threading.Tasks;
-using AutoMapper;
-using GenericBizRunner.Configuration;
 using GenericBizRunner.Internal;
 using GenericBizRunner.PublicButHidden;
 using Microsoft.EntityFrameworkCore;
@@ -62,8 +60,8 @@ namespace GenericBizRunner
         public async Task<TOut> RunBizActionAsync<TOut>(object inputData)
         {
             var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOut | RequestedInOut.Async, _turnOffCaching);
-            return await ((Task<TOut>) decoder.BizInfo.GetServiceInstance(_wrappedConfig.Config)
-                    .RunBizActionDbAndInstanceAsync<TOut>(_context, _bizInstance, _wrappedConfig, inputData))
+            return await ((Task<TOut>) decoder.BizInfo.GetServiceInstance(_wrappedConfig)
+                    .RunBizActionDbAndInstanceAsync<TOut>(_context, _bizInstance, inputData))
                 .ConfigureAwait(false);
         }
 
@@ -75,8 +73,8 @@ namespace GenericBizRunner
         public async Task<TOut> RunBizActionAsync<TOut>()
         {
             var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.Out | RequestedInOut.Async, _turnOffCaching);
-            return await ((Task<TOut>)decoder.BizInfo.GetServiceInstance(_wrappedConfig.Config)
-                    .RunBizActionDbAndInstanceAsync<TOut>(_context, _bizInstance, _wrappedConfig))
+            return await ((Task<TOut>)decoder.BizInfo.GetServiceInstance(_wrappedConfig)
+                    .RunBizActionDbAndInstanceAsync<TOut>(_context, _bizInstance))
                 .ConfigureAwait(false);
         }
 
@@ -88,8 +86,8 @@ namespace GenericBizRunner
         public async Task RunBizActionAsync(object inputData)
         {
             var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.In | RequestedInOut.Async, _turnOffCaching);
-            await ((Task) decoder.BizInfo.GetServiceInstance(_wrappedConfig.Config)
-                .RunBizActionDbAndInstanceAsync(_context, _bizInstance, _wrappedConfig, inputData))
+            await ((Task) decoder.BizInfo.GetServiceInstance(_wrappedConfig)
+                .RunBizActionDbAndInstanceAsync(_context, _bizInstance, inputData))
                 .ConfigureAwait(false);
         }
 

@@ -185,7 +185,7 @@ namespace Tests.UnitTests.Internals
             using (var context = new TestDbContext(options))
             {
                 context.Database.EnsureCreated();
-                var utData = NonDiSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
+                var utData = NonDiSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(config);
                 utData.AddBizOutDtoMapping<ServiceLayerBizOutDto>();
                 var bizInstance = new BizActionInOutWriteDb(context);
                 var runner = new ActionServiceInOut<IBizActionInOutWriteDb, BizDataIn, BizDataOut>(true, utData.WrappedConfig);

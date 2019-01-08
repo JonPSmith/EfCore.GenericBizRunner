@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using GenericBizRunner.Configuration;
+using GenericBizRunner.PublicButHidden;
 
 namespace GenericBizRunner.Internal
 {
@@ -58,11 +59,11 @@ namespace GenericBizRunner.Internal
         /// <summary>
         /// This is the instance that can be called to run the service
         /// </summary>
-        public dynamic GetServiceInstance(IGenericBizRunnerConfig config)
+        public dynamic GetServiceInstance(IWrappedBizRunnerConfigAndMappings wrappedConfig)
         {
             return _bizInstance ??
                    (_bizInstance =
-                       CreateRequiredServiceInstance(_matchingServiceType, _iBizType, _extractedActionInterface, config));
+                       CreateRequiredServiceInstance(_matchingServiceType, _iBizType, _extractedActionInterface, wrappedConfig));
         }
 
         public Type GetBizInType()
@@ -107,13 +108,13 @@ namespace GenericBizRunner.Internal
         //private methods
 
         private dynamic CreateRequiredServiceInstance(ServiceBuilderLookup serviceBaseInfo,
-            Type iBizType, Type genericInterfacePart, IGenericBizRunnerConfig config)
+            Type iBizType, Type genericInterfacePart, IWrappedBizRunnerConfigAndMappings wrappedConfig)
         {
             var genericAgruments = genericInterfacePart.GetGenericArguments().ToList();
             genericAgruments.Insert(0, iBizType);
             return Activator.CreateInstance(
                 serviceBaseInfo.ServiceHandleType.MakeGenericType(genericAgruments.ToArray()),
-                new object[] { RequiresSaveChanges, config});
+                new object[] { RequiresSaveChanges, wrappedConfig});
         }
     }
 }

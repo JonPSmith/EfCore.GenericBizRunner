@@ -32,6 +32,7 @@ namespace Tests.UnitTests.TestActionsAsync
             var config = new GenericBizRunnerConfig { TurnOffCaching = true };
             var utData = NonDiSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(config);
             utData.AddBizOutDtoMapping<ServiceLayerBizOutDto>();
+            utData.AddBizOutDtoMapping<ServiceLayerBizOutDtoAsync>();
             _wrappedConfig = utData.WrappedConfig;
         }
 
@@ -111,6 +112,7 @@ namespace Tests.UnitTests.TestActionsAsync
         public async Task TestActionServiceErrorInSetupOk()
         {
             //SETUP   
+
             var bizInstance = new BizActionInOutAsync();
             var runner = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, bizInstance, _wrappedConfig);
             var input = await runner.GetDtoAsync<ServiceLayerBizInDto>(x => { x.RaiseErrorInSetupSecondaryData = true; });

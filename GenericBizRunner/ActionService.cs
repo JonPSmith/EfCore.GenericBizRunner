@@ -2,9 +2,6 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Linq.Expressions;
-using AutoMapper;
-using GenericBizRunner.Configuration;
 using GenericBizRunner.Internal;
 using GenericBizRunner.PublicButHidden;
 using Microsoft.EntityFrameworkCore;
@@ -62,7 +59,7 @@ namespace GenericBizRunner
         public TOut RunBizAction<TOut>(object inputData)
         {
             var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOut, _turnOffCaching);
-            return decoder.BizInfo.GetServiceInstance(_wrappedConfig.Config).RunBizActionDbAndInstance<TOut>(_context, _bizInstance, _wrappedConfig, inputData);
+            return decoder.BizInfo.GetServiceInstance(_wrappedConfig).RunBizActionDbAndInstance<TOut>(_context, _bizInstance, inputData);
         }
 
         /// <summary>
@@ -73,7 +70,7 @@ namespace GenericBizRunner
         public TOut RunBizAction<TOut>()
         {
             var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.Out, _turnOffCaching);
-            return decoder.BizInfo.GetServiceInstance(_wrappedConfig.Config).RunBizActionDbAndInstance<TOut>(_context, _bizInstance, _wrappedConfig);
+            return decoder.BizInfo.GetServiceInstance(_wrappedConfig).RunBizActionDbAndInstance<TOut>(_context, _bizInstance);
         }
 
         /// <summary>
@@ -84,8 +81,8 @@ namespace GenericBizRunner
         public void RunBizAction(object inputData)
         {
             var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.In, _turnOffCaching);
-            decoder.BizInfo.GetServiceInstance(_wrappedConfig.Config)
-                .RunBizActionDbAndInstance(_context, _bizInstance, _wrappedConfig, inputData);
+            decoder.BizInfo.GetServiceInstance(_wrappedConfig)
+                .RunBizActionDbAndInstance(_context, _bizInstance, inputData);
         }
 
         /// <summary>

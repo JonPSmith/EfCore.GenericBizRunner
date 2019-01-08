@@ -9,7 +9,7 @@ namespace GenericBizRunner.PublicButHidden
     /// <summary>
     /// This is used to find all ToBiz Dtos
     /// </summary>
-    public interface IGenericActionToBizDto { }
+    internal interface IGenericActionToBizDto { }
 
     /// <summary>
     /// This is the abstract class that is used by GenericActionToBizDto class
