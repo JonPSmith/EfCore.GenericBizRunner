@@ -34,7 +34,7 @@ namespace GenericBizRunner.Configuration
         /// ctor
         /// </summary>
         /// <param name="publicConfig"></param>
-        public NonDiSetup(IGenericBizRunnerConfig publicConfig)
+        public NonDiSetup(IGenericBizRunnerConfig publicConfig = null)
         {
             PublicConfig = publicConfig ?? new GenericBizRunnerConfig();
             _bizInProfile = new BizRunnerProfile();
