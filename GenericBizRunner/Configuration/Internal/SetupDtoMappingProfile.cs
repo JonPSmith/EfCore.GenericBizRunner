@@ -12,7 +12,7 @@ namespace GenericBizRunner.Configuration.Internal
         public SetupDtoMappingProfile(Type dtoType, Type bizInOutType, BizRunnerProfile profile, bool bizIn)
         {
             var myGeneric = bizIn ? typeof(SetupToBizDtoProfile<,>) : typeof(SetupFromBizDtoProfile<,>);
-            var setupType = myGeneric.MakeGenericType(dtoType, bizInOutType);
+            var setupType = myGeneric.MakeGenericType(bizInOutType, dtoType);
             Activator.CreateInstance(setupType, new object[]{ profile });
         }
 
@@ -24,30 +24,18 @@ namespace GenericBizRunner.Configuration.Internal
             public SetupFromBizDtoProfile(BizRunnerProfile profile)
             {
                 dynamic dto = Activator.CreateInstance(typeof(TDtoOut));
-                var mappingConfig = dto.MappingConfig;
-                if (mappingConfig == null)
-                    profile.CreateMap<TBizOut, TDtoOut>();
-                else
-                {
-                    mappingConfig(profile.CreateMap<TBizOut, TDtoOut>());
-                }
+                dto.SetDtoMapping(profile.CreateMap<TBizOut, TDtoOut>().IgnoreAllPropertiesWithAnInaccessibleSetter());
             }
         }
 
-        private class SetupToBizDtoProfile<TDtoIn, TBizIn> //NOTE: The TDtoIn, TBizIn are in a different order to elsewhere! That is on purpose
-            where TDtoIn : GenericActionToBizDtoSetup<TBizIn, TDtoIn>, new()
+        private class SetupToBizDtoProfile<TBizIn, TDtoIn>
             where TBizIn : class
+            where TDtoIn : GenericActionToBizDtoSetup<TBizIn, TDtoIn>, new()
         {
             public SetupToBizDtoProfile(BizRunnerProfile profile)
             {
                 dynamic dto = Activator.CreateInstance(typeof(TDtoIn));
-                var mappingConfig = dto.MappingConfig;
-                if (mappingConfig == null)
-                    profile.CreateMap<TBizIn, TDtoIn>();
-                else
-                {
-                    mappingConfig(profile.CreateMap<TBizIn, TDtoIn>());
-                }
+                dto.SetDtoMapping(profile.CreateMap<TDtoIn, TBizIn>().IgnoreAllPropertiesWithAnInaccessibleSetter());
             }
         }
     }

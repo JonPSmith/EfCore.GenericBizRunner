@@ -16,7 +16,7 @@ namespace Tests.UnitTests.Setup
     public class TestAutoMapperConfig
     {
         [Fact]
-        public void TestProfileOnDto()
+        public void TestBizInMappingDto()
         {
             //SETUP
             var utData = NonDiSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>();
@@ -27,6 +27,37 @@ namespace Tests.UnitTests.Setup
 
             //VERIFY
             data.Num.ShouldEqual(234);
+        }
+
+
+        [Fact]
+        public void TestBizOutMappingDto()
+        {
+            //SETUP
+            var utData = NonDiSetup.SetupBizOutDtoMapping<ServiceLayerBizOutDto>();
+
+            //ATTEMPT
+            var input = new BizDataOut { Output = "hello"};
+            var data = utData.WrappedConfig.ToBizIMapper.Map<ServiceLayerBizOutDto>(input);
+
+            //VERIFY
+            data.Output.ShouldEqual("hello");
+        }
+
+        //---------------------------------------------------------------
+
+        [Fact]
+        public void TestDtoWithOverrideOfAutoMapperSetup()
+        {
+            //SETUP
+            var utData = NonDiSetup.SetupBizOutDtoMapping<ServiceLayerBizOutWithMappingDto>();
+
+            //ATTEMPT
+            var input = new BizDataOut { Output = "Hello" };
+            var data = utData.WrappedConfig.FromBizIMapper.Map<ServiceLayerBizOutWithMappingDto>(input);
+
+            //VERIFY
+            data.MappedOutput.ShouldEqual("Hello with suffix.");
         }
     }
 }

@@ -56,13 +56,14 @@ namespace GenericBizRunner.Configuration.Internal
 
         internal static void SetupMappingForDto(Type bizOutDtoType, BizRunnerProfile profile, bool bizIn)
         {
-            var genericBizSetup = bizIn
+            var baseTypeName = (bizIn
                 ? typeof(GenericActionToBizDtoSetup<,>)
-                : typeof(GenericActionFromBizDtoSetup<,>);
+                : typeof(GenericActionFromBizDtoSetup<,>)).FullName;
+            baseTypeName = baseTypeName.Substring(0, baseTypeName.IndexOf('`'));
             Type setupType = null, loopType = bizOutDtoType.BaseType;
-            while(setupType == null || loopType != null)
+            while(setupType == null && loopType != null)
             {
-                if (loopType.FullName == genericBizSetup.FullName)
+                if (loopType.FullName.Substring(0, loopType.FullName.IndexOf('`')) == baseTypeName)
                     setupType = loopType;
                 else
                 {
@@ -71,10 +72,10 @@ namespace GenericBizRunner.Configuration.Internal
             }
             if (setupType == null)
                 throw new InvalidOperationException(
-                    $"You registered the DTO {bizOutDtoType.Name}, as a {(bizIn ? "bizInDto" : "bizOutDto")}, but it doesn't inherit from {genericBizSetup.Name} ");
+                    $"You registered the DTO {bizOutDtoType.Name}, as a {(bizIn ? "bizInDto" : "bizOutDto")}, but it doesn't inherit from {baseTypeName} ");
 
-            var bizOutType = setupType.GetGenericArguments()[0];
-            new SetupDtoMappingProfile(bizOutDtoType, bizOutType, profile, false);
+            var bizInOutType = setupType.GetGenericArguments()[0];
+            new SetupDtoMappingProfile(bizOutDtoType, bizInOutType, profile, bizIn);
         }
 
         //----------------------------------------------
