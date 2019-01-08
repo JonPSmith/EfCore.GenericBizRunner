@@ -87,5 +87,21 @@ namespace Tests.UnitTests.Setup
             //VERIFY
             ex.Message.ShouldEqual("You registered the DTO ServiceLayerBizOutDto, as a bizInDto, but it doesn't inherit from GenericBizRunner.PublicButHidden.GenericActionToBizDtoSetup.");
         }
+
+
+        [Fact]
+        public void TestMissingMapThrowsError()
+        {
+            //SETUP
+            Mapper.Initialize(cfg => cfg.CreateMissingTypeMaps = false);
+            var utData = new NonDiSetup();
+
+            //ATTEMPT
+            var input = new BizDataOut { Output = "hello"};
+            var data = utData.WrappedConfig.FromBizIMapper.Map<ServiceLayerBizOutDto>(input);
+
+            //VERIFY
+            data.Output.ShouldEqual("hello");
+        }
     }
 }
