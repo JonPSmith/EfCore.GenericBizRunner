@@ -7,6 +7,9 @@ using GenericBizRunner.Configuration;
 
 namespace GenericBizRunner.PublicButHidden
 {
+    /// <summary>
+    /// This holds the BizRunner configuration and the AutoMapper profiles for the ToBiz and FromBiz mappings
+    /// </summary>
     public interface IWrappedBizRunnerConfigAndMappings
     {
         /// <summary>
@@ -25,9 +28,10 @@ namespace GenericBizRunner.PublicButHidden
         IMapper FromBizIMapper { get; }
     }
 
+    /// <inheritdoc />
     public class WrappedBizRunnerConfigAndMappings : IWrappedBizRunnerConfigAndMappings
     {
-        public WrappedBizRunnerConfigAndMappings(IGenericBizRunnerConfig config, MapperConfiguration toBizMapping, MapperConfiguration fromBizMapping)
+        internal WrappedBizRunnerConfigAndMappings(IGenericBizRunnerConfig config, MapperConfiguration toBizMapping, MapperConfiguration fromBizMapping)
         {
             Config = config ?? throw new ArgumentNullException(nameof(config));
             ToBizIMapper = toBizMapping?.CreateMapper() ?? throw new ArgumentNullException(nameof(toBizMapping));
