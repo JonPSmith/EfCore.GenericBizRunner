@@ -33,6 +33,24 @@ namespace Tests.UnitTests.Setup
         }
 
         [Fact]
+        public void TestBizOutMappingDto()
+        {
+            //SETUP
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new ServiceLayerBizOutDto());
+            });
+            var mapper = config.CreateMapper();
+
+            //ATTEMPT
+            var input = new BizDataOut { Output = "hello" };
+            var data = mapper.Map<ServiceLayerBizOutDto>(input);
+
+            //VERIFY
+            data.Output.ShouldEqual("hello");
+        }
+
+        [Fact]
         public void TestViaAddAutoMapper()
         {
             //SETUP
@@ -48,5 +66,7 @@ namespace Tests.UnitTests.Setup
             //VERIFY
             data.Num.ShouldEqual(234);
         }
+
+
     }
 }
