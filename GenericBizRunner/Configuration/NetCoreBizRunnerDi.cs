@@ -2,7 +2,6 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
@@ -11,10 +10,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace GenericBizRunner.Configuration
 {
+    /// <summary>
+    /// This contains the code to register the GenericBizRunner library and also find and GenericBizRunner DTO and 
+    /// </summary>
     public static class NetCoreBizRunnerDi
     {
         /// <summary>
-        /// This is the method for registering GenericBizRunner with .NET Core DI provider
+        /// This is the method for registering GenericBizRunner and any GenericBizRunner DTOs with .NET Core DI provider
         /// </summary>
         /// <typeparam name="TDefaultDbContext"></typeparam>
         /// <param name="services"></param>
@@ -22,13 +24,11 @@ namespace GenericBizRunner.Configuration
         public static void RegisterGenericBizRunnerBasic<TDefaultDbContext>(this IServiceCollection services, params Assembly[] assembliesToScan)
             where TDefaultDbContext : DbContext
         {
-            services.AddScoped<DbContext>(sp => sp.GetService<TDefaultDbContext>());
-            services.AddTransient(typeof(IActionService<>), typeof(ActionService<>));
-            services.AddTransient(typeof(IActionServiceAsync<>), typeof(ActionServiceAsync<>));
+            services.RegisterGenericBizRunnerBasic<TDefaultDbContext>(new GenericBizRunnerConfig(), assembliesToScan);
         }
 
         /// <summary>
-        /// This is the method for registering GenericBizRunner with .NET Core DI provider with config
+        /// This is the method for registering GenericBizRunner and any GenericBizRunner DTOs with .NET Core DI provider with config
         /// </summary>
         /// <typeparam name="TDefaultDbContext"></typeparam>
         /// <param name="services"></param>
@@ -49,18 +49,17 @@ namespace GenericBizRunner.Configuration
         }
 
         /// <summary>
-        /// This is used to register GenericBizRunner with .NET Core DI provider to work with multiple DbContexts
+        /// This is used to register GenericBizRunner and any GenericBizRunner DTOs with .NET Core DI provider to work with multiple DbContexts
         /// </summary>
         /// <param name="services"></param>
         /// <param name="assembliesToScan">These are the assemblies to scan for DTOs</param>
         public static void RegisterGenericBizRunnerMultiDbContext(this IServiceCollection services, params Assembly[] assembliesToScan)
         {
-            services.AddTransient(typeof(IActionService<,>), typeof(ActionService<,>));
-            services.AddTransient(typeof(IActionServiceAsync<,>), typeof(ActionServiceAsync<,>));
+            services.RegisterGenericBizRunnerMultiDbContext(new GenericBizRunnerConfig(), assembliesToScan);
         }
 
         /// <summary>
-        /// This is used to register GenericBizRunner with .NET Core DI provider to work with multiple DbContexts
+        /// This is used to register GenericBizRunner and any GenericBizRunner DTOs with .NET Core DI provider to work with multiple DbContexts
         /// </summary>
         /// <param name="services"></param>
         /// <param name="config"></param>

@@ -1,8 +1,7 @@
 ﻿using System;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using AutoMapper;
-using AutoMapper.Configuration;
+using System.Reflection;
+using BizDbAccess.Orders.Concrete;
+using BizLogic.Orders.Concrete;
 using DataLayer.EfCode;
 using EfCoreInAction.Logger;
 using GenericBizRunner.Configuration;
@@ -11,10 +10,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NetCore.AutoRegisterDi;
 using ServiceLayer;
+using ServiceLayer.BookServices;
+using ServiceLayer.OrderServices;
 
 namespace EfCoreInAction
 {
@@ -29,7 +30,7 @@ namespace EfCoreInAction
         public Microsoft.Extensions.Configuration.IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
             services.AddMvc();
@@ -47,22 +48,18 @@ namespace EfCoreInAction
             services.AddDbContext<EfCoreContext>(options => options.UseSqlite(connection));
             //--------------------------------------------------------------------
 
-            //Now I use AutoFac to do some of the more complex registering of services
-            var containerBuilder = new ContainerBuilder();
 
             #region GenericBizRunner parts
-            // Need to call AddAutoMapper to set up the mappings any GenericAction From/To Biz Dtos
-            services.AddAutoMapper(); 
-            //GenericBizRunner has two AutoFac modules that can register all the services needed
-            //This one is the simplest, as it sets up the link to the application's DbContext
-            containerBuilder.RegisterModule(new BizRunnerDiModule<EfCoreContext>());
-            //Now I use the ServiceLayer AutoFac module that registers all the other DI items, such as my biz logic
-            containerBuilder.RegisterModule(new ServiceLayerModule());
+            //This sets up the 
+            services.RegisterGenericBizRunnerBasic<EfCoreContext>(Assembly.GetAssembly(typeof(WebChangeDeliveryDto)));
             #endregion
 
-            containerBuilder.Populate(services);
-            var container = containerBuilder.Build();
-            return new AutofacServiceProvider(container); 
+            //now we register the public classes with public interfaces in the three layers
+            services.RegisterAssemblyPublicNonGenericClasses(
+                Assembly.GetAssembly(typeof(BookListDto)), //Service layer
+                Assembly.GetAssembly(typeof(PlaceOrderAction)), //BizLogic
+                Assembly.GetAssembly(typeof(PlaceOrderDbAccess)) //BizDbAccess
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
