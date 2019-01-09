@@ -182,6 +182,46 @@ namespace Tests.UnitTests.Setup
             }
         }
 
+        [Fact]
+        public void TestSqlErrorHandlerWorksEvenIfValidationIsTurnedOff()
+        {
+            IStatusGeneric CatchUniqueError(Exception e, DbContext context)
+            {
+                var dbUpdateEx = e as DbUpdateException;
+                var sqliteError = dbUpdateEx?.InnerException as SqliteException;
+                return sqliteError?.SqliteErrorCode == 19
+                    ? new StatusGenericHandler().AddError("Unique constraint failed")
+                    : null;
+            }
+
+            //SETUP  
+            var options = SqliteInMemory.CreateOptions<TestDbContext>();
+            using (var context = new TestDbContext(options))
+            {
+                context.Database.EnsureCreated();
+                context.UniqueEntities.Add(new UniqueEntity { UniqueString = "Hello" });
+                context.SaveChanges();
+
+                var config = new GenericBizRunnerConfig
+                {
+                    TurnOffCaching = true,
+                    DoNotValidateSaveChanges = true,
+                    SaveChangesExceptionHandler = CatchUniqueError
+                };
+                var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(config);
+                utData.AddDtoMapping<ServiceLayerBizOutDto>();
+                var bizInstance = new BizActionCheckSqlErrorHandlerWriteDb(context);
+                var runner = new ActionService<IBizActionCheckSqlErrorHandlerWriteDb>(context, bizInstance, utData.WrappedConfig);
+
+                //ATTEMPT
+                runner.RunBizAction("Hello");
+
+                //VERIFY
+                runner.Status.GetAllErrors().ShouldEqual("Unique constraint failed");
+            }
+        }
+
+
         [Theory]
         [InlineData(1, true)]
         [InlineData(19, false)]
@@ -229,8 +269,45 @@ namespace Tests.UnitTests.Setup
                 shouldThrowException.ShouldBeFalse();
                 runner.Status.GetAllErrors().ShouldEqual("Unique constraint failed");
             }
+        }
 
+        [Fact]
+        public async Task TestSqlErrorHandlerWorksEvenIfValidationIsTurnedOffAsync()
+        {
+            IStatusGeneric CatchUniqueError(Exception e, DbContext context)
+            {
+                var dbUpdateEx = e as DbUpdateException;
+                var sqliteError = dbUpdateEx?.InnerException as SqliteException;
+                return sqliteError?.SqliteErrorCode == 19
+                    ? new StatusGenericHandler().AddError("Unique constraint failed")
+                    : null;
+            }
 
+            //SETUP  
+            var options = SqliteInMemory.CreateOptions<TestDbContext>();
+            using (var context = new TestDbContext(options))
+            {
+                context.Database.EnsureCreated();
+                context.UniqueEntities.Add(new UniqueEntity { UniqueString = "Hello" });
+                context.SaveChanges();
+
+                var config = new GenericBizRunnerConfig
+                {
+                    TurnOffCaching = true,
+                    DoNotValidateSaveChanges = true,
+                    SaveChangesExceptionHandler = CatchUniqueError
+                };
+                var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(config);
+                utData.AddDtoMapping<ServiceLayerBizOutDto>();
+                var bizInstance = new BizActionCheckSqlErrorHandlerWriteDbAsync(context);
+                var runner = new ActionServiceAsync<IBizActionCheckSqlErrorHandlerWriteDbAsync>(context, bizInstance, utData.WrappedConfig);
+
+                //ATTEMPT
+                await runner.RunBizActionAsync("Hello");
+
+                //VERIFY
+                runner.Status.GetAllErrors().ShouldEqual("Unique constraint failed");
+            }
         }
     }
 }

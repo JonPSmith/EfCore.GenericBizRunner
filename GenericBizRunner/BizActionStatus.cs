@@ -1,12 +1,7 @@
 ﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using System.Linq;
 using GenericBizRunner.Configuration;
 
 namespace GenericBizRunner
@@ -43,7 +38,7 @@ namespace GenericBizRunner
         /// </summary>
         /// <param name="config"></param>
         /// <returns></returns>
-        public bool ValidateSaveChanges(IGenericBizRunnerConfig config)
+        public bool ShouldValidateSaveChanges(IGenericBizRunnerConfig config)
         {
             if (ValidateOnSaveSetting == ValidateOnSaveStates.UseConfig)
                 return !config.DoNotValidateSaveChanges;

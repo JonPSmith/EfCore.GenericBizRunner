@@ -37,5 +37,8 @@ namespace GenericBizRunner.Configuration
 
         /// <inheritdoc />
         public Func<Exception, DbContext, IStatusGeneric> SaveChangesExceptionHandler { get; set; } = (exception, context) => null; // default is to return null
+
+        /// <inheritdoc />
+        public BeforeSaveChangesBizRunner BeforeSaveChanges { get; set;  }
     }
 }

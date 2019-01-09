@@ -18,6 +18,6 @@ namespace GenericBizRunner
         /// </summary>
         /// <param name="config"></param>
         /// <returns></returns>
-        bool ValidateSaveChanges(IGenericBizRunnerConfig config);
+        bool ShouldValidateSaveChanges(IGenericBizRunnerConfig config);
     }
 }

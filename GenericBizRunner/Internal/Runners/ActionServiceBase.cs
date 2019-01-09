@@ -2,7 +2,6 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using GenericBizRunner.Configuration;
 using GenericBizRunner.Helpers;
 using GenericBizRunner.PublicButHidden;
 using Microsoft.EntityFrameworkCore;
@@ -18,15 +17,14 @@ namespace GenericBizRunner.Internal.Runners
         }
 
         /// <summary>
-        /// This contains info on whether SaveChanges (with validation) should be called after a succsessful business logic has run
+        /// This contains info on whether SaveChanges (with validation) should be called after a successful business logic has run
         /// </summary>
         private bool RequiresSaveChanges { get; }
 
         protected IWrappedBizRunnerConfigAndMappings WrappedConfig { get; }
 
         /// <summary>
-        /// This a) handled optional save to database and b) calling SetupSecondaryData if there are any errors
-        /// It also makes sure that the runStatus is used at the primary return so that warnings are passed on.
+        /// This handled optional save to database with various validation and/or handlers
         /// Note: if it did save successfully to the database it alters the message
         /// </summary>
         /// <param name="db"></param>
@@ -34,21 +32,17 @@ namespace GenericBizRunner.Internal.Runners
         /// <returns></returns>
         protected void SaveChangedIfRequiredAndNoErrors(DbContext db, IBizActionStatus bizStatus)
         {
+
             if (!bizStatus.HasErrors && RequiresSaveChanges)
             {
-                if (bizStatus.ValidateSaveChanges(WrappedConfig.Config))
-                    bizStatus.CombineErrors(db.SaveChangesWithValidation(WrappedConfig.Config));
-                else
-                {
-                    db.SaveChanges();
-                }
+                bizStatus.CombineErrors(db.SaveChangesWithOptionalValidation(
+                    bizStatus.ShouldValidateSaveChanges(WrappedConfig.Config), WrappedConfig.Config));
                 WrappedConfig.Config.UpdateSuccessMessageOnGoodWrite(bizStatus, WrappedConfig.Config);
             }
         }
 
         /// <summary>
-        /// This a) handled optional save to database and b) calling SetupSecondaryData if there are any errors
-        /// It also makes sure that the runStatus is used at the primary return so that warnings are passed on.
+        /// This handled optional save to database with various validation and/or handlers
         /// Note: if it did save successfully to the database it alters the message
         /// </summary>
         /// <param name="db"></param>
@@ -58,13 +52,9 @@ namespace GenericBizRunner.Internal.Runners
         {
             if (!bizStatus.HasErrors && RequiresSaveChanges)
             {
-                if (bizStatus.ValidateSaveChanges(WrappedConfig.Config))
-                    bizStatus.CombineErrors(await db.SaveChangesWithValidationAsync(WrappedConfig.Config));
-                else
-                {
-                    await db.SaveChangesAsync().ConfigureAwait(false);
-                }
-
+                bizStatus.CombineErrors(await db.SaveChangesWithOptionalValidationAsync(
+                    bizStatus.ShouldValidateSaveChanges(WrappedConfig.Config), WrappedConfig.Config)
+                        .ConfigureAwait(false));
                 WrappedConfig.Config.UpdateSuccessMessageOnGoodWrite(bizStatus, WrappedConfig.Config);
             }
         }
