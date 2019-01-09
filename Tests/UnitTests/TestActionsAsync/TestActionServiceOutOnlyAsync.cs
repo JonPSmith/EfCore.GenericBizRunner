@@ -45,8 +45,8 @@ namespace Tests.UnitTests.TestActionsAsync
         public async Task TestActionServiceOutOnlyDtosAsyncOk()
         {
             //SETUP 
-            var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDtoAsync>(_noCachingConfig);
-            utData.AddBizOutDtoMapping<ServiceLayerBizOutDtoAsync>();
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDtoAsync>(_noCachingConfig);
+            utData.AddDtoMapping<ServiceLayerBizOutDtoAsync>();
             var bizInstance = new BizActionOutOnlyAsync();
             var runner = new ActionServiceAsync<IBizActionOutOnlyAsync>(_emptyDbContext, bizInstance, utData.WrappedConfig);
 
@@ -66,8 +66,8 @@ namespace Tests.UnitTests.TestActionsAsync
             using (var context = new TestDbContext(options))
             {
                 context.Database.EnsureCreated();
-                var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
-                utData.AddBizOutDtoMapping<ServiceLayerBizOutDto>();
+                var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
+                utData.AddDtoMapping<ServiceLayerBizOutDto>();
                 var bizInstance = new BizActionOutOnlyWriteDbAsync(context);
                 var runner =
                     new ActionServiceAsync<IBizActionOutOnlyWriteDbAsync>(context, bizInstance, utData.WrappedConfig);
@@ -85,8 +85,8 @@ namespace Tests.UnitTests.TestActionsAsync
         public async Task TestActionServiceOutOnlyDtosOk()
         {
             //SETUP 
-            var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
-            utData.AddBizOutDtoMapping<ServiceLayerBizOutDto>();
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
+            utData.AddDtoMapping<ServiceLayerBizOutDto>();
             var bizInstance = new BizActionOutOnlyAsync();
             var runner = new ActionServiceAsync<IBizActionOutOnlyAsync>(_emptyDbContext, bizInstance, utData.WrappedConfig);
 

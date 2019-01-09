@@ -19,7 +19,7 @@ namespace Tests.UnitTests.Internals
         public async Task TestBizInCopyAsyncAsyncDtoOk()
         {
             //SETUP 
-            var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDtoAsync>();
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDtoAsync>();
             var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDtoAsync), typeof(BizDataIn), true, true, true);
             var input = new ServiceLayerBizInDtoAsync { Num = 234 };
 
@@ -53,7 +53,7 @@ namespace Tests.UnitTests.Internals
         public async Task TestBizInCopyAsyncServiceInstanceOk()
         {
             //SETUP 
-            var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDtoAsync>();
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDtoAsync>();
             var copier = new CopyToBizDataAsync<BizDataIn, ServiceLayerBizInDtoAsync>();
             var input = new ServiceLayerBizInDtoAsync { Num = 234 };
 
@@ -68,7 +68,7 @@ namespace Tests.UnitTests.Internals
         public async Task TestBizInCopyAsyncSyncDtoOk()
         {
             //SETUP 
-            var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>();
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>();
             var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDto), typeof(BizDataIn), true, true, true);
             var input = new ServiceLayerBizInDto { Num = 234 };
 
@@ -84,7 +84,7 @@ namespace Tests.UnitTests.Internals
         public async Task TestBizOutCopyAsyncAsyncDtoOk()
         {
             //SETUP 
-            var utData = NonDiBizSetup.SetupBizOutDtoMapping<ServiceLayerBizOutDtoAsync>();
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizOutDtoAsync>();
             var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataOut), typeof(ServiceLayerBizOutDtoAsync), false, true, true);
             var input = new BizDataOut { Output = "test copy" };
 
@@ -118,7 +118,7 @@ namespace Tests.UnitTests.Internals
         public async Task TestBizOutCopyAsyncSyncDtoOk()
         {
             //SETUP 
-            var utData = NonDiBizSetup.SetupBizOutDtoMapping<ServiceLayerBizOutDto>();
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizOutDto>();
             var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataOut), typeof(ServiceLayerBizOutDto), false, true, true);
             var input = new BizDataOut { Output = "test copy" };
 

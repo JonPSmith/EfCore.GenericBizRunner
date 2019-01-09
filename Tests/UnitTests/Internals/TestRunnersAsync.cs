@@ -32,7 +32,7 @@ namespace Tests.UnitTests.Internals
         public async Task TestActionServiceInOutValuesOkAsync(int num, bool hasErrors)
         {
             //SETUP 
-            var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
             var bizInstance = new BizActionInOutAsync();
             var runner = new ActionServiceInOutAsync<IBizActionInOutAsync, BizDataIn, BizDataOut>(false, utData.WrappedConfig);
             var input = new BizDataIn { Num = num };
@@ -54,7 +54,7 @@ namespace Tests.UnitTests.Internals
         public async Task TestActionServiceInOnlyNoDtoOk(int num, bool hasErrors)
         {
             //SETUP 
-            var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
             var bizInstance = new BizActionInOnlyAsync();
             var runner = new ActionServiceInOnlyAsync<IBizActionInOnlyAsync, BizDataIn>(false, utData.WrappedConfig);
             var input = new BizDataIn { Num = num };
@@ -75,8 +75,8 @@ namespace Tests.UnitTests.Internals
         public async Task TestActionServiceInOutMappingOk(int num, bool hasErrors)
         {
             //SETUP 
-            var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
-            utData.AddBizOutDtoMapping<ServiceLayerBizOutDto>();
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
+            utData.AddDtoMapping<ServiceLayerBizOutDto>();
             var bizInstance = new BizActionInOutAsync();
             var runner = new ActionServiceInOutAsync<IBizActionInOutAsync, BizDataIn, BizDataOut>(false, utData.WrappedConfig);
             var inDto = new ServiceLayerBizInDto { Num = num };
@@ -98,8 +98,8 @@ namespace Tests.UnitTests.Internals
         public async Task TestActionServiceInOnlyMappingOk(int num, bool hasErrors)
         {
             //SETUP 
-            var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
-            utData.AddBizOutDtoMapping<ServiceLayerBizOutDto>();
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
+            utData.AddDtoMapping<ServiceLayerBizOutDto>();
             var bizInstance = new BizActionInOnlyAsync();
             var runner = new ActionServiceInOnlyAsync<IBizActionInOnlyAsync, BizDataIn>(false, utData.WrappedConfig);
             var inDto = new ServiceLayerBizInDto { Num = num };
@@ -126,8 +126,8 @@ namespace Tests.UnitTests.Internals
             using (var context = new TestDbContext(options))
             {
                 context.Database.EnsureCreated();
-                var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(config);
-                utData.AddBizOutDtoMapping<ServiceLayerBizOutDto>();
+                var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(config);
+                utData.AddDtoMapping<ServiceLayerBizOutDto>();
                 var bizInstance = new BizActionInOutWriteDbAsync(context);
                 var runner = new ActionServiceInOutAsync<IBizActionInOutWriteDbAsync, BizDataIn, BizDataOut>(true, utData.WrappedConfig);
                 var inDto = new ServiceLayerBizInDto { Num = num };
@@ -154,8 +154,8 @@ namespace Tests.UnitTests.Internals
             using (var context = new TestDbContext(options))
             {
                 context.Database.EnsureCreated();
-                var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
-                utData.AddBizOutDtoMapping<ServiceLayerBizOutDto>();
+                var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
+                utData.AddDtoMapping<ServiceLayerBizOutDto>();
                 var bizInstance = new BizActionInOnlyWriteDbAsync(context);
                 var runner = new ActionServiceInOnlyAsync<IBizActionInOnlyWriteDbAsync, BizDataIn>(true, utData.WrappedConfig);
                 var inDto = new ServiceLayerBizInDto { Num = num };
@@ -187,8 +187,8 @@ namespace Tests.UnitTests.Internals
             using (var context = new TestDbContext(options))
             {
                 context.Database.EnsureCreated();
-                var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(config);
-                utData.AddBizOutDtoMapping<ServiceLayerBizOutDto>();
+                var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(config);
+                utData.AddDtoMapping<ServiceLayerBizOutDto>();
                 var bizInstance = new BizActionInOutWriteDbAsync(context);
                 var runner = new ActionServiceInOutAsync<IBizActionInOutWriteDbAsync, BizDataIn, BizDataOut>(true, utData.WrappedConfig);
                 var inDto = new ServiceLayerBizInDto { Num = num };
@@ -214,7 +214,7 @@ namespace Tests.UnitTests.Internals
             {
                 context.Database.EnsureCreated();
 
-                var utData = NonDiBizSetup.SetupBizOutDtoMapping<ServiceLayerBizOutDto>(_noCachingConfig);
+                var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizOutDto>(_noCachingConfig);
                 var bizInstance = new BizActionOutOnlyWriteDbAsync(context);
                 var runner = new ActionServiceOutOnlyAsync<IBizActionOutOnlyWriteDbAsync, BizDataOut>(true, utData.WrappedConfig);
 
@@ -231,7 +231,7 @@ namespace Tests.UnitTests.Internals
         public async Task TestActionServiceOutOnlyMappingOk()
         {
             //SETUP 
-            var utData = NonDiBizSetup.SetupBizOutDtoMapping<ServiceLayerBizOutDto>(_noCachingConfig);
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizOutDto>(_noCachingConfig);
             var bizInstance = new BizActionOutOnlyAsync();
             var runner = new ActionServiceOutOnlyAsync<IBizActionOutOnlyAsync, BizDataOut>(false, utData.WrappedConfig);
 
@@ -247,7 +247,7 @@ namespace Tests.UnitTests.Internals
         public async Task TestActionServiceOutOnlyNoDtoOk()
         {
             //SETUP 
-            var utData = NonDiBizSetup.SetupBizOutDtoMapping<ServiceLayerBizOutDto>(_noCachingConfig);
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizOutDto>(_noCachingConfig);
             var bizInstance = new BizActionOutOnlyAsync();
             var runner = new ActionServiceOutOnlyAsync<IBizActionOutOnlyAsync, BizDataOut>(false, utData.WrappedConfig);
 

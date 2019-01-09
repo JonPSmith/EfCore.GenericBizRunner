@@ -33,7 +33,7 @@ namespace Tests.UnitTests.Internals
         public void TestBizInCopyOk()
         {
             //SETUP
-            var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>();
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>();
             var copier = DtoAccessGenerator.BuildCopier(typeof(ServiceLayerBizInDto), typeof(BizDataIn), true, false, true);
             var input = new ServiceLayerBizInDto { Num = 234 };
 
@@ -50,7 +50,7 @@ namespace Tests.UnitTests.Internals
         public void TestBizOutCopyOk()
         {
             //SETUP
-            var utData = NonDiBizSetup.SetupBizOutDtoMapping<ServiceLayerBizOutDto>();
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizOutDto>();
             var copier = DtoAccessGenerator.BuildCopier(typeof(BizDataOut), typeof(ServiceLayerBizOutDto), false, false, true);
             var input = new BizDataOut { Output = "test copy" };
 

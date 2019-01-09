@@ -31,7 +31,7 @@ namespace Tests.UnitTests.Internals
         public void TestActionServiceInOutValuesOk(int input, bool hasErrors)
         {
             //SETUP
-            var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
             var bizInstance = new BizActionValueInOut();
             var runner = new ActionServiceInOut<IBizActionValueInOut, int, string>(false, utData.WrappedConfig);
 
@@ -52,7 +52,7 @@ namespace Tests.UnitTests.Internals
         public void TestActionServiceInOnlyNoDtoOk(int num, bool hasErrors)
         {
             //SETUP 
-            var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
             var bizInstance = new BizActionInOnly();
             var runner = new ActionServiceInOnly<IBizActionInOnly, BizDataIn>(false, utData.WrappedConfig);
             var input = new BizDataIn {Num = num};
@@ -73,8 +73,8 @@ namespace Tests.UnitTests.Internals
         public void TestActionServiceInOutMappingOk(int num, bool hasErrors)
         {
             //SETUP
-            var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
-            utData.AddBizOutDtoMapping<ServiceLayerBizOutDto>();
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
+            utData.AddDtoMapping<ServiceLayerBizOutDto>();
             var bizInstance = new BizActionInOut();
             var runner = new ActionServiceInOut<IBizActionInOut, BizDataIn, BizDataOut>(false, utData.WrappedConfig);
             var inDto = new ServiceLayerBizInDto {Num = num};
@@ -96,8 +96,8 @@ namespace Tests.UnitTests.Internals
         public void TestActionServiceInOnlyMappingOk(int num, bool hasErrors)
         {
             //SETUP 
-            var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
-            utData.AddBizOutDtoMapping<ServiceLayerBizOutDto>();
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
+            utData.AddDtoMapping<ServiceLayerBizOutDto>();
             var bizInstance = new BizActionInOnly();
             var runner = new ActionServiceInOnly<IBizActionInOnly, BizDataIn>(false, utData.WrappedConfig);
             var inDto = new ServiceLayerBizInDto { Num = num };
@@ -124,8 +124,8 @@ namespace Tests.UnitTests.Internals
             using(var context = new TestDbContext(options))
             {
                 context.Database.EnsureCreated();
-                var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(config);
-                utData.AddBizOutDtoMapping<ServiceLayerBizOutDto>();
+                var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(config);
+                utData.AddDtoMapping<ServiceLayerBizOutDto>();
                 var bizInstance = new BizActionInOutWriteDb(context);
                 var runner = new ActionServiceInOut<IBizActionInOutWriteDb, BizDataIn, BizDataOut>(true, utData.WrappedConfig);
                 var inDto = new ServiceLayerBizInDto { Num = num };
@@ -152,8 +152,8 @@ namespace Tests.UnitTests.Internals
             using (var context = new TestDbContext(options))
             {
                 context.Database.EnsureCreated();
-                var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
-                utData.AddBizOutDtoMapping<ServiceLayerBizOutDto>();
+                var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
+                utData.AddDtoMapping<ServiceLayerBizOutDto>();
                 var bizInstance = new BizActionInOnlyWriteDb(context);
                 var runner = new ActionServiceInOnly<IBizActionInOnlyWriteDb, BizDataIn>(true, utData.WrappedConfig);
                 var inDto = new ServiceLayerBizInDto {Num = num};
@@ -185,8 +185,8 @@ namespace Tests.UnitTests.Internals
             using (var context = new TestDbContext(options))
             {
                 context.Database.EnsureCreated();
-                var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(config);
-                utData.AddBizOutDtoMapping<ServiceLayerBizOutDto>();
+                var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(config);
+                utData.AddDtoMapping<ServiceLayerBizOutDto>();
                 var bizInstance = new BizActionInOutWriteDb(context);
                 var runner = new ActionServiceInOut<IBizActionInOutWriteDb, BizDataIn, BizDataOut>(true, utData.WrappedConfig);
                 var inDto = new ServiceLayerBizInDto { Num = num };
@@ -212,7 +212,7 @@ namespace Tests.UnitTests.Internals
             {
                 context.Database.EnsureCreated();
 
-                var utData = NonDiBizSetup.SetupBizOutDtoMapping<ServiceLayerBizOutDto>(_noCachingConfig);
+                var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizOutDto>(_noCachingConfig);
                 var bizInstance = new BizActionOutOnlyWriteDb(context);
                 var runner = new ActionServiceOutOnly<IBizActionOutOnlyWriteDb, BizDataOut>(true, utData.WrappedConfig);
 
@@ -229,7 +229,7 @@ namespace Tests.UnitTests.Internals
         public void TestActionServiceOutOnlyMappingOk()
         {
             //SETUP 
-            var utData = NonDiBizSetup.SetupBizOutDtoMapping<ServiceLayerBizOutDto>(_noCachingConfig);
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizOutDto>(_noCachingConfig);
             var bizInstance = new BizActionOutOnly();
             var runner = new ActionServiceOutOnly<IBizActionOutOnly, BizDataOut>(false, utData.WrappedConfig);
 
@@ -245,7 +245,7 @@ namespace Tests.UnitTests.Internals
         public void TestActionServiceOutOnlyNoDtoOk()
         {
             //SETUP 
-            var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
             var bizInstance = new BizActionOutOnly();
             var runner = new ActionServiceOutOnly<IBizActionOutOnly, BizDataOut>(false, utData.WrappedConfig);
 

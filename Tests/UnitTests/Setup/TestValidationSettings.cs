@@ -35,8 +35,8 @@ namespace Tests.UnitTests.Setup
                 context.Database.EnsureCreated();
 
                 var config = new GenericBizRunnerConfig { TurnOffCaching = true, DoNotValidateSaveChanges = doNotValidate };
-                var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(config);
-                utData.AddBizOutDtoMapping<ServiceLayerBizOutDto>();
+                var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(config);
+                utData.AddDtoMapping<ServiceLayerBizOutDto>();
                 var bizInstance = new BizActionInOnlyWriteDb(context);
                 var runner = new ActionService<IBizActionInOnlyWriteDb>(context, bizInstance, utData.WrappedConfig);
                 var input = new BizDataIn { Num = 1 };
@@ -67,8 +67,8 @@ namespace Tests.UnitTests.Setup
                 context.Database.EnsureCreated();
 
                 var config = new GenericBizRunnerConfig { TurnOffCaching = true};
-                var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(config);
-                utData.AddBizOutDtoMapping<ServiceLayerBizOutDto>();
+                var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(config);
+                utData.AddDtoMapping<ServiceLayerBizOutDto>();
                 var bizInstance = new BizActionInOnlyWriteDbForceValidateOff(context);
                 var runner = new ActionService<IBizActionInOnlyWriteDbForceValidateOff>(context, bizInstance, utData.WrappedConfig);
                 var input = new BizDataIn {Num = 1};
@@ -92,8 +92,8 @@ namespace Tests.UnitTests.Setup
                 context.Database.EnsureCreated();
 
                 var config = new GenericBizRunnerConfig { TurnOffCaching = true, DoNotValidateSaveChanges = true};
-                var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(config);
-                utData.AddBizOutDtoMapping<ServiceLayerBizOutDto>();
+                var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(config);
+                utData.AddDtoMapping<ServiceLayerBizOutDto>();
                 var bizInstance = new BizActionInOnlyWriteDbForceValidateOn(context);
                 var runner =
                     new ActionService<IBizActionInOnlyWriteDbForceValidateOn>(context, bizInstance, utData.WrappedConfig);
@@ -120,8 +120,8 @@ namespace Tests.UnitTests.Setup
                 context.SaveChanges();
 
                 var config = new GenericBizRunnerConfig { TurnOffCaching = true};
-                var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(config);
-                utData.AddBizOutDtoMapping<ServiceLayerBizOutDto>();
+                var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(config);
+                utData.AddDtoMapping<ServiceLayerBizOutDto>();
                 var bizInstance = new BizActionCheckSqlErrorHandlerWriteDb(context);
                 var runner = new ActionService<IBizActionCheckSqlErrorHandlerWriteDb>(context, bizInstance, utData.WrappedConfig);
 
@@ -160,8 +160,8 @@ namespace Tests.UnitTests.Setup
                     TurnOffCaching = true,
                     SaveChangesExceptionHandler = CatchUniqueError
                 };
-                var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(config);
-                utData.AddBizOutDtoMapping<ServiceLayerBizOutDto>();
+                var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(config);
+                utData.AddDtoMapping<ServiceLayerBizOutDto>();
                 var bizInstance = new BizActionCheckSqlErrorHandlerWriteDb(context);
                 var runner = new ActionService<IBizActionCheckSqlErrorHandlerWriteDb>(context, bizInstance, utData.WrappedConfig);
 
@@ -209,8 +209,8 @@ namespace Tests.UnitTests.Setup
                     TurnOffCaching = true,
                     SaveChangesExceptionHandler = CatchUniqueError
                 };
-                var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(config);
-                utData.AddBizOutDtoMapping<ServiceLayerBizOutDto>();
+                var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(config);
+                utData.AddDtoMapping<ServiceLayerBizOutDto>();
                 var bizInstance = new BizActionCheckSqlErrorHandlerWriteDbAsync(context);
                 var runner = new ActionServiceAsync<IBizActionCheckSqlErrorHandlerWriteDbAsync>(context, bizInstance, utData.WrappedConfig);
 

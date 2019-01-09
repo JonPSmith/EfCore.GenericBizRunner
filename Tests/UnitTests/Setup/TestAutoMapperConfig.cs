@@ -17,7 +17,7 @@ namespace Tests.UnitTests.Setup
         public void TestBizInMappingDto()
         {
             //SETUP
-            var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>();
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>();
 
             //ATTEMPT
             var input = new ServiceLayerBizInDto { Num = 234 };
@@ -32,7 +32,7 @@ namespace Tests.UnitTests.Setup
         public void TestBizOutMappingDto()
         {
             //SETUP
-            var utData = NonDiBizSetup.SetupBizOutDtoMapping<ServiceLayerBizOutDto>();
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizOutDto>();
 
             //ATTEMPT
             var input = new BizDataOut { Output = "hello"};
@@ -48,7 +48,7 @@ namespace Tests.UnitTests.Setup
         public void TestDtoWithOverrideOfAutoMapperSetup()
         {
             //SETUP
-            var utData = NonDiBizSetup.SetupBizOutDtoMapping<ServiceLayerBizOutWithMappingDto>();
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizOutWithMappingDto>();
 
             //ATTEMPT
             var input = new BizDataOut { Output = "Hello" };
@@ -62,27 +62,15 @@ namespace Tests.UnitTests.Setup
         //errors
 
         [Fact]
-        public void TestDtoInWrongMapperSetup()
+        public void TestNotValidDto()
         {
             //SETUP
 
             //ATTEMPT
-            var ex = Assert.Throws<InvalidOperationException>(() => NonDiBizSetup.SetupBizOutDtoMapping<ServiceLayerBizInDto>());
+            var ex = Assert.Throws<InvalidOperationException>(() => NonDiBizSetup.SetupDtoMapping<string>());
 
             //VERIFY
-            ex.Message.ShouldEqual("You registered the DTO ServiceLayerBizInDto, as a bizOutDto, but it doesn't inherit from GenericBizRunner.PublicButHidden.GenericActionFromBizDtoSetup.");
-        }
-
-        [Fact]
-        public void TestDtoOutWrongMapperSetup()
-        {
-            //SETUP
-
-            //ATTEMPT
-            var ex = Assert.Throws<InvalidOperationException>(() => NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizOutDto>());
-
-            //VERIFY
-            ex.Message.ShouldEqual("You registered the DTO ServiceLayerBizOutDto, as a bizInDto, but it doesn't inherit from GenericBizRunner.PublicButHidden.GenericActionToBizDtoSetup.");
+            ex.Message.ShouldEqual("The class String doesn't inherit from one of the Biz Runner Dto classes.");
         }
 
 

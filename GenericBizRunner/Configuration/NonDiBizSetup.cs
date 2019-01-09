@@ -42,30 +42,16 @@ namespace GenericBizRunner.Configuration
             _bizOutProfile = new BizRunnerProfile();
         }
 
-        public static NonDiBizSetup SetupBizInDtoMapping<TBizInDto>(IGenericBizRunnerConfig publicConfig = null)
+        public static NonDiBizSetup SetupDtoMapping<TBizInDto>(IGenericBizRunnerConfig publicConfig = null)
         {
             var nonDiConf = new NonDiBizSetup(publicConfig);
-            SetupDtoMappings.SetupMappingForDto(typeof(TBizInDto), nonDiConf._bizInProfile, true);
-            //SetupDtoMapping(typeof(TBizInDto), nonDiConf);
+            SetupDtoMapping(typeof(TBizInDto), nonDiConf);
             return nonDiConf;
         }
 
-        public void AddBizInDtoMapping<TBizInDto>()
+        public void AddDtoMapping<TBizInDto>()
         {
-            SetupDtoMappings.SetupMappingForDto(typeof(TBizInDto), _bizInProfile, true);
-            //SetupDtoMapping(typeof(TBizInDto), this);
-        }
-
-        public static NonDiBizSetup SetupBizOutDtoMapping<TBizOutDto>(IGenericBizRunnerConfig publicConfig = null)
-        {
-            var nonDiConf = new NonDiBizSetup(publicConfig);
-            SetupDtoMappings.SetupMappingForDto(typeof(TBizOutDto), nonDiConf._bizOutProfile, false);
-            return nonDiConf;
-        }
-
-        public void AddBizOutDtoMapping<TBizOutDto>(IGenericBizRunnerConfig publicConfig = null)
-        {
-            SetupDtoMappings.SetupMappingForDto(typeof(TBizOutDto), _bizOutProfile, false);
+            SetupDtoMapping(typeof(TBizInDto), this);
         }
 
         //---------------------------------------------------
@@ -75,7 +61,7 @@ namespace GenericBizRunner.Configuration
         {
             var bizIn = dtoType.GetInterface(nameof(IGenericActionToBizDto)) != null;
             if (!bizIn && dtoType.GetInterface(nameof(IGenericActionFromBizDto)) == null)
-                throw new InvalidOperationException($"The class {dtoType.Name} doesn't inherit from ine of the Biz Runner Dto classes.");
+                throw new InvalidOperationException($"The class {dtoType.Name} doesn't inherit from one of the Biz Runner Dto classes.");
 
             SetupDtoMappings.SetupMappingForDto(dtoType, bizIn ? nonDiConf._bizInProfile : nonDiConf._bizOutProfile, bizIn);
         }
