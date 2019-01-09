@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using BizDbAccess.Orders.Concrete;
 using BizLogic.Orders.Concrete;
 using DataLayer.EfCode;
@@ -13,7 +12,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NetCore.AutoRegisterDi;
-using ServiceLayer;
 using ServiceLayer.BookServices;
 using ServiceLayer.OrderServices;
 
@@ -48,10 +46,12 @@ namespace EfCoreInAction
             services.AddDbContext<EfCoreContext>(options => options.UseSqlite(connection));
             //--------------------------------------------------------------------
 
-
             #region GenericBizRunner parts
-            //This sets up the 
+            //This sets up the GenericBizRunner to use one DbContext. Note: you could add a GenericBizRunnerConfig here if you needed it
             services.RegisterGenericBizRunnerBasic<EfCoreContext>(Assembly.GetAssembly(typeof(WebChangeDeliveryDto)));
+            //This sets up the GenericBizRunner to work with multiple DbContext
+            //see https://github.com/JonPSmith/EfCore.GenericBizRunner/wiki/Using-multiple-DbContexts
+            //services.RegisterGenericBizRunnerMultiDbContext(Assembly.GetAssembly(typeof(WebChangeDeliveryDto)));
             #endregion
 
             //now we register the public classes with public interfaces in the three layers

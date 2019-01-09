@@ -18,7 +18,40 @@ It provides the following features:
 The article [A library to run your business logic when using Entity Framework Core](http://www.thereformedprogrammer.net/a-library-to-run-your-business-logic-when-using-entity-framework-core/)
 gives a good overview about the library, and there is there is 
 [good documentation](https://github.com/JonPSmith/EfCore.GenericBizRunner/wiki) in the project's Wiki.
-Alos, this project contains a runnable ASP.NET Core application with two business logic examples in it.
+Also, this project contains a runnable ASP.NET Core application with two business logic examples in it.
+
+## Example of code to call business logic in ASP.NET Core
+
+Here is some code taken from the ExampleWebApp (which you can run), from the [OrdersController](https://github.com/JonPSmith/EfCore.GenericBizRunner/blob/master/ExampleWebApp/Controllers/OrdersController.cs)
+to give you an idea of what it looks like. Note that every business logic call is very similar, just different interfaces and DTO/ViewModel classes.
+
+```csharp
+[HttpPost]
+[ValidateAntiForgeryToken]
+public IActionResult ChangeDelivery(WebChangeDeliveryDto dto,
+    [FromServices]IActionService<IChangeDeliverAction> service)
+{
+    if (!ModelState.IsValid)
+    {
+        service.ResetDto(dto); //resets any dropdown list etc.
+        return View(dto);
+    }
+
+    service.RunBizAction(dto);
+
+    if (!service.Status.HasErrors)
+    {
+        //We copy the message from the business logic to show 
+        return RedirectToAction("ConfirmOrder", "Orders", 
+            new { dto.OrderId, message = service.Status.Message });
+    }
+
+    //Otherwise errors, so I need to redisplay the page to the user
+    service.Status.CopyErrorsToModelState(ModelState, dto);
+    service.ResetDto(dto); //resets any dropdown list etc.
+    return View(dto); //redisplay the page, with the errors
+}
+```
 
 ## Why did I write this library?
 
