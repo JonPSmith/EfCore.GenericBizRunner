@@ -87,7 +87,7 @@ namespace GenericBizRunner.Configuration
                 new ServiceDescriptor(typeof(IWrappedBizRunnerConfigAndMappings), config), new CheckDescriptor()))
             {
                 var wrapBuilder = new SetupDtoMappings(config);
-                var wrapperConfig = wrapBuilder.BuildWrappedConfigByScanningForDtos(assembliesToScan, config);
+                var wrapperConfig = wrapBuilder.BuildWrappedConfigByScanningForDtos(assembliesToScan.Distinct().ToArray(), config);
                 //Register the IWrappedBizRunnerConfigAndMappings
                 services.AddSingleton(wrapperConfig);
             }
