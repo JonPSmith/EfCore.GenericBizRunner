@@ -9,7 +9,7 @@ using GenericBizRunner.PublicButHidden;
 
 namespace GenericBizRunner.Configuration.Internal
 {
-    internal class SetupDtoMappings : StatusGenericHandler
+    internal class SetupDtoMappings
     {
         readonly BizRunnerProfile _bizInProfile = new BizRunnerProfile();
         readonly BizRunnerProfile _bizOutProfile = new BizRunnerProfile();
@@ -21,7 +21,7 @@ namespace GenericBizRunner.Configuration.Internal
             PublicConfig = publicConfig ?? throw new ArgumentNullException(nameof(publicConfig));
         }
 
-        public IWrappedBizRunnerConfigAndMappings ScanAllAssemblies(Assembly[] assembliesToScan, IGenericBizRunnerConfig config)
+        public IWrappedBizRunnerConfigAndMappings BuildWrappedConfigByScanningForDtos(Assembly[] assembliesToScan, IGenericBizRunnerConfig config)
         {
             if (assembliesToScan == null || assembliesToScan.Length == 0)
                 throw new ArgumentException("There were no assembles to scan!", nameof(assembliesToScan));
@@ -29,11 +29,6 @@ namespace GenericBizRunner.Configuration.Internal
             {
                 ScanAssemblyAndAddToProfiles(assembly);
             }
-
-            if (HasErrors)
-                //If errors then don't set up the mappings
-                return null;
-
             return CreateWrappedConfig(config, _bizInProfile, _bizOutProfile);
         }
 
@@ -90,6 +85,10 @@ namespace GenericBizRunner.Configuration.Internal
             foreach (var bizOutDtoType in allTypesInAssembly.Where(x => x.GetInterface(nameof(IGenericActionFromBizDto)) != null))
             {
                 SetupMappingForDto(bizOutDtoType, _bizOutProfile, false);
+            }
+            foreach (var bizOutDtoType in allTypesInAssembly.Where(x => x.GetInterface(nameof(IGenericActionToBizDto)) != null))
+            {
+                SetupMappingForDto(bizOutDtoType, _bizInProfile, true);
             }
         }
 

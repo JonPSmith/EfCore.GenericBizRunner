@@ -5,6 +5,8 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
+using GenericBizRunner.Configuration.Internal;
+using GenericBizRunner.PublicButHidden;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -44,8 +46,7 @@ namespace GenericBizRunner.Configuration
             services.AddTransient(typeof(IActionService<>), typeof(ActionService<>));
             services.AddTransient(typeof(IActionServiceAsync<>), typeof(ActionServiceAsync<>));
 
-            //Register the GenericBizRunnerConfig if given
-            services.AddSingleton(config);
+            services.BuildRegisterWrappedConfig(config, assembliesToScan);
         }
 
         /// <summary>
@@ -72,16 +73,25 @@ namespace GenericBizRunner.Configuration
             services.AddTransient(typeof(IActionService<,>), typeof(ActionService<,>));
             services.AddTransient(typeof(IActionServiceAsync<,>), typeof(ActionServiceAsync<,>));
 
-            //Register the GenericBizRunnerConfig if not already registered
-            if (!services.Contains(
-                    new ServiceDescriptor(typeof(IGenericBizRunnerConfig), config), new CheckDescriptor()))
-            {
-                services.AddSingleton(config);
-            }
+            services.BuildRegisterWrappedConfig(config, assembliesToScan);
         }
 
         //---------------------------------------------------------
-        //
+        //private parts
+
+        private static void BuildRegisterWrappedConfig(this IServiceCollection services, 
+            IGenericBizRunnerConfig config, params Assembly[] assembliesToScan)
+        {
+            //It is possible that the user would use both default DbContext and MultiDbContext, so we only add if not already there
+            if (!services.Contains(
+                new ServiceDescriptor(typeof(IWrappedBizRunnerConfigAndMappings), config), new CheckDescriptor()))
+            {
+                var wrapBuilder = new SetupDtoMappings(config);
+                var wrapperConfig = wrapBuilder.BuildWrappedConfigByScanningForDtos(assembliesToScan, config);
+                //Register the IWrappedBizRunnerConfigAndMappings
+                services.AddSingleton(wrapperConfig);
+            }
+        }
 
         private class CheckDescriptor : IEqualityComparer<ServiceDescriptor>
         {

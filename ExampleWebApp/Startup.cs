@@ -41,9 +41,9 @@ namespace EfCoreInAction
             //--------------------------------------------------------------------
             //var connection = Configuration.GetConnectionString("DefaultConnection");
             //Swapped over to sqlite in-memory database
-            var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = ":memory:" };  
-            var connectionString = connectionStringBuilder.ToString(); 
-            var connection = new SqliteConnection(connectionString); 
+            var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = ":memory:" };
+            var connectionString = connectionStringBuilder.ToString();
+            var connection = new SqliteConnection(connectionString);
             connection.Open();  //see https://github.com/aspnet/EntityFramework/issues/6968
             services.AddDbContext<EfCoreContext>(options => options.UseSqlite(connection));
             //--------------------------------------------------------------------
@@ -59,7 +59,7 @@ namespace EfCoreInAction
                 Assembly.GetAssembly(typeof(BookListDto)), //Service layer
                 Assembly.GetAssembly(typeof(PlaceOrderAction)), //BizLogic
                 Assembly.GetAssembly(typeof(PlaceOrderDbAccess)) //BizDbAccess
-            );
+            ).AsPublicImplementedInterfaces();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -4,15 +4,24 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Reflection;
 using GenericBizRunner;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 using GenericBizRunner.Configuration;
+using GenericBizRunner.PublicButHidden;
 using Microsoft.EntityFrameworkCore;
+using ServiceLayer.BookServices;
+using ServiceLayer.OrderServices;
+using TestBizLayer.Actions;
+using TestBizLayer.Actions.Concrete;
+using TestBizLayer.BizDTOs;
 using TestBizLayer.DbForTransactions;
+using Tests.DTOs;
+using TestSupport.EfHelpers;
 
-namespace Tests.UnitTests.DependecyInjection
+namespace Tests.UnitTests.DependencyInjection
 {
     public class TestNetCoreDi
     {
@@ -22,28 +31,15 @@ namespace Tests.UnitTests.DependecyInjection
             //SETUP
             var service = new ServiceCollection();
 
-            //ATTEMP
-            service.RegisterGenericBizRunnerBasic<TestDbContext>();
-
-            //VERIFY
-            service.Count.ShouldEqual(3);
-            service.Contains(new ServiceDescriptor(typeof(DbContext), typeof(TestDbContext), ServiceLifetime.Scoped), new CheckDescriptor()).ShouldBeTrue();
-            service.Contains(new ServiceDescriptor(typeof(IActionService<>), typeof(ActionService<>), ServiceLifetime.Transient), new CheckDescriptor()).ShouldBeTrue();
-            service.Contains(new ServiceDescriptor(typeof(IActionServiceAsync<>), typeof(ActionServiceAsync<>), ServiceLifetime.Transient), new CheckDescriptor()).ShouldBeTrue();
-        }
-
-        [Fact]
-        public void TestRegisterGenericBizRunnerBasicWithConfigOk()
-        {
-            //SETUP
-            var service = new ServiceCollection();
-
-            //ATTEMP
-            service.RegisterGenericBizRunnerBasic<TestDbContext>(new GenericBizRunnerConfig());
+            //ATTEMPT
+            service.RegisterGenericBizRunnerBasic<TestDbContext>(Assembly.GetAssembly(typeof(WebChangeDeliveryDto)));
 
             //VERIFY
             service.Count.ShouldEqual(4);
-            service.Contains(new ServiceDescriptor(typeof(IGenericBizRunnerConfig), typeof(GenericBizRunnerConfig), ServiceLifetime.Singleton), new CheckDescriptor()).ShouldBeTrue();
+            service.Contains(new ServiceDescriptor(typeof(DbContext), typeof(TestDbContext), ServiceLifetime.Scoped), new CheckDescriptor()).ShouldBeTrue();
+            service.Contains(new ServiceDescriptor(typeof(IActionService<>), typeof(ActionService<>), ServiceLifetime.Transient), new CheckDescriptor()).ShouldBeTrue();
+            service.Contains(new ServiceDescriptor(typeof(IActionServiceAsync<>), typeof(ActionServiceAsync<>), ServiceLifetime.Transient), new CheckDescriptor()).ShouldBeTrue();
+            service.Contains(new ServiceDescriptor(typeof(IWrappedBizRunnerConfigAndMappings), typeof(WrappedBizRunnerConfigAndMappings), ServiceLifetime.Singleton), new CheckDescriptor()).ShouldBeTrue();
         }
 
         [Fact]
@@ -52,28 +48,16 @@ namespace Tests.UnitTests.DependecyInjection
             //SETUP
             var service = new ServiceCollection();
 
-            //ATTEMP
-            service.RegisterGenericBizRunnerMultiDbContext();
-
-            //VERIFY
-            service.Count.ShouldEqual(2);
-            service.Contains(new ServiceDescriptor(typeof(IActionService<,>), typeof(ActionService<,>), ServiceLifetime.Transient), new CheckDescriptor()).ShouldBeTrue();
-            service.Contains(new ServiceDescriptor(typeof(IActionServiceAsync<,>), typeof(ActionServiceAsync<,>), ServiceLifetime.Transient), new CheckDescriptor()).ShouldBeTrue();
-        }
-
-        [Fact]
-        public void TestRegisterGenericBizRunnerMultiDbContextWithConfigOk()
-        {
-            //SETUP
-            var service = new ServiceCollection();
-
-            //ATTEMP
-            service.RegisterGenericBizRunnerMultiDbContext(new GenericBizRunnerConfig());
+            //ATTEMPT
+            service.RegisterGenericBizRunnerMultiDbContext(Assembly.GetAssembly(typeof(WebChangeDeliveryDto)));
 
             //VERIFY
             service.Count.ShouldEqual(3);
-            service.Contains(new ServiceDescriptor(typeof(IGenericBizRunnerConfig), typeof(GenericBizRunnerConfig), ServiceLifetime.Singleton), new CheckDescriptor()).ShouldBeTrue();
+            service.Contains(new ServiceDescriptor(typeof(IActionService<,>), typeof(ActionService<,>), ServiceLifetime.Transient), new CheckDescriptor()).ShouldBeTrue();
+            service.Contains(new ServiceDescriptor(typeof(IActionServiceAsync<,>), typeof(ActionServiceAsync<,>), ServiceLifetime.Transient), new CheckDescriptor()).ShouldBeTrue();
+            service.Contains(new ServiceDescriptor(typeof(IWrappedBizRunnerConfigAndMappings), typeof(WrappedBizRunnerConfigAndMappings), ServiceLifetime.Singleton), new CheckDescriptor()).ShouldBeTrue();
         }
+
 
         [Fact]
         public void TestRegisterGenericBizRunnerBothWithConfigOk()
@@ -81,13 +65,37 @@ namespace Tests.UnitTests.DependecyInjection
             //SETUP
             var service = new ServiceCollection();
 
-            //ATTEMP
-            service.RegisterGenericBizRunnerBasic<TestDbContext>(new GenericBizRunnerConfig());
-            service.RegisterGenericBizRunnerMultiDbContext(new GenericBizRunnerConfig());
+            //ATTEMPT
+            service.RegisterGenericBizRunnerBasic<TestDbContext>(Assembly.GetAssembly(typeof(WebChangeDeliveryDto)));
+            service.RegisterGenericBizRunnerMultiDbContext(Assembly.GetAssembly(typeof(WebChangeDeliveryDto)));
 
             //VERIFY
             service.Count.ShouldEqual(6);
-            service.Contains(new ServiceDescriptor(typeof(IGenericBizRunnerConfig), typeof(GenericBizRunnerConfig), ServiceLifetime.Singleton), new CheckDescriptor()).ShouldBeTrue();
+            service.Contains(new ServiceDescriptor(typeof(IWrappedBizRunnerConfigAndMappings), typeof(WrappedBizRunnerConfigAndMappings), ServiceLifetime.Singleton), new CheckDescriptor()).ShouldBeTrue();
+        }
+
+        //---------------------------------------------------
+        //Check mappings found
+
+        [Fact]
+        public void TestRegisterGenericBizRunnerDtosFoundOk()
+        {
+            //SETUP
+            var service = new ServiceCollection();
+            DbContext emptyDbContext = new TestDbContext(SqliteInMemory.CreateOptions<TestDbContext>());
+            service.RegisterGenericBizRunnerBasic<TestDbContext>(Assembly.GetAssembly(typeof(ServiceLayerBizInDto)));
+            var diProvider = service.BuildServiceProvider();
+
+            //ATTEMPT
+            var wrappedConfig = diProvider.GetRequiredService<IWrappedBizRunnerConfigAndMappings>();
+            var bizInstance = new BizActionInOut();
+            var runner = new ActionService<IBizActionInOut>(emptyDbContext, bizInstance, wrappedConfig);
+            var input = new ServiceLayerBizInDto { Num = 123 };
+            var result = runner.RunBizAction<ServiceLayerBizOutDto>(input);
+
+            //VERIFY
+            runner.Status.HasErrors.ShouldBeFalse();
+            result.Output.ShouldEqual("123");
         }
 
         //---------------------------------------------------
