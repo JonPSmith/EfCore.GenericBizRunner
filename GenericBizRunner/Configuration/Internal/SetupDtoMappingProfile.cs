@@ -2,9 +2,7 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
-using AutoMapper;
 using GenericBizRunner.PublicButHidden;
-using Remotion.Linq.Parsing.ExpressionVisitors.MemberBindings;
 
 namespace GenericBizRunner.Configuration.Internal
 {

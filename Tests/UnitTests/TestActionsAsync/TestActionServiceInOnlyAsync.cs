@@ -30,8 +30,9 @@ namespace Tests.UnitTests.TestActionsAsync
         public TestActionServiceInOnlyAsync()
         {
             var config = new GenericBizRunnerConfig { TurnOffCaching = true };
-            var utData = NonDiSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(config);
+            var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(config);
             utData.AddBizOutDtoMapping<ServiceLayerBizOutDto>();
+            utData.AddBizInDtoMapping<ServiceLayerBizInDtoAsync>();
             _wrappedConfig = utData.WrappedConfig;
         }
 

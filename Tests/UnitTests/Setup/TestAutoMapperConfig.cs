@@ -2,11 +2,8 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
-using System.Reflection;
 using AutoMapper;
 using GenericBizRunner.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using TestBizLayer.BizDTOs;
 using Tests.DTOs;
 using Xunit;
@@ -20,7 +17,7 @@ namespace Tests.UnitTests.Setup
         public void TestBizInMappingDto()
         {
             //SETUP
-            var utData = NonDiSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>();
+            var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>();
 
             //ATTEMPT
             var input = new ServiceLayerBizInDto { Num = 234 };
@@ -35,7 +32,7 @@ namespace Tests.UnitTests.Setup
         public void TestBizOutMappingDto()
         {
             //SETUP
-            var utData = NonDiSetup.SetupBizOutDtoMapping<ServiceLayerBizOutDto>();
+            var utData = NonDiBizSetup.SetupBizOutDtoMapping<ServiceLayerBizOutDto>();
 
             //ATTEMPT
             var input = new BizDataOut { Output = "hello"};
@@ -51,7 +48,7 @@ namespace Tests.UnitTests.Setup
         public void TestDtoWithOverrideOfAutoMapperSetup()
         {
             //SETUP
-            var utData = NonDiSetup.SetupBizOutDtoMapping<ServiceLayerBizOutWithMappingDto>();
+            var utData = NonDiBizSetup.SetupBizOutDtoMapping<ServiceLayerBizOutWithMappingDto>();
 
             //ATTEMPT
             var input = new BizDataOut { Output = "Hello" };
@@ -70,7 +67,7 @@ namespace Tests.UnitTests.Setup
             //SETUP
 
             //ATTEMPT
-            var ex = Assert.Throws<InvalidOperationException>(() => NonDiSetup.SetupBizOutDtoMapping<ServiceLayerBizInDto>());
+            var ex = Assert.Throws<InvalidOperationException>(() => NonDiBizSetup.SetupBizOutDtoMapping<ServiceLayerBizInDto>());
 
             //VERIFY
             ex.Message.ShouldEqual("You registered the DTO ServiceLayerBizInDto, as a bizOutDto, but it doesn't inherit from GenericBizRunner.PublicButHidden.GenericActionFromBizDtoSetup.");
@@ -82,7 +79,7 @@ namespace Tests.UnitTests.Setup
             //SETUP
 
             //ATTEMPT
-            var ex = Assert.Throws<InvalidOperationException>(() => NonDiSetup.SetupBizInDtoMapping<ServiceLayerBizOutDto>());
+            var ex = Assert.Throws<InvalidOperationException>(() => NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizOutDto>());
 
             //VERIFY
             ex.Message.ShouldEqual("You registered the DTO ServiceLayerBizOutDto, as a bizInDto, but it doesn't inherit from GenericBizRunner.PublicButHidden.GenericActionToBizDtoSetup.");
@@ -90,18 +87,31 @@ namespace Tests.UnitTests.Setup
 
 
         [Fact]
-        public void TestMissingMapThrowsError()
+        public void TestMissingBizInMapThrowsError()
         {
             //SETUP
-            Mapper.Initialize(cfg => cfg.CreateMissingTypeMaps = false);
-            var utData = new NonDiSetup();
+            var utData = new NonDiBizSetup();
+
+            //ATTEMPT
+            var input = new ServiceLayerBizInDto {Num = 1 };
+            var ex = Assert.Throws<AutoMapperMappingException>(() => utData.WrappedConfig.FromBizIMapper.Map<BizDataIn>(input));
+
+            //VERIFY
+            ex.Message.ShouldStartWith("Missing type map configuration or unsupported mapping.");
+        }
+
+        [Fact]
+        public void TestMissingBizOutMapThrowsError()
+        {
+            //SETUP
+            var utData = new NonDiBizSetup();
 
             //ATTEMPT
             var input = new BizDataOut { Output = "hello"};
-            var data = utData.WrappedConfig.FromBizIMapper.Map<ServiceLayerBizOutDto>(input);
+            var ex = Assert.Throws<AutoMapperMappingException>(() => utData.WrappedConfig.FromBizIMapper.Map<ServiceLayerBizOutDto>(input));
 
             //VERIFY
-            data.Output.ShouldEqual("hello");
+            ex.Message.ShouldStartWith("Missing type map configuration or unsupported mapping.");
         }
     }
 }

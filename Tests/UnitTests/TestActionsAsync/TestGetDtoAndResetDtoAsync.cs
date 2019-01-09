@@ -32,7 +32,7 @@ namespace Tests.UnitTests.TestActionsAsync
         public TestGetDtoAndResetDtoAsync()
         {
             var config = new GenericBizRunnerConfig { TurnOffCaching = true };
-            var utData = new NonDiSetup(config);
+            var utData = new NonDiBizSetup(config);
             _wrappedConfig = utData.WrappedConfig;
         }
 

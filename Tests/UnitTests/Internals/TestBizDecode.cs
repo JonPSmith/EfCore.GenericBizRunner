@@ -28,7 +28,7 @@ namespace Tests.UnitTests.Internals
 
         public TestBizDecode()
         {
-            var utData = new NonDiSetup(new GenericBizRunnerConfig { TurnOffCaching = true });
+            var utData = new NonDiBizSetup(new GenericBizRunnerConfig { TurnOffCaching = true });
             _wrappedConfig = utData.WrappedConfig;
         }
 

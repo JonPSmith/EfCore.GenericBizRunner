@@ -26,7 +26,7 @@ namespace Tests.UnitTests.TestActions
         public TestGetDtoAndResetDto()
         {
             var config = new GenericBizRunnerConfig { TurnOffCaching = true };
-            var utData = NonDiSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(config);
+            var utData = NonDiBizSetup.SetupBizInDtoMapping<ServiceLayerBizInDto>(config);
             utData.AddBizOutDtoMapping<ServiceLayerBizOutDto>();
             _wrappedConfig = utData.WrappedConfig;
         }

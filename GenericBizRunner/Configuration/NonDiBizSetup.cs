@@ -1,13 +1,14 @@
 ﻿// Copyright (c) 2019 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System;
 using AutoMapper;
 using GenericBizRunner.Configuration.Internal;
 using GenericBizRunner.PublicButHidden;
 
 namespace GenericBizRunner.Configuration
 {
-    public class NonDiSetup
+    public class NonDiBizSetup
     {
         /// <summary>
         /// We only create the IWrappedConfigAndMapper when someone needs it.
@@ -34,28 +35,30 @@ namespace GenericBizRunner.Configuration
         /// ctor
         /// </summary>
         /// <param name="publicConfig"></param>
-        public NonDiSetup(IGenericBizRunnerConfig publicConfig = null)
+        public NonDiBizSetup(IGenericBizRunnerConfig publicConfig = null)
         {
             PublicConfig = publicConfig ?? new GenericBizRunnerConfig();
             _bizInProfile = new BizRunnerProfile();
             _bizOutProfile = new BizRunnerProfile();
         }
 
-        public static NonDiSetup SetupBizInDtoMapping<TBizInDto>(IGenericBizRunnerConfig publicConfig = null)
+        public static NonDiBizSetup SetupBizInDtoMapping<TBizInDto>(IGenericBizRunnerConfig publicConfig = null)
         {
-            var nonDiConf = new NonDiSetup(publicConfig);
+            var nonDiConf = new NonDiBizSetup(publicConfig);
             SetupDtoMappings.SetupMappingForDto(typeof(TBizInDto), nonDiConf._bizInProfile, true);
+            //SetupDtoMapping(typeof(TBizInDto), nonDiConf);
             return nonDiConf;
         }
 
         public void AddBizInDtoMapping<TBizInDto>()
         {
             SetupDtoMappings.SetupMappingForDto(typeof(TBizInDto), _bizInProfile, true);
+            //SetupDtoMapping(typeof(TBizInDto), this);
         }
 
-        public static NonDiSetup SetupBizOutDtoMapping<TBizOutDto>(IGenericBizRunnerConfig publicConfig = null)
+        public static NonDiBizSetup SetupBizOutDtoMapping<TBizOutDto>(IGenericBizRunnerConfig publicConfig = null)
         {
-            var nonDiConf = new NonDiSetup(publicConfig);
+            var nonDiConf = new NonDiBizSetup(publicConfig);
             SetupDtoMappings.SetupMappingForDto(typeof(TBizOutDto), nonDiConf._bizOutProfile, false);
             return nonDiConf;
         }
@@ -63,6 +66,18 @@ namespace GenericBizRunner.Configuration
         public void AddBizOutDtoMapping<TBizOutDto>(IGenericBizRunnerConfig publicConfig = null)
         {
             SetupDtoMappings.SetupMappingForDto(typeof(TBizOutDto), _bizOutProfile, false);
+        }
+
+        //---------------------------------------------------
+        //private 
+
+        private static void SetupDtoMapping(Type dtoType, NonDiBizSetup nonDiConf)
+        {
+            var bizIn = dtoType.GetInterface(nameof(IGenericActionToBizDto)) != null;
+            if (!bizIn && dtoType.GetInterface(nameof(IGenericActionFromBizDto)) == null)
+                throw new InvalidOperationException($"The class {dtoType.Name} doesn't inherit from ine of the Biz Runner Dto classes.");
+
+            SetupDtoMappings.SetupMappingForDto(dtoType, bizIn ? nonDiConf._bizInProfile : nonDiConf._bizOutProfile, bizIn);
         }
     }
 }
