@@ -74,32 +74,32 @@ namespace Tests.UnitTests.Setup
         }
 
 
-        [Fact]
-        public void TestMissingBizInMapThrowsError()
-        {
-            //SETUP
-            var utData = new NonDiBizSetup();
+        //[Fact]
+        //public void TestMissingBizInMapThrowsError()
+        //{
+        //    //SETUP
+        //    var utData = new NonDiBizSetup();
 
-            //ATTEMPT
-            var input = new ServiceLayerBizInDto {Num = 1 };
-            var ex = Assert.Throws<AutoMapperMappingException>(() => utData.WrappedConfig.FromBizIMapper.Map<BizDataIn>(input));
+        //    //ATTEMPT
+        //    var input = new ServiceLayerBizInDto {Num = 1 };
+        //    var ex = Assert.Throws<AutoMapperMappingException>(() => utData.WrappedConfig.FromBizIMapper.Map<BizDataIn>(input));
 
-            //VERIFY
-            ex.Message.ShouldStartWith("Missing type map configuration or unsupported mapping.");
-        }
+        //    //VERIFY
+        //    ex.Message.ShouldStartWith("Missing type map configuration or unsupported mapping.");
+        //}
 
-        [Fact]
-        public void TestMissingBizOutMapThrowsError()
-        {
-            //SETUP
-            var utData = new NonDiBizSetup();
+        //[Fact]
+        //public void TestMissingBizOutMapThrowsError()
+        //{
+        //    //SETUP
+        //    var utData = new NonDiBizSetup();
 
-            //ATTEMPT
-            var input = new BizDataOut { Output = "hello"};
-            var ex = Assert.Throws<AutoMapperMappingException>(() => utData.WrappedConfig.FromBizIMapper.Map<ServiceLayerBizOutDto>(input));
+        //    //ATTEMPT
+        //    var input = new BizDataOut { Output = "hello"};
+        //    var ex = Assert.Throws<AutoMapperMappingException>(() => utData.WrappedConfig.FromBizIMapper.Map<ServiceLayerBizOutDto>(input));
 
-            //VERIFY
-            ex.Message.ShouldStartWith("Missing type map configuration or unsupported mapping.");
-        }
+        //    //VERIFY
+        //    ex.Message.ShouldStartWith("Missing type map configuration or unsupported mapping.");
+        //}
     }
 }

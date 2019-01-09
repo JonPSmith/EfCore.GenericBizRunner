@@ -37,12 +37,12 @@ namespace GenericBizRunner.Configuration.Internal
         {
             var bizInMapping = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMissingTypeMaps = false;
+                //cfg.CreateMissingTypeMaps = false;
                 cfg.AddProfile(bizInProfile);
             });
             var bizOutMapping = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMissingTypeMaps = false;
+                //cfg.CreateMissingTypeMaps = false;
                 cfg.AddProfile(bizOutProfile);
             });
             return new WrappedBizRunnerConfigAndMappings(config, bizInMapping, bizOutMapping);
