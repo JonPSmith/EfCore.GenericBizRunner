@@ -2,17 +2,19 @@
 
 Version 3 (V3) of [EfCore.GenericBizRunner](https://github.com/JonPSmith/EfCore.GenericBizRunner) changes (improves) the way it configures [AutoMapper](https://automapper.org/), plus adds a number of other useful improvements. The problem is this could break any code you wrote to work with version 2 (V2) of the library. This page tells you what has changed and tells you what to do if you upgrade and get compile errors.
 
-**NOTE: If you change over from V2 to V3 and it compiles, then your code should work as it did before. There isn't any changes to what it does, just how it is implemented inside.**
+**NOTE: If you change over from V2 to V3 and get the code compile, then your code should work as it did before. There isn't any changes to what it does, just how it is implemented inside.**
 
 ## Motivation for these changes
 
-EfCore.GenericBizRunner uses AutoMapper to map inputs and outputs to the business logic *(you can find out why from the [Anti corruption feature](https://github.com/JonPSmith/EfCore.GenericBizRunner/wiki/Anti-corruption-feature) page in the Wiki)*. I made a mistake around how to configure AutoMapper mappings, which added extra properties to the the DTO. That's a small problem with ASP.NET Core Razor pages, but its a big pain with ASP.NET Core Web API.
+GenericBizRunner uses AutoMapper to map inputs and outputs to the business logic *(you can find out why from the [Anti corruption feature](https://github.com/JonPSmith/EfCore.GenericBizRunner/wiki/Anti-corruption-feature) page in the Wiki)*. I made a mistake around how to configure AutoMapper mappings, which added extra properties to the the DTO. That's causes a problem with scaffolding ASP.NET Core Razor pages, but you can edit the code by hand to remove the extra properties. The real pain-point comes with ASP.NET Core Web API.
 
-Version 3 of EfCore.GenericBizRunner fixes this, plus adds some useful features I recently added to the[EfCore.GenericServices](https://github.com/JonPSmith/EfCore.GenericServices) library. See the [Release Notes](https://github.com/JonPSmith/EfCore.GenericServices/blob/master/ReleaseNotes.md) for information on all the changes, plus notes at the end.
+Web APIs are all about sending back the exact data that the front-end/service requires, but GenericBizRunner V2 had these extra properties which made using it with Web APIs really difficult. I worked around this problem in one project, but now I have the time I have fixed this in V3. GenericBizRunner V3 now handles Web APIs really well.
+
+GenericBizRunner V3 also has some useful features I recently added to the[EfCore.GenericServices](https://github.com/JonPSmith/EfCore.GenericServices) library which are nice to have. See the [Release Notes](https://github.com/JonPSmith/EfCore.GenericServices/blob/master/ReleaseNotes.md) for information on all the changes, plus notes at the end.
 
 ## How the AutoMapper changes affect your code
 
-In versions before V3 I placed AutoMapper's `Profile` class inside the DTOs and used `AddAutoMapper()` to set up the mapping. In V3 I removed the `Profile` class from the DTO definitions and handle the setup of the AutoMapper mappings within the library.
+In GenericBizRunner before V3 I made my GenericBizRunner DTO templates inherit AutoMapper's `Profile` class and used `AddAutoMapper()` to set up the mapping (It was the `Profile` class that added the extra public properties). In V3 I removed the `Profile` class from the DTO definitions and handle the setup of the AutoMapper mappings within the library.
 
 ### 1. Changes ASP.NET Core Startup Class
 
