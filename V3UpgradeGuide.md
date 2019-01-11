@@ -2,7 +2,7 @@
 
 Version 3 (V3) of [EfCore.GenericBizRunner](https://github.com/JonPSmith/EfCore.GenericBizRunner) changes (improves) the way it configures [AutoMapper](https://automapper.org/), plus adds a number of other useful improvements. The problem is this could break any code you wrote to work with version 2 (V2) of the library. This page tells you what has changed and tells you what to do if you upgrade and get compile errors.
 
-**NOTE: If you change over from V2 to V3 and get the code compile, then your code should work as it did before. There isn't any changes to what it does, just how it is implemented inside.**
+**NOTE: If you change over from V2 to V3 and get the code compile, then your code should work as it did before. There isn't any changes to what GenericBizRunner does, just how it is implemented inside.**
 
 ## Motivation for these changes
 
