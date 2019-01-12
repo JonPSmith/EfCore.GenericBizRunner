@@ -8,6 +8,10 @@ using GenericBizRunner.PublicButHidden;
 
 namespace GenericBizRunner.Configuration
 {
+    /// <summary>
+    /// This class is used to set up the IWrappedBizRunnerConfigAndMappings when you aren't using dependency injection.
+    /// Useful for unit tests, Azure Functions etc.
+    /// </summary>
     public class NonDiBizSetup
     {
         /// <summary>
@@ -16,6 +20,7 @@ namespace GenericBizRunner.Configuration
         /// </summary>
         private IWrappedBizRunnerConfigAndMappings _configAndMapper;
 
+        private readonly IGenericBizRunnerConfig _config;
         private readonly BizRunnerProfile _bizInProfile;
         private readonly BizRunnerProfile _bizOutProfile;
 
@@ -24,34 +29,41 @@ namespace GenericBizRunner.Configuration
         /// </summary>
         public IWrappedBizRunnerConfigAndMappings WrappedConfig => 
             _configAndMapper ?? (_configAndMapper =
-               SetupDtoMappings.CreateWrappedConfig(PublicConfig, _bizInProfile, _bizOutProfile));
+               SetupDtoMappings.CreateWrappedConfig(_config, _bizInProfile, _bizOutProfile));
+
+
 
         /// <summary>
-        /// This is the global config
-        /// </summary>
-        public IGenericBizRunnerConfig PublicConfig { get; }
-
-        /// <summary>
-        /// ctor
+        /// This creates the NonDiBizSetup - useful if you don't have any DTOs to map
         /// </summary>
         /// <param name="publicConfig"></param>
         public NonDiBizSetup(IGenericBizRunnerConfig publicConfig = null)
         {
-            PublicConfig = publicConfig ?? new GenericBizRunnerConfig();
+            _config = publicConfig ?? new GenericBizRunnerConfig();
             _bizInProfile = new BizRunnerProfile();
             _bizOutProfile = new BizRunnerProfile();
         }
 
-        public static NonDiBizSetup SetupDtoMapping<TBizInDto>(IGenericBizRunnerConfig publicConfig = null)
+        /// <summary>
+        /// This creates the NonDiBizSetup and adds one GenericBizRunner DTO
+        /// </summary>
+        /// <typeparam name="TDto"></typeparam>
+        /// <param name="publicConfig"></param>
+        /// <returns></returns>
+        public static NonDiBizSetup SetupDtoMapping<TDto>(IGenericBizRunnerConfig publicConfig = null)
         {
             var nonDiConf = new NonDiBizSetup(publicConfig);
-            SetupDtoMapping(typeof(TBizInDto), nonDiConf);
+            SetupDtoMapping(typeof(TDto), nonDiConf);
             return nonDiConf;
         }
 
-        public void AddDtoMapping<TBizInDto>()
+        /// <summary>
+        /// This adds a GenericBizRunner DTO to the NonDiBizSetup instance
+        /// </summary>
+        /// <typeparam name="TDto"></typeparam>
+        public void AddDtoMapping<TDto>()
         {
-            SetupDtoMapping(typeof(TBizInDto), this);
+            SetupDtoMapping(typeof(TDto), this);
         }
 
         //---------------------------------------------------
