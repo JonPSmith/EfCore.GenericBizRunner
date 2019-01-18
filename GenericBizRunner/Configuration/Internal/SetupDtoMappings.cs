@@ -23,8 +23,10 @@ namespace GenericBizRunner.Configuration.Internal
 
         public IWrappedBizRunnerConfigAndMappings BuildWrappedConfigByScanningForDtos(Assembly[] assembliesToScan, IGenericBizRunnerConfig config)
         {
+            
             if (assembliesToScan == null || assembliesToScan.Length == 0)
-                throw new ArgumentException("There were no assembles to scan!", nameof(assembliesToScan));
+                throw new ArgumentException("Needs assemblies to scan for DTOs. If not using DTOs use Assembly.GetExecutingAssembly()."
+                    , nameof(assembliesToScan));
             foreach (var assembly in assembliesToScan)
             {
                 ScanAssemblyAndAddToProfiles(assembly);
