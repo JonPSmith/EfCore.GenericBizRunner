@@ -16,7 +16,7 @@
     <PackageTags>Entity Framework Core, Business Logic, ServiceLayer</PackageTags>
     <PackageReleaseNotes>
       - BREAKING CHANGE: The way you register GenericBizRunner at startup has changed - see Upgrade Guide on how to do that.
-      - BREAKING CHANGE: Changed the way in which AutoMapper mappings are set up. Please read the Upgrade Guide on how this changes unit tests.
+      - BREAKING CHANGE: Changed the way in which AutoMapper mappings are set up. Please read the Upgrade Guide on how this changes integration tests.
       - Breaking change: removed AutoFac DI setup - now only provides Net Core setup (you can still use AutoFac for other DI usages).
       - New Feature: Added `IGenericStatus BeforeSaveChanges(DbContext)` to configuration - allows you to add your own validation, logging etc.
       - Minor improvement: Sql error handler used if present, even if validation isn't on.

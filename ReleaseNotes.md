@@ -7,7 +7,7 @@
 ## 3.0.0
 
 - BREAKING CHANGE: The way you register GenericBizRunner at startup has changed - see [Upgrade Guide]() on how to do that.
-- BREAKING CHANGE: Changed the way in which AutoMapper mappings are set up. Please read the [Upgrade Guide]() on how this changes unit tests.
+- BREAKING CHANGE: Changed the way in which AutoMapper mappings are set up. Please read the [Upgrade Guide]() on how this changes integration tests.
 - Breaking change: removed AutoFac DI setup - now only provides Net Core setup (you can still use AutoFac for other DI usages).
 - Improvement: You don't need need to call AutoMapper's code to find and set up DTO mappings on startup. That is now done inside the GenericBizRunner setup.
 - New Feature: Added `IGenericStatus BeforeSaveChanges(DbContext)` to configuration. This allows you to inject code that is called just before SaveChanges/SaveChangesAsync is run. This allows you to add some validation, logging etc.

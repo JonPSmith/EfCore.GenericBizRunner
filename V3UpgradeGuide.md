@@ -78,7 +78,7 @@ public class ServiceLayerBizOutWithMappingDto
 }
 ```
 
-### 3. Unit tests
+### 3. Changes to integration tests
 
 You most likely don't need to change your unit tests of your business logic as you can call it directly. The only real case I can think of is if you want to do integration tests of ASP.NET Controllers, e.g.  Web API controllers.
 
