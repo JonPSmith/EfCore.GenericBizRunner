@@ -2,7 +2,7 @@
 
 Version 3 (V3) of [EfCore.GenericBizRunner](https://github.com/JonPSmith/EfCore.GenericBizRunner) changes (improves) the way it configures [AutoMapper](https://automapper.org/), plus adds a number of other useful improvements. The problem is this could break any code you wrote to work with version 2 (V2) of the library. This page tells you what has changed and tells you what to do if you upgrade and get compile errors.
 
-**NOTE: If you change over from V2 to V3 and get the code compile, then your code should work as it did before. There isn't any changes to what GenericBizRunner does, just how it is implemented inside.**
+**NOTE: If you change over from V2 to V3 and get the code compile, then your code should work as it did before (but must update your startup code see later). There isn't any changes to what GenericBizRunner does, just how it is implemented inside.**
 
 ## Motivation for these changes
 
@@ -18,16 +18,18 @@ In GenericBizRunner before V3 I made my GenericBizRunner DTO templates inherit A
 
 ### 1. Changes ASP.NET Core Startup Class
 
-Somewhere in the `ConfigureServices` in the `Startup` class you will have some code to set up AutoMapper and GenericBizRunner, possibly via AutoFac bundles or .NET Core DI. This needs to be replaced by new code that needs a list of all the assemblies that GenericBizRunner DTOs exist. It needs this to set up the AutoMapper mappings, e.g.
+Somewhere in the `ConfigureServices` in the `Startup` class you will have some code to set up AutoMapper and GenericBizRunner, possibly via AutoFac bundles or .NET Core DI. 
+
+This needs to be replaced by a new method, typically the `RegisterBizRunnerWithDtoScans<TContext>` or the more advanced `RegisterBizRunnerMultiDbContextWithDtoScans` method. These methods need a list of all the assemblies that GenericBizRunner DTOs exist in i.e. DTOs that inherit from the `GenericActionToBizDto`/Async or `GenericActionFromBizDto`\Async class. Typically you will only have one assembly where the GenericBizRunner DTOs exist, but for completeness I show , e.g.
 
 ```csharp
-services.RegisterGenericBizRunnerBasic<EfCoreContext>(
+services.RegisterBizRunnerWithDtoScans<EfCoreContext>(
     Assembly.GetAssembly(typeof(WebChangeDeliveryDto)),
     Assembly.GetAssembly(typeof(DtoInAnotherAssembly)),
     //... as many assemblies as you need);
 ```
 
-*NOTE: there are versions that allow you to add a `GenericBizRunnerConfig` and another form, `RegisterGenericBizRunnerMultiDbContext`, for when you are using multiple DBContexts [see Using multiple DbContexts](https://github.com/JonPSmith/EfCore.GenericBizRunner/wiki/Using-multiple-DbContexts) in Wiki.*
+*NOTE: there are versions that allow you to add a `GenericBizRunnerConfig` and another form, `RegisterBizRunnerMultiDbContextWithDtoScans`, for when you are using multiple DBContexts [see Using multiple DbContexts](https://github.com/JonPSmith/EfCore.GenericBizRunner/wiki/Using-multiple-DbContexts) in Wiki.*
 
 PS. You don't need `services.AddAutoMapper();` anymore unless you are using AutoMapper yourself. GenericBizRunner now handles setting up the mappings.
 

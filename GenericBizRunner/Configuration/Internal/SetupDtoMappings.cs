@@ -25,9 +25,9 @@ namespace GenericBizRunner.Configuration.Internal
         {
             
             if (assembliesToScan == null || assembliesToScan.Length == 0)
-                throw new ArgumentException("Needs assemblies to scan for DTOs. If not using DTOs use Assembly.GetExecutingAssembly()."
+                throw new ArgumentException("Needs assemblies to scan for DTOs. If not using DTOs just supply (Assembly)null as parameter."
                     , nameof(assembliesToScan));
-            foreach (var assembly in assembliesToScan)
+            foreach (var assembly in assembliesToScan.Where(x => x != null))
             {
                 ScanAssemblyAndAddToProfiles(assembly);
             }

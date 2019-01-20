@@ -12,11 +12,9 @@ using Xunit.Extensions.AssertExtensions;
 using GenericBizRunner.Configuration;
 using GenericBizRunner.PublicButHidden;
 using Microsoft.EntityFrameworkCore;
-using ServiceLayer.BookServices;
 using ServiceLayer.OrderServices;
 using TestBizLayer.Actions;
 using TestBizLayer.Actions.Concrete;
-using TestBizLayer.BizDTOs;
 using TestBizLayer.DbForTransactions;
 using Tests.DTOs;
 using TestSupport.EfHelpers;
@@ -26,13 +24,13 @@ namespace Tests.UnitTests.DependencyInjection
     public class TestNetCoreDi
     {
         [Fact]
-        public void TestRegisterGenericBizRunnerBasicOk()
+        public void TestRegisterBizRunnerBasicOk()
         {
             //SETUP
             var service = new ServiceCollection();
 
             //ATTEMPT
-            service.RegisterGenericBizRunnerBasic<TestDbContext>(Assembly.GetAssembly(typeof(WebChangeDeliveryDto)));
+            service.RegisterBizRunnerWithDtoScans<TestDbContext>(Assembly.GetAssembly(typeof(WebChangeDeliveryDto)));
 
             //VERIFY
             service.Count.ShouldEqual(4);
@@ -43,13 +41,13 @@ namespace Tests.UnitTests.DependencyInjection
         }
 
         [Fact]
-        public void TestRegisterGenericBizRunnerMultiDbContextOk()
+        public void TestRegisterBizRunnerMultiDbContextOk()
         {
             //SETUP
             var service = new ServiceCollection();
 
             //ATTEMPT
-            service.RegisterGenericBizRunnerMultiDbContext(Assembly.GetAssembly(typeof(WebChangeDeliveryDto)));
+            service.RegisterBizRunnerMultiDbContextWithDtoScans(Assembly.GetAssembly(typeof(WebChangeDeliveryDto)));
 
             //VERIFY
             service.Count.ShouldEqual(3);
@@ -60,30 +58,59 @@ namespace Tests.UnitTests.DependencyInjection
 
 
         [Fact]
-        public void TestRegisterGenericBizRunnerBothWithConfigOk()
+        public void TestRegisterBizRunnerBothWithConfigOk()
         {
             //SETUP
             var service = new ServiceCollection();
 
             //ATTEMPT
-            service.RegisterGenericBizRunnerBasic<TestDbContext>(Assembly.GetAssembly(typeof(WebChangeDeliveryDto)));
-            service.RegisterGenericBizRunnerMultiDbContext(Assembly.GetAssembly(typeof(WebChangeDeliveryDto)));
+            service.RegisterBizRunnerWithDtoScans<TestDbContext>(Assembly.GetAssembly(typeof(WebChangeDeliveryDto)));
+            service.RegisterBizRunnerMultiDbContextWithDtoScans(Assembly.GetAssembly(typeof(WebChangeDeliveryDto)));
 
             //VERIFY
             service.Count.ShouldEqual(6);
             service.Contains(new ServiceDescriptor(typeof(IWrappedBizRunnerConfigAndMappings), typeof(WrappedBizRunnerConfigAndMappings), ServiceLifetime.Singleton), new CheckDescriptor()).ShouldBeTrue();
         }
 
+        //-----------------------------------------------------------------
+        //errors and null
+
+        [Fact]
+        public void TestRegisterBizRunnerNoAssembliesToScan()
+        {
+            //SETUP
+            var service = new ServiceCollection();
+
+            //ATTEMPT
+            var ex = Assert.Throws<ArgumentException>(() => service.RegisterBizRunnerWithDtoScans<TestDbContext>());
+
+            //VERIFY
+            ex.Message.ShouldStartWith("Needs assemblies to scan for DTOs. If not using DTOs just supply (Assembly)null as parameter.");
+        }
+
+        [Fact]
+        public void TestRegisterBizRunnerNullToNotScan()
+        {
+            //SETUP
+            var service = new ServiceCollection();
+
+            //ATTEMPT
+            service.RegisterBizRunnerWithDtoScans<TestDbContext>((Assembly)null);
+
+            //VERIFY
+            service.Count.ShouldEqual(4);
+        }
+
         //---------------------------------------------------
         //Check mappings found
 
         [Fact]
-        public void TestRegisterGenericBizRunnerDtosFoundOk()
+        public void TestRegisterBizRunnerDtosFoundOk()
         {
             //SETUP
             var service = new ServiceCollection();
             DbContext emptyDbContext = new TestDbContext(SqliteInMemory.CreateOptions<TestDbContext>());
-            service.RegisterGenericBizRunnerBasic<TestDbContext>(Assembly.GetAssembly(typeof(ServiceLayerBizInDto)));
+            service.RegisterBizRunnerWithDtoScans<TestDbContext>(Assembly.GetAssembly(typeof(ServiceLayerBizInDto)));
             var diProvider = service.BuildServiceProvider();
 
             //ATTEMPT

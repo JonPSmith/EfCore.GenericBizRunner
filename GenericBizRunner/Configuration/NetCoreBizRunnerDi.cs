@@ -23,10 +23,10 @@ namespace GenericBizRunner.Configuration
         /// <typeparam name="TDefaultDbContext"></typeparam>
         /// <param name="services"></param>
         /// <param name="assembliesToScan">These are the assemblies to scan for DTOs</param>
-        public static void RegisterGenericBizRunnerBasic<TDefaultDbContext>(this IServiceCollection services, params Assembly[] assembliesToScan)
+        public static void RegisterBizRunnerWithDtoScans<TDefaultDbContext>(this IServiceCollection services, params Assembly[] assembliesToScan)
             where TDefaultDbContext : DbContext
         {
-            services.RegisterGenericBizRunnerBasic<TDefaultDbContext>(new GenericBizRunnerConfig(), assembliesToScan);
+            services.RegisterBizRunnerWithDtoScans<TDefaultDbContext>(new GenericBizRunnerConfig(), assembliesToScan);
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace GenericBizRunner.Configuration
         /// <param name="services"></param>
         /// <param name="config"></param>
         /// <param name="assembliesToScan">These are the assemblies to scan for DTOs</param>
-        public static void RegisterGenericBizRunnerBasic<TDefaultDbContext>(this IServiceCollection services, IGenericBizRunnerConfig config,
+        public static void RegisterBizRunnerWithDtoScans<TDefaultDbContext>(this IServiceCollection services, IGenericBizRunnerConfig config,
             params Assembly[] assembliesToScan)
             where TDefaultDbContext : DbContext
         {
@@ -54,9 +54,9 @@ namespace GenericBizRunner.Configuration
         /// </summary>
         /// <param name="services"></param>
         /// <param name="assembliesToScan">These are the assemblies to scan for DTOs</param>
-        public static void RegisterGenericBizRunnerMultiDbContext(this IServiceCollection services, params Assembly[] assembliesToScan)
+        public static void RegisterBizRunnerMultiDbContextWithDtoScans(this IServiceCollection services, params Assembly[] assembliesToScan)
         {
-            services.RegisterGenericBizRunnerMultiDbContext(new GenericBizRunnerConfig(), assembliesToScan);
+            services.RegisterBizRunnerMultiDbContextWithDtoScans(new GenericBizRunnerConfig(), assembliesToScan);
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace GenericBizRunner.Configuration
         /// <param name="services"></param>
         /// <param name="config"></param>
         /// <param name="assembliesToScan">These are the assemblies to scan for DTOs</param>
-        public static void RegisterGenericBizRunnerMultiDbContext(this IServiceCollection services, IGenericBizRunnerConfig config,
+        public static void RegisterBizRunnerMultiDbContextWithDtoScans(this IServiceCollection services, IGenericBizRunnerConfig config,
             params Assembly[] assembliesToScan)
         {
             if (config == null) throw new ArgumentNullException(nameof(config));
