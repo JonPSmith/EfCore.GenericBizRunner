@@ -1,36 +1,29 @@
 ﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+// Licensed under MIT license. See License.txt in the project root for license information.
 
+using System;
 using AutoMapper;
 
 namespace GenericBizRunner.PublicButHidden
 {
     /// <summary>
+    /// This is used to find all ToBiz Dtos
+    /// </summary>
+    internal interface IGenericActionToBizDto { }
+
+    /// <summary>
     /// This is the abstract class that is used by GenericActionToBizDto class
-    /// It uses the AutoMapper Profile class to allow creation of the mapping in the ctor
+    /// It contains a method to alter the AutoMapper mapping configuration
     /// </summary>
     /// <typeparam name="TBizIn"></typeparam>
     /// <typeparam name="TDtoIn"></typeparam>
-    public abstract class GenericActionToBizDtoSetup<TBizIn, TDtoIn> : Profile
+    public abstract class GenericActionToBizDtoSetup<TBizIn, TDtoIn> : IGenericActionToBizDto
         where TBizIn : class
         where TDtoIn : GenericActionToBizDtoSetup<TBizIn, TDtoIn>
     {
         /// <summary>
-        /// ctor
-        /// It is valid to call a method that has been overrriden in a derived class (see unit test TestOverrideMethodInBaseCtor)
+        /// Override this to provide your own IMappingExpression to the TBizOut to TDtoOut mapping
         /// </summary>
-        protected GenericActionToBizDtoSetup()
-        {
-            // ReSharper disable once VirtualMemberCallInConstructor
-            AutoMapperSetup();
-        }
-
-        /// <summary>
-        /// Override this to modify the AutoMapper mappings. For instance adding .ForMember or .BeforeMap/.AfterMap
-        /// </summary>
-        protected virtual void AutoMapperSetup()
-        {
-            CreateMap<TDtoIn, TBizIn>();
-        }
+        protected internal virtual Action<IMappingExpression<TBizIn, TDtoIn>> AlterDtoMapping => null;
     }
 }

@@ -1,5 +1,5 @@
 ﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
 using System.Linq;
@@ -10,6 +10,7 @@ using GenericBizRunner;
 using GenericBizRunner.Configuration;
 using GenericBizRunner.Internal;
 using GenericBizRunner.Internal.Runners;
+using GenericBizRunner.PublicButHidden;
 using Microsoft.EntityFrameworkCore;
 using TestBizLayer.Actions;
 using TestBizLayer.ActionsAsync;
@@ -21,7 +22,16 @@ namespace Tests.UnitTests.Internals
 {
     public class TestBizDecode
     {
-        private readonly IGenericBizRunnerConfig _noCachingConfig = new GenericBizRunnerConfig {TurnOffCaching = true};
+
+
+        private readonly IWrappedBizRunnerConfigAndMappings _wrappedConfig;
+
+        public TestBizDecode()
+        {
+            var utData = new NonDiBizSetup(new GenericBizRunnerConfig { TurnOffCaching = true });
+            _wrappedConfig = utData.WrappedConfig;
+        }
+
 
         [Theory]
         [InlineData(typeof(IBizActionInOut), "Out")]
@@ -67,12 +77,13 @@ namespace Tests.UnitTests.Internals
             var genericActionInterfaces =
                 Assembly.GetAssembly(typeof (IGenericAction<,>))
                     .GetTypes()
-                    .Where(x => x.IsInterface && x.Name.StartsWith("IGenericAction") && x != typeof(DbContext))
+                    .Where(x => x.IsInterface && x.IsPublic && x.Name.StartsWith("IGenericAction") && x != typeof(DbContext))
                     .ToList();
 
             //ATTEMPT
 
             //VERIFY
+            //NOTE: two interfaces 
             genericActionInterfaces.Count.ShouldEqual(ServiceBuilderLookup.ServiceLookup.Count);
             foreach (var foundInterface in genericActionInterfaces)
             {
@@ -89,8 +100,8 @@ namespace Tests.UnitTests.Internals
             var decoder = new BizDecoder(typeof (IBizActionInOut), RequestedInOut.InOut, true);
 
             //VERIFY
-            ((Type)decoder.BizInfo.GetServiceInstance(_noCachingConfig).GetType()).GetGenericTypeDefinition().ShouldEqual(typeof(ActionServiceInOut<,,>));
-            var args = ((Type)decoder.BizInfo.GetServiceInstance(_noCachingConfig).GetType()).GetGenericArguments();
+            ((Type)decoder.BizInfo.GetServiceInstance(_wrappedConfig).GetType()).GetGenericTypeDefinition().ShouldEqual(typeof(ActionServiceInOut<,,>));
+            var args = ((Type)decoder.BizInfo.GetServiceInstance(_wrappedConfig).GetType()).GetGenericArguments();
             args.Length.ShouldEqual(3);
             args[0].ShouldEqual(typeof (IBizActionInOut));   
             args[1].ShouldEqual(typeof (BizDataIn));
@@ -108,8 +119,8 @@ namespace Tests.UnitTests.Internals
             var decoder = new BizDecoder(typeof(IBizActionInOutAsync), RequestedInOut.InOut | RequestedInOut.Async, true);
 
             //VERIFY
-            ((Type)decoder.BizInfo.GetServiceInstance(_noCachingConfig).GetType()).GetGenericTypeDefinition().ShouldEqual(typeof(ActionServiceInOutAsync<,,>));
-            var args = ((Type)decoder.BizInfo.GetServiceInstance(_noCachingConfig).GetType()).GetGenericArguments();
+            ((Type)decoder.BizInfo.GetServiceInstance(_wrappedConfig).GetType()).GetGenericTypeDefinition().ShouldEqual(typeof(ActionServiceInOutAsync<,,>));
+            var args = ((Type)decoder.BizInfo.GetServiceInstance(_wrappedConfig).GetType()).GetGenericArguments();
             args.Length.ShouldEqual(3);
             args[0].ShouldEqual(typeof(IBizActionInOutAsync));
             args[1].ShouldEqual(typeof (BizDataIn));
@@ -127,8 +138,8 @@ namespace Tests.UnitTests.Internals
             var decoder = new BizDecoder(typeof(IBizActionInOnly), RequestedInOut.In, true);
 
             //VERIFY
-            ((Type)decoder.BizInfo.GetServiceInstance(_noCachingConfig).GetType()).GetGenericTypeDefinition().ShouldEqual(typeof(ActionServiceInOnly<,>));
-            var args = ((Type)decoder.BizInfo.GetServiceInstance(_noCachingConfig).GetType()).GetGenericArguments();
+            ((Type)decoder.BizInfo.GetServiceInstance(_wrappedConfig).GetType()).GetGenericTypeDefinition().ShouldEqual(typeof(ActionServiceInOnly<,>));
+            var args = ((Type)decoder.BizInfo.GetServiceInstance(_wrappedConfig).GetType()).GetGenericArguments();
             args.Length.ShouldEqual(2);
             args[0].ShouldEqual(typeof(IBizActionInOnly));
             args[1].ShouldEqual(typeof (BizDataIn));
@@ -145,8 +156,8 @@ namespace Tests.UnitTests.Internals
             var decoder = new BizDecoder(typeof(IBizActionInOnlyAsync), RequestedInOut.In | RequestedInOut.Async, true);
 
             //VERIFY
-            ((Type)decoder.BizInfo.GetServiceInstance(_noCachingConfig).GetType()).GetGenericTypeDefinition().ShouldEqual(typeof(ActionServiceInOnlyAsync<,>));
-            var args = ((Type)decoder.BizInfo.GetServiceInstance(_noCachingConfig).GetType()).GetGenericArguments();
+            ((Type)decoder.BizInfo.GetServiceInstance(_wrappedConfig).GetType()).GetGenericTypeDefinition().ShouldEqual(typeof(ActionServiceInOnlyAsync<,>));
+            var args = ((Type)decoder.BizInfo.GetServiceInstance(_wrappedConfig).GetType()).GetGenericArguments();
             args.Length.ShouldEqual(2);
             args[0].ShouldEqual(typeof(IBizActionInOnlyAsync));
             args[1].ShouldEqual(typeof (BizDataIn));
@@ -163,8 +174,8 @@ namespace Tests.UnitTests.Internals
             var decoder = new BizDecoder(typeof(IBizActionOutOnly), RequestedInOut.Out, true);
 
             //VERIFY
-            ((Type)decoder.BizInfo.GetServiceInstance(_noCachingConfig).GetType()).GetGenericTypeDefinition().ShouldEqual(typeof(ActionServiceOutOnly<,>));
-            var args = ((Type)decoder.BizInfo.GetServiceInstance(_noCachingConfig).GetType()).GetGenericArguments();
+            ((Type)decoder.BizInfo.GetServiceInstance(_wrappedConfig).GetType()).GetGenericTypeDefinition().ShouldEqual(typeof(ActionServiceOutOnly<,>));
+            var args = ((Type)decoder.BizInfo.GetServiceInstance(_wrappedConfig).GetType()).GetGenericArguments();
             args.Length.ShouldEqual(2);
             args[0].ShouldEqual(typeof(IBizActionOutOnly));
             args[1].ShouldEqual(typeof (BizDataOut));
@@ -181,8 +192,8 @@ namespace Tests.UnitTests.Internals
             var decoder = new BizDecoder(typeof(IBizActionOutOnlyAsync), RequestedInOut.Out | RequestedInOut.Async, true);
 
             //VERIFY
-            ((Type)decoder.BizInfo.GetServiceInstance(_noCachingConfig).GetType()).GetGenericTypeDefinition().ShouldEqual(typeof(ActionServiceOutOnlyAsync<,>));
-            var args = ((Type)decoder.BizInfo.GetServiceInstance(_noCachingConfig).GetType()).GetGenericArguments();
+            ((Type)decoder.BizInfo.GetServiceInstance(_wrappedConfig).GetType()).GetGenericTypeDefinition().ShouldEqual(typeof(ActionServiceOutOnlyAsync<,>));
+            var args = ((Type)decoder.BizInfo.GetServiceInstance(_wrappedConfig).GetType()).GetGenericArguments();
             args.Length.ShouldEqual(2);
             args[0].ShouldEqual(typeof(IBizActionOutOnlyAsync));
             args[1].ShouldEqual(typeof (BizDataOut));
@@ -199,8 +210,8 @@ namespace Tests.UnitTests.Internals
             var decoder = new BizDecoder(typeof(IBizActionValueInOut), RequestedInOut.InOut, true);
 
             //VERIFY
-            ((Type)decoder.BizInfo.GetServiceInstance(_noCachingConfig).GetType()).GetGenericTypeDefinition().ShouldEqual(typeof(ActionServiceInOut<,,>));
-            var args = ((Type)decoder.BizInfo.GetServiceInstance(_noCachingConfig).GetType()).GetGenericArguments();
+            ((Type)decoder.BizInfo.GetServiceInstance(_wrappedConfig).GetType()).GetGenericTypeDefinition().ShouldEqual(typeof(ActionServiceInOut<,,>));
+            var args = ((Type)decoder.BizInfo.GetServiceInstance(_wrappedConfig).GetType()).GetGenericArguments();
             args.Length.ShouldEqual(3);
             args[0].ShouldEqual(typeof(IBizActionValueInOut));
             args[1].ShouldEqual(typeof(int));
@@ -221,8 +232,8 @@ namespace Tests.UnitTests.Internals
             var decoder = new BizDecoder(typeof(IBizActionInOutWriteDb), RequestedInOut.InOut, true);
 
             //VERIFY
-            ((Type)decoder.BizInfo.GetServiceInstance(_noCachingConfig).GetType()).GetGenericTypeDefinition().ShouldEqual(typeof(ActionServiceInOut<,,>));
-            var args = ((Type)decoder.BizInfo.GetServiceInstance(_noCachingConfig).GetType()).GetGenericArguments();
+            ((Type)decoder.BizInfo.GetServiceInstance(_wrappedConfig).GetType()).GetGenericTypeDefinition().ShouldEqual(typeof(ActionServiceInOut<,,>));
+            var args = ((Type)decoder.BizInfo.GetServiceInstance(_wrappedConfig).GetType()).GetGenericArguments();
             args.Length.ShouldEqual(3);
             args[0].ShouldEqual(typeof(IBizActionInOutWriteDb));
             args[1].ShouldEqual(typeof (BizDataIn));
@@ -240,8 +251,8 @@ namespace Tests.UnitTests.Internals
             var decoder = new BizDecoder(typeof(IBizActionInOutWriteDbAsync), RequestedInOut.InOut | RequestedInOut.Async, true);
 
             //VERIFY
-            ((Type)decoder.BizInfo.GetServiceInstance(_noCachingConfig).GetType()).GetGenericTypeDefinition().ShouldEqual(typeof(ActionServiceInOutAsync<,,>));
-            var args = ((Type)decoder.BizInfo.GetServiceInstance(_noCachingConfig).GetType()).GetGenericArguments();
+            ((Type)decoder.BizInfo.GetServiceInstance(_wrappedConfig).GetType()).GetGenericTypeDefinition().ShouldEqual(typeof(ActionServiceInOutAsync<,,>));
+            var args = ((Type)decoder.BizInfo.GetServiceInstance(_wrappedConfig).GetType()).GetGenericArguments();
             args.Length.ShouldEqual(3);
             args[0].ShouldEqual(typeof(IBizActionInOutWriteDbAsync));
             args[1].ShouldEqual(typeof (BizDataIn));
@@ -292,7 +303,7 @@ namespace Tests.UnitTests.Internals
             runMethod.Name.ShouldEqual("RunBizActionDbAndInstanceAsync");
             runMethod.ReturnType.ShouldEqual(typeof(Task));
             runMethod.GetParameters().Select(x => x.ParameterType).ShouldEqual(
-                new[] { typeof(DbContext), typeof(IBizActionInOnlyAsync), typeof(IMapper), typeof(object)});
+                new[] { typeof(DbContext), typeof(IBizActionInOnlyAsync), typeof(object)});
         }
 
         [Fact]
@@ -308,7 +319,7 @@ namespace Tests.UnitTests.Internals
             runMethod.Name.ShouldEqual("RunBizActionDbAndInstance");
             runMethod.ReturnType.ShouldEqual(typeof(void));
             runMethod.GetParameters().Select(x => x.ParameterType).ShouldEqual(
-                new[] { typeof(DbContext), typeof(IBizActionInOnly), typeof(IMapper), typeof(object) });
+                new[] { typeof(DbContext), typeof(IBizActionInOnly), typeof(object) });
         }
 
         [Fact]
@@ -324,7 +335,7 @@ namespace Tests.UnitTests.Internals
             runMethod.Name.ShouldEqual("RunBizActionDbAndInstanceAsync");
             runMethod.ReturnType.ShouldEqual(typeof(Task<BizDataOut>));
             runMethod.GetParameters().Select(x => x.ParameterType).ShouldEqual(
-                new[] { typeof(DbContext), typeof(IBizActionInOutAsync), typeof(IMapper), typeof(object) });
+                new[] { typeof(DbContext), typeof(IBizActionInOutAsync), typeof(object) });
         }
 
         //---------------------------------------------------------------------
@@ -343,7 +354,7 @@ namespace Tests.UnitTests.Internals
             runMethod.Name.ShouldEqual("RunBizActionDbAndInstance");
             runMethod.ReturnType.ShouldEqual(typeof(BizDataOut));
             runMethod.GetParameters().Select(x => x.ParameterType).ShouldEqual(
-                new[] {typeof (DbContext), typeof (IBizActionInOut), typeof(IMapper), typeof (object)});
+                new[] {typeof (DbContext), typeof (IBizActionInOut), typeof (object)});
         }
     }
 }

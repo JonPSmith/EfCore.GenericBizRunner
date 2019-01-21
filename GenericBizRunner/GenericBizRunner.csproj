@@ -3,10 +3,10 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>EfCore.GenericBizRunner</PackageId>
-    <PackageVersion>2.0.2</PackageVersion>
-    <Version>2.0.2</Version>
-    <AssemblyVersion>2.0.2.0</AssemblyVersion>
-    <FileVersion>2.0.2.0</FileVersion>
+    <PackageVersion>3.0.0</PackageVersion>
+    <Version>3.0.0</Version>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <FileVersion>3.0.0.0</FileVersion>
     <Authors>Jon P Smith</Authors>
     <Description>Library to run business logic when using Entity Framework Core for database accesses</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
@@ -15,7 +15,11 @@
     <RepositoryUrl>https://github.com/JonPSmith/EfCore.GenericBizRunner</RepositoryUrl>
     <PackageTags>Entity Framework Core, Business Logic, ServiceLayer</PackageTags>
     <PackageReleaseNotes>
-      - Bug Fix: The ActionServiceAsync service had the wrong interface definitions for version that takes in DbContext
+      - BREAKING CHANGE: The way you register GenericBizRunner at startup has changed - see Upgrade Guide on how to do that.
+      - BREAKING CHANGE: Changed the way in which AutoMapper mappings are set up. Please read the Upgrade Guide on how this changes integration tests.
+      - Breaking change: removed AutoFac DI setup - now only provides Net Core setup (you can still use AutoFac for other DI usages).
+      - New Feature: Added `IGenericStatus BeforeSaveChanges(DbContext)` to configuration - allows you to add your own validation, logging etc.
+      - Minor improvement: Sql error handler used if present, even if validation isn't on.
     </PackageReleaseNotes>
     <PackageIconUrl>https://raw.githubusercontent.com/JonPSmith/EfCore.GenericBizRunner/master/GenericBizRunnerNuGetIcon128.png</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/JonPSmith/EfCore.GenericBizRunner/blob/master/LICENCE</PackageLicenseUrl>
@@ -27,7 +31,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="4.8.1" />
     <PackageReference Include="AutoMapper" Version="7.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.0" />
   </ItemGroup>

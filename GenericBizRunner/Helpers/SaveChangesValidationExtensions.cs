@@ -1,9 +1,8 @@
 ﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,6 +16,36 @@ namespace GenericBizRunner.Helpers
     /// </summary>
     public static class SaveChangesValidationExtensions
     {
+        /// <summary>
+        /// This SaveChangesAsync, with a boolean to decide whether to validate or not
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="shouldValidate"></param>
+        /// <param name="config"></param>
+        /// <returns></returns>
+        public static async Task<IStatusGeneric> SaveChangesWithOptionalValidationAsync(this DbContext context,
+            bool shouldValidate, IGenericBizRunnerConfig config)
+        {
+            return shouldValidate
+                ? await context.SaveChangesWithValidationAsync(config).ConfigureAwait(false)
+                : await context.SaveChangesWithExtrasAsync(config).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// This SaveChanges, with a boolean to decide whether to validate or not
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="shouldValidate"></param>
+        /// <param name="config"></param>
+        /// <returns></returns>
+        public static IStatusGeneric SaveChangesWithOptionalValidation(this DbContext context,
+            bool shouldValidate, IGenericBizRunnerConfig config)
+        {
+            return shouldValidate
+                ? context.SaveChangesWithValidation(config)
+                : context.SaveChangesWithExtras(config);
+        }
+
         //see https://blogs.msdn.microsoft.com/dotnet/2016/09/29/implementing-seeding-custom-conventions-and-interceptors-in-ef-core-1-0/
         //for why I call DetectChanges before ChangeTracker, and why I then turn ChangeTracker.AutoDetectChangesEnabled off/on around SaveChanges
 
@@ -30,25 +59,9 @@ namespace GenericBizRunner.Helpers
         public static async Task<IStatusGeneric> SaveChangesWithValidationAsync(this DbContext context, IGenericBizRunnerConfig config = null)
         {
             var status = context.ExecuteValidation();
-            if (status.HasErrors) return status;
-
-            context.ChangeTracker.AutoDetectChangesEnabled = false;
-            try
-            {
-                await context.SaveChangesAsync().ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                var exStatus = config?.SaveChangesExceptionHandler(e, context);
-                if (exStatus == null) throw;       //error wasn't handled, so rethrow
-                status.CombineErrors(exStatus);
-            }
-            finally
-            {
-                context.ChangeTracker.AutoDetectChangesEnabled = true;
-            }
-
-            return status;
+            return status.HasErrors
+                ? status
+                : await context.SaveChangesWithExtrasAsync(config, true);
         }
 
         //see https://blogs.msdn.microsoft.com/dotnet/2016/09/29/implementing-seeding-custom-conventions-and-interceptors-in-ef-core-1-0/
@@ -64,9 +77,26 @@ namespace GenericBizRunner.Helpers
         public static IStatusGeneric SaveChangesWithValidation(this DbContext context, IGenericBizRunnerConfig config = null)
         {
             var status = context.ExecuteValidation();
-            if (status.HasErrors) return status;
+            return status.HasErrors
+                ? status
+                : context.SaveChangesWithExtras(config, true);
+        }
 
-            context.ChangeTracker.AutoDetectChangesEnabled = false;
+
+        //-------------------------------------------------------------------
+        //private methods
+
+        private static IStatusGeneric SaveChangesWithExtras(this DbContext context,
+            IGenericBizRunnerConfig config, bool turnOffChangeTracker = false)
+        {
+            var status = config?.BeforeSaveChanges != null
+                ? config.BeforeSaveChanges(context)
+                : new StatusGenericHandler();
+            if (status.HasErrors)
+                return status;
+
+            if (turnOffChangeTracker)
+                context.ChangeTracker.AutoDetectChangesEnabled = false;
             try
             {
                 context.SaveChanges();
@@ -85,9 +115,34 @@ namespace GenericBizRunner.Helpers
             return status;
         }
 
+        private static async Task<IStatusGeneric> SaveChangesWithExtrasAsync(this DbContext context,
+            IGenericBizRunnerConfig config, bool turnOffChangeTracker = false)
+        {
+            var status = config?.BeforeSaveChanges != null
+                ? config.BeforeSaveChanges(context)
+                : new StatusGenericHandler();
+            if (status.HasErrors)
+                return status;
 
-        //-------------------------------------------------------------------
-        //private methods
+            if (turnOffChangeTracker)
+                context.ChangeTracker.AutoDetectChangesEnabled = false;
+            try
+            {
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                var exStatus = config?.SaveChangesExceptionHandler(e, context);
+                if (exStatus == null) throw;       //error wasn't handled, so rethrow
+                status.CombineErrors(exStatus);
+            }
+            finally
+            {
+                context.ChangeTracker.AutoDetectChangesEnabled = true;
+            }
+
+            return status;
+        }
 
 
         private static IStatusGeneric ExecuteValidation(this DbContext context)

@@ -1,10 +1,9 @@
 ﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+// Licensed under MIT license. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
-using System.Reflection;
+using System;
 using AutoMapper;
-using Microsoft.Extensions.DependencyInjection;
+using GenericBizRunner.Configuration;
 using TestBizLayer.BizDTOs;
 using Tests.DTOs;
 using Xunit;
@@ -15,58 +14,63 @@ namespace Tests.UnitTests.Setup
     public class TestAutoMapperConfig
     {
         [Fact]
-        public void TestProfileOnDto()
+        public void TestBizInMappingDto()
         {
             //SETUP
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile(new ServiceLayerBizInDto());
-            });
-            var mapper = config.CreateMapper();
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>();
 
             //ATTEMPT
             var input = new ServiceLayerBizInDto { Num = 234 };
-            var data = mapper.Map<BizDataIn>(input);
+            var data = utData.WrappedConfig.ToBizIMapper.Map<BizDataIn>(input);
 
             //VERIFY
             data.Num.ShouldEqual(234);
         }
 
-        [Fact]
-        public void TestBizOutMappingDto()
-        {
-            //SETUP
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile(new ServiceLayerBizOutDto());
-            });
-            var mapper = config.CreateMapper();
-
-            //ATTEMPT
-            var input = new BizDataOut { Output = "hello" };
-            var data = mapper.Map<ServiceLayerBizOutDto>(input);
-
-            //VERIFY
-            data.Output.ShouldEqual("hello");
-        }
 
         [Fact]
         public void TestViaAddAutoMapper()
         {
             //SETUP
-            IServiceCollection services = new ServiceCollection();
-            services.AddAutoMapper(null, new List<Assembly>{Assembly.GetAssembly(typeof(ServiceLayerBizInDto))});
-
-            var mapper = ((MapperConfiguration) services[0].ImplementationInstance).CreateMapper();
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizOutDto>();
 
             //ATTEMPT
-            var input = new ServiceLayerBizInDto { Num = 234 };
-            var data = mapper.Map<BizDataIn>(input);
+            var input = new BizDataOut { Output = "hello"};
+            var data = utData.WrappedConfig.FromBizIMapper.Map<ServiceLayerBizOutDto>(input);
 
             //VERIFY
-            data.Num.ShouldEqual(234);
+            data.Output.ShouldEqual("hello");
         }
 
+        //---------------------------------------------------------------
 
+        [Fact]
+        public void TestDtoWithOverrideOfAutoMapperSetup()
+        {
+            //SETUP
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizOutWithMappingDto>();
+
+            //ATTEMPT
+            var input = new BizDataOut { Output = "Hello" };
+            var data = utData.WrappedConfig.FromBizIMapper.Map<ServiceLayerBizOutWithMappingDto>(input);
+
+            //VERIFY
+            data.MappedOutput.ShouldEqual("Hello with suffix.");
+        }
+
+        //---------------------------------------------------------------------
+        //errors
+
+        [Fact]
+        public void TestNotValidDto()
+        {
+            //SETUP
+
+            //ATTEMPT
+            var ex = Assert.Throws<InvalidOperationException>(() => NonDiBizSetup.SetupDtoMapping<string>());
+
+            //VERIFY
+            ex.Message.ShouldEqual("The class String doesn't inherit from one of the Biz Runner Dto classes.");
+        }
     }
 }

@@ -1,11 +1,9 @@
 ﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Linq.Expressions;
-using AutoMapper;
-using GenericBizRunner.Configuration;
 using GenericBizRunner.Internal;
+using GenericBizRunner.PublicButHidden;
 using Microsoft.EntityFrameworkCore;
 
 namespace GenericBizRunner
@@ -18,8 +16,8 @@ namespace GenericBizRunner
         where TBizInstance : class, IBizActionStatus
     {
         /// <inheritdoc />
-        public ActionService(DbContext context, TBizInstance bizInstance, IMapper mapper, IGenericBizRunnerConfig config = null)
-            : base(context, bizInstance, mapper, config)
+        public ActionService(DbContext context, TBizInstance bizInstance, IWrappedBizRunnerConfigAndMappings wrappedConfig)
+            : base(context, bizInstance, wrappedConfig)
         {
         }
     }
@@ -34,17 +32,17 @@ namespace GenericBizRunner
         where TBizInstance : class, IBizActionStatus
     {
         private readonly TBizInstance _bizInstance;
-        private readonly IGenericBizRunnerConfig _config;
-        private readonly IMapper _mapper;
+        private readonly IWrappedBizRunnerConfigAndMappings _wrappedConfig;
         private readonly TContext _context;
+        private readonly bool _turnOffCaching;
 
         /// <inheritdoc />
-        public ActionService(TContext context, TBizInstance bizInstance, IMapper mapper, IGenericBizRunnerConfig config = null)
+        public ActionService(TContext context, TBizInstance bizInstance, IWrappedBizRunnerConfigAndMappings wrappedConfig)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _bizInstance = bizInstance ?? throw new ArgumentNullException(nameof(bizInstance));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _config = config ?? new GenericBizRunnerConfig();
+            _wrappedConfig = wrappedConfig ?? throw new ArgumentNullException(nameof(wrappedConfig));
+            _turnOffCaching = _wrappedConfig.Config.TurnOffCaching;
         }
 
         /// <summary>
@@ -57,11 +55,11 @@ namespace GenericBizRunner
         /// </summary>
         /// <typeparam name="TOut">The type of the result to return. Should either be the Business logic output type or class which inherits fromm GenericActionFromBizDto</typeparam>
         /// <param name="inputData">The input data. It should be Should either be the Business logic input type or class which inherits form GenericActionToBizDto</param>
-        /// <returns>The returned data after the run, or default value is thewre was an error</returns>
+        /// <returns>The returned data after the run, or default value is there was an error</returns>
         public TOut RunBizAction<TOut>(object inputData)
         {
-            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOut, _config.TurnOffCaching);
-            return decoder.BizInfo.GetServiceInstance(_config).RunBizActionDbAndInstance<TOut>(_context, _bizInstance, _mapper, inputData);
+            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOut, _turnOffCaching);
+            return decoder.BizInfo.GetServiceInstance(_wrappedConfig).RunBizActionDbAndInstance<TOut>(_context, _bizInstance, inputData);
         }
 
         /// <summary>
@@ -71,8 +69,8 @@ namespace GenericBizRunner
         /// <returns>The returned data after the run, or default value is thewre was an error</returns>
         public TOut RunBizAction<TOut>()
         {
-            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.Out, _config.TurnOffCaching);
-            return decoder.BizInfo.GetServiceInstance(_config).RunBizActionDbAndInstance<TOut>(_context, _bizInstance, _mapper);
+            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.Out, _turnOffCaching);
+            return decoder.BizInfo.GetServiceInstance(_wrappedConfig).RunBizActionDbAndInstance<TOut>(_context, _bizInstance);
         }
 
         /// <summary>
@@ -82,9 +80,9 @@ namespace GenericBizRunner
         /// <returns>status message with no result part</returns>
         public void RunBizAction(object inputData)
         {
-            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.In, _config.TurnOffCaching);
-            decoder.BizInfo.GetServiceInstance(_config)
-                .RunBizActionDbAndInstance(_context, _bizInstance, _mapper, inputData);
+            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.In, _turnOffCaching);
+            decoder.BizInfo.GetServiceInstance(_wrappedConfig)
+                .RunBizActionDbAndInstance(_context, _bizInstance, inputData);
         }
 
         /// <summary>
@@ -99,14 +97,15 @@ namespace GenericBizRunner
             if (!typeof(TDto).IsClass)
                 throw new InvalidOperationException("You should only call this on a primitive type. Its only useful for Dtos.");
 
-            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOrInOut, _config.TurnOffCaching);
-            var toBizCopier = DtoAccessGenerator.BuildCopier(typeof(TDto), decoder.BizInfo.GetBizInType(), true, false, _config);
+            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOrInOut, _turnOffCaching);
+            var toBizCopier = DtoAccessGenerator.BuildCopier(typeof(TDto), decoder.BizInfo.GetBizInType(), 
+                true, false, _turnOffCaching);
             return toBizCopier.CreateDataWithPossibleSetup<TDto>(_context, Status, runBeforeSetup);
         }
 
         /// <summary>
         /// This should be called if a model error is found in the input data.
-        /// If the provided data is a GenericActions dto, or it has ISetupsecondaryData, it will call SetupSecondaryData 
+        /// If the provided data is a GenericActions dto, or it has ISetupSecondaryData, it will call SetupSecondaryData 
         /// to reset any data in the dto ready for reshowing the dto to the user.
         /// </summary>
         /// <typeparam name="TDto"></typeparam>
@@ -116,8 +115,8 @@ namespace GenericBizRunner
             if (!typeof(TDto).IsClass)
                 throw new InvalidOperationException("You should only call this on a primitive type. Its only useful for Dtos.");
 
-            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOrInOut, _config.TurnOffCaching);
-            var toBizCopier = DtoAccessGenerator.BuildCopier(typeof(TDto), decoder.BizInfo.GetBizInType(), true, false, _config);
+            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOrInOut, _turnOffCaching);
+            var toBizCopier = DtoAccessGenerator.BuildCopier(typeof(TDto), decoder.BizInfo.GetBizInType(), true, false, _turnOffCaching);
             toBizCopier.SetupSecondaryDataIfRequired(_context, Status, dto);
             return dto;
         }

@@ -1,5 +1,5 @@
 ﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,13 +32,13 @@ namespace Tests.UnitTests.Internals
         public async Task TestActionServiceInOutValuesOkAsync(int num, bool hasErrors)
         {
             //SETUP 
-            var mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto>(); //doesn't need a mapper, but mapper msutn't be null
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
             var bizInstance = new BizActionInOutAsync();
-            var runner = new ActionServiceInOutAsync<IBizActionInOutAsync, BizDataIn, BizDataOut>(false, _noCachingConfig);
+            var runner = new ActionServiceInOutAsync<IBizActionInOutAsync, BizDataIn, BizDataOut>(false, utData.WrappedConfig);
             var input = new BizDataIn { Num = num };
 
             //ATTEMPT
-            var data = await runner.RunBizActionDbAndInstanceAsync<BizDataOut>(_dbContext, bizInstance, mapper, input);
+            var data = await runner.RunBizActionDbAndInstanceAsync<BizDataOut>(_dbContext, bizInstance, input);
 
             //VERIFY
             bizInstance.HasErrors.ShouldEqual(hasErrors);
@@ -54,14 +54,13 @@ namespace Tests.UnitTests.Internals
         public async Task TestActionServiceInOnlyNoDtoOk(int num, bool hasErrors)
         {
             //SETUP 
-            var mapper =
-                SetupHelpers.CreateMapper<ServiceLayerBizInDto>(); //doesn't need a mapper, but mapper msutn't be null
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
             var bizInstance = new BizActionInOnlyAsync();
-            var runner = new ActionServiceInOnlyAsync<IBizActionInOnlyAsync, BizDataIn>(false, _noCachingConfig);
+            var runner = new ActionServiceInOnlyAsync<IBizActionInOnlyAsync, BizDataIn>(false, utData.WrappedConfig);
             var input = new BizDataIn { Num = num };
 
             //ATTEMPT
-            await runner.RunBizActionDbAndInstanceAsync(_dbContext, bizInstance, mapper, input);
+            await runner.RunBizActionDbAndInstanceAsync(_dbContext, bizInstance, input);
 
             //VERIFY
             bizInstance.HasErrors.ShouldEqual(hasErrors);
@@ -76,13 +75,14 @@ namespace Tests.UnitTests.Internals
         public async Task TestActionServiceInOutMappingOk(int num, bool hasErrors)
         {
             //SETUP 
-            var mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto, ServiceLayerBizOutDto>();
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
+            utData.AddDtoMapping<ServiceLayerBizOutDto>();
             var bizInstance = new BizActionInOutAsync();
-            var runner = new ActionServiceInOutAsync<IBizActionInOutAsync, BizDataIn, BizDataOut>(false, _noCachingConfig);
+            var runner = new ActionServiceInOutAsync<IBizActionInOutAsync, BizDataIn, BizDataOut>(false, utData.WrappedConfig);
             var inDto = new ServiceLayerBizInDto { Num = num };
 
             //ATTEMPT
-            var data = await runner.RunBizActionDbAndInstanceAsync<ServiceLayerBizOutDto>(_dbContext, bizInstance, mapper, inDto);
+            var data = await runner.RunBizActionDbAndInstanceAsync<ServiceLayerBizOutDto>(_dbContext, bizInstance, inDto);
 
             //VERIFY
             bizInstance.HasErrors.ShouldEqual(hasErrors);
@@ -98,13 +98,14 @@ namespace Tests.UnitTests.Internals
         public async Task TestActionServiceInOnlyMappingOk(int num, bool hasErrors)
         {
             //SETUP 
-            var mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto, ServiceLayerBizOutDto>();
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
+            utData.AddDtoMapping<ServiceLayerBizOutDto>();
             var bizInstance = new BizActionInOnlyAsync();
-            var runner = new ActionServiceInOnlyAsync<IBizActionInOnlyAsync, BizDataIn>(false, _noCachingConfig);
+            var runner = new ActionServiceInOnlyAsync<IBizActionInOnlyAsync, BizDataIn>(false, utData.WrappedConfig);
             var inDto = new ServiceLayerBizInDto { Num = num };
 
             //ATTEMPT
-            await runner.RunBizActionDbAndInstanceAsync(_dbContext, bizInstance, mapper, inDto);
+            await runner.RunBizActionDbAndInstanceAsync(_dbContext, bizInstance, inDto);
 
             //VERIFY
             bizInstance.HasErrors.ShouldEqual(hasErrors);
@@ -125,13 +126,14 @@ namespace Tests.UnitTests.Internals
             using (var context = new TestDbContext(options))
             {
                 context.Database.EnsureCreated();
-                var mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto, ServiceLayerBizOutDto>();
+                var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(config);
+                utData.AddDtoMapping<ServiceLayerBizOutDto>();
                 var bizInstance = new BizActionInOutWriteDbAsync(context);
-                var runner = new ActionServiceInOutAsync<IBizActionInOutWriteDbAsync, BizDataIn, BizDataOut>(true, config);
+                var runner = new ActionServiceInOutAsync<IBizActionInOutWriteDbAsync, BizDataIn, BizDataOut>(true, utData.WrappedConfig);
                 var inDto = new ServiceLayerBizInDto { Num = num };
 
                 //ATTEMPT
-                var data = await runner.RunBizActionDbAndInstanceAsync<ServiceLayerBizOutDto>(context, bizInstance, mapper, inDto);
+                var data = await runner.RunBizActionDbAndInstanceAsync<ServiceLayerBizOutDto>(context, bizInstance, inDto);
 
                 //VERIFY
                 bizInstance.HasErrors.ShouldEqual(hasErrors);
@@ -152,13 +154,14 @@ namespace Tests.UnitTests.Internals
             using (var context = new TestDbContext(options))
             {
                 context.Database.EnsureCreated();
-                var mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto, ServiceLayerBizOutDto>();
+                var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(_noCachingConfig);
+                utData.AddDtoMapping<ServiceLayerBizOutDto>();
                 var bizInstance = new BizActionInOnlyWriteDbAsync(context);
-                var runner = new ActionServiceInOnlyAsync<IBizActionInOnlyWriteDbAsync, BizDataIn>(true, _noCachingConfig);
+                var runner = new ActionServiceInOnlyAsync<IBizActionInOnlyWriteDbAsync, BizDataIn>(true, utData.WrappedConfig);
                 var inDto = new ServiceLayerBizInDto { Num = num };
 
                 //ATTEMPT
-                await runner.RunBizActionDbAndInstanceAsync(context, bizInstance, mapper, inDto);
+                await runner.RunBizActionDbAndInstanceAsync(context, bizInstance, inDto);
 
                 //VERIFY
                 bizInstance.HasErrors.ShouldEqual(hasErrors);
@@ -184,13 +187,14 @@ namespace Tests.UnitTests.Internals
             using (var context = new TestDbContext(options))
             {
                 context.Database.EnsureCreated();
-                var mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto, ServiceLayerBizOutDto>();
+                var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(config);
+                utData.AddDtoMapping<ServiceLayerBizOutDto>();
                 var bizInstance = new BizActionInOutWriteDbAsync(context);
-                var runner = new ActionServiceInOutAsync<IBizActionInOutWriteDbAsync, BizDataIn, BizDataOut>(true, config);
+                var runner = new ActionServiceInOutAsync<IBizActionInOutWriteDbAsync, BizDataIn, BizDataOut>(true, utData.WrappedConfig);
                 var inDto = new ServiceLayerBizInDto { Num = num };
 
                 //ATTEMPT
-                var data = await runner.RunBizActionDbAndInstanceAsync<ServiceLayerBizOutDto>(context, bizInstance, mapper, inDto);
+                var data = await runner.RunBizActionDbAndInstanceAsync<ServiceLayerBizOutDto>(context, bizInstance, inDto);
 
                 //VERIFY
                 bizInstance.HasErrors.ShouldEqual(hasErrors);
@@ -210,12 +214,12 @@ namespace Tests.UnitTests.Internals
             {
                 context.Database.EnsureCreated();
 
-                var mapper = SetupHelpers.CreateMapper<ServiceLayerBizOutDto>();
+                var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizOutDto>(_noCachingConfig);
                 var bizInstance = new BizActionOutOnlyWriteDbAsync(context);
-                var runner = new ActionServiceOutOnlyAsync<IBizActionOutOnlyWriteDbAsync, BizDataOut>(true, _noCachingConfig);
+                var runner = new ActionServiceOutOnlyAsync<IBizActionOutOnlyWriteDbAsync, BizDataOut>(true, utData.WrappedConfig);
 
                 //ATTEMPT
-                var data = await runner.RunBizActionDbAndInstanceAsync<ServiceLayerBizOutDto>(context, bizInstance, mapper);
+                var data = await runner.RunBizActionDbAndInstanceAsync<ServiceLayerBizOutDto>(context, bizInstance);
 
                 //VERIFY
                 bizInstance.HasErrors.ShouldBeFalse();
@@ -227,12 +231,12 @@ namespace Tests.UnitTests.Internals
         public async Task TestActionServiceOutOnlyMappingOk()
         {
             //SETUP 
-            var mapper = SetupHelpers.CreateMapper<ServiceLayerBizOutDto>();
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizOutDto>(_noCachingConfig);
             var bizInstance = new BizActionOutOnlyAsync();
-            var runner = new ActionServiceOutOnlyAsync<IBizActionOutOnlyAsync, BizDataOut>(false, _noCachingConfig);
+            var runner = new ActionServiceOutOnlyAsync<IBizActionOutOnlyAsync, BizDataOut>(false, utData.WrappedConfig);
 
             //ATTEMPT
-            var data = await runner.RunBizActionDbAndInstanceAsync<ServiceLayerBizOutDto>(_dbContext, bizInstance, mapper);
+            var data = await runner.RunBizActionDbAndInstanceAsync<ServiceLayerBizOutDto>(_dbContext, bizInstance);
 
             //VERIFY
             bizInstance.HasErrors.ShouldBeFalse();
@@ -243,12 +247,12 @@ namespace Tests.UnitTests.Internals
         public async Task TestActionServiceOutOnlyNoDtoOk()
         {
             //SETUP 
-            var mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto>(); //doesn't need a mapper, but mapper msutn't be null
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizOutDto>(_noCachingConfig);
             var bizInstance = new BizActionOutOnlyAsync();
-            var runner = new ActionServiceOutOnlyAsync<IBizActionOutOnlyAsync, BizDataOut>(false, _noCachingConfig);
+            var runner = new ActionServiceOutOnlyAsync<IBizActionOutOnlyAsync, BizDataOut>(false, utData.WrappedConfig);
 
             //ATTEMPT
-            var data = await runner.RunBizActionDbAndInstanceAsync<BizDataOut>(_dbContext, bizInstance, mapper);
+            var data = await runner.RunBizActionDbAndInstanceAsync<BizDataOut>(_dbContext, bizInstance);
 
             //VERIFY
             bizInstance.HasErrors.ShouldBeFalse();

@@ -1,5 +1,5 @@
 ﻿// Copyright (c) 2017 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.Linq;
 using BizLogic.Orders;
@@ -66,7 +66,7 @@ namespace EfCoreInAction.Controllers
             }
 
             //This runs my business logic using the service injected into the Action's parameters 
-            var order = service.RunBizAction<Order>(dto);
+            var orderDto = service.RunBizAction<OrderIdDto>(dto);
 
             if (!service.Status.HasErrors)
             {
@@ -74,7 +74,7 @@ namespace EfCoreInAction.Controllers
                 ClearCheckoutCookie(HttpContext);
                 SetupTraceInfo();       //Used to update the logs
                 return RedirectToAction("ConfirmOrder", "Orders", 
-                    new { order.OrderId, Message = "Your order is confirmed" });
+                    new { orderDto.OrderId, Message = "Your order is confirmed" });
             }
 
             //Otherwise errors, so I need to redisplay the basket from the cookie

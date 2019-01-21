@@ -1,5 +1,5 @@
 ﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System.IO;
 using System.Linq;
@@ -18,11 +18,11 @@ namespace Tests.UnitTests.DDDEntities
             //SETUP
             var testsDir = TestData.GetCallingAssemblyTopLevelDir();
             var dataDir = Path.GetFullPath($"{testsDir}{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}"+
-                $"{nameof(ExampleWebApp)}{Path.DirectorySeparatorChar}wwwroot{Path.DirectorySeparatorChar}{SetupHelpers.SeedFileSubDirectory}");
+                $"{nameof(ExampleWebApp)}{Path.DirectorySeparatorChar}wwwroot{Path.DirectorySeparatorChar}{DbSetupHelpers.SeedFileSubDirectory}");
 
             //ATTEMPT
             var books = BookJsonLoader.LoadBooks(dataDir,
-                    SetupHelpers.SeedDataSearchName).ToList();
+                    DbSetupHelpers.SeedDataSearchName).ToList();
 
             //VERIFY
             books.Count.ShouldEqual(53);

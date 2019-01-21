@@ -1,5 +1,5 @@
 ﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -37,5 +37,8 @@ namespace GenericBizRunner.Configuration
 
         /// <inheritdoc />
         public Func<Exception, DbContext, IStatusGeneric> SaveChangesExceptionHandler { get; set; } = (exception, context) => null; // default is to return null
+
+        /// <inheritdoc />
+        public BeforeSaveChangesBizRunner BeforeSaveChanges { get; set;  }
     }
 }

@@ -1,14 +1,18 @@
 ﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace GenericBizRunner.Configuration
 {
+    /// <summary>
+    /// This is the signature for the method you can add which will be called before SaveChanges
+    /// </summary>
+    /// <param name="context">Access to DbContext</param>
+    /// <returns></returns>
+    public delegate IStatusGeneric BeforeSaveChangesBizRunner(DbContext context);
+
     /// <summary>
     /// This is the interface to the configuration information for the GenericBizRunner
     /// </summary>
@@ -58,5 +62,12 @@ namespace GenericBizRunner.Configuration
         /// SQL errors into user-friendly errors
         /// </summary>
         Func<Exception, DbContext, IStatusGeneric> SaveChangesExceptionHandler { get; }
+
+        /// <summary>
+        /// This will be called just before SaveChanges/SaveChangesAsync is called.
+        /// I allows you to do things like your own validation, logging, etc. without needing to put code inside your application's DbContext
+        /// If the status returned by BeforeSaveChanges has errors, then SaveChanges won't be called. 
+        /// </summary>
+        BeforeSaveChangesBizRunner BeforeSaveChanges { get; }
     }
 }

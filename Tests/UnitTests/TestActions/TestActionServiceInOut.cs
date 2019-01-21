@@ -1,12 +1,14 @@
 ﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
 using System.Linq;
 using AutoMapper;
 using GenericBizRunner;
 using GenericBizRunner.Configuration;
+using GenericBizRunner.PublicButHidden;
 using Microsoft.EntityFrameworkCore;
+using ServiceLayer.DatabaseServices.Concrete;
 using TestBizLayer.Actions;
 using TestBizLayer.Actions.Concrete;
 using TestBizLayer.BizDTOs;
@@ -21,12 +23,17 @@ namespace Tests.UnitTests.TestActions
 {
     public class TestActionServiceInOut
     {
-        private readonly IGenericBizRunnerConfig _noCachingConfig = new GenericBizRunnerConfig { TurnOffCaching = true };
-
         //This action does not access the database, but the ActionService checks that the dbContext isn't null
         private readonly DbContext _emptyDbContext = new TestDbContext(SqliteInMemory.CreateOptions<TestDbContext>());
+        private readonly IWrappedBizRunnerConfigAndMappings _wrappedConfig;
 
-        readonly IMapper _mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto, ServiceLayerBizOutDto>();
+        public TestActionServiceInOut()
+        {
+            var config = new GenericBizRunnerConfig { TurnOffCaching = true };
+            var utData = NonDiBizSetup.SetupDtoMapping<ServiceLayerBizInDto>(config);
+            utData.AddDtoMapping<ServiceLayerBizOutDto>();
+            _wrappedConfig = utData.WrappedConfig;
+        }
 
         [Theory]
         [InlineData(123, false)]
@@ -35,7 +42,7 @@ namespace Tests.UnitTests.TestActions
         {
             //SETUP 
             var bizInstance = new BizActionValueInOut();
-            var runner = new ActionService<IBizActionValueInOut>(_emptyDbContext, bizInstance, _mapper, _noCachingConfig);
+            var runner = new ActionService<IBizActionValueInOut>(_emptyDbContext, bizInstance, _wrappedConfig);
             var input = num;
 
             //ATTEMPT
@@ -58,9 +65,8 @@ namespace Tests.UnitTests.TestActions
         public void TestActionServiceInOutDtosOk(int num, bool hasErrors)
         {
             //SETUP 
-            var mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto, ServiceLayerBizOutDto>();
             var bizInstance = new BizActionInOut();
-            var runner = new ActionService<IBizActionInOut>(_emptyDbContext, bizInstance, mapper, _noCachingConfig);
+            var runner = new ActionService<IBizActionInOut>(_emptyDbContext, bizInstance, _wrappedConfig);
             var input = new ServiceLayerBizInDto{Num = num};
 
             //ATTEMPT
@@ -81,9 +87,8 @@ namespace Tests.UnitTests.TestActions
         public void TestActionServiceErrorInSetupOk()
         {
             //SETUP         
-            var mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDto, ServiceLayerBizOutDto>();
             var bizInstance = new BizActionInOut();
-            var runner = new ActionService<IBizActionInOut>(_emptyDbContext, bizInstance, mapper, _noCachingConfig);
+            var runner = new ActionService<IBizActionInOut>(_emptyDbContext, bizInstance, _wrappedConfig);
             var input = runner.GetDto<ServiceLayerBizInDto>(x => { x.RaiseErrorInSetupSecondaryData = true; });
 
             //ATTEMPT
@@ -106,7 +111,7 @@ namespace Tests.UnitTests.TestActions
                 context.Database.EnsureCreated();
 
                 var bizInstance = new BizActionInOutWriteDb(context);
-                var runner = new ActionService<IBizActionInOutWriteDb>(context, bizInstance, _mapper, _noCachingConfig);
+                var runner = new ActionService<IBizActionInOutWriteDb>(context, bizInstance, _wrappedConfig);
                 var input = new ServiceLayerBizInDto { Num = num };
 
                 //ATTEMPT
@@ -139,7 +144,7 @@ namespace Tests.UnitTests.TestActions
                 context.Database.EnsureCreated();
                 var bizInstance = new BizActionInOnlyWriteDb(context);
                 var runner =
-                    new ActionService<IBizActionInOnlyWriteDb>(context, bizInstance, _mapper, _noCachingConfig);
+                    new ActionService<IBizActionInOnlyWriteDb>(context, bizInstance, _wrappedConfig);
                 var input = new ServiceLayerBizInDto { Num = num };
 
                 //ATTEMPT
@@ -164,7 +169,7 @@ namespace Tests.UnitTests.TestActions
         {
             //SETUP 
             var bizInstance = new BizActionValueInOut();
-            var runner = new ActionService<IBizActionValueInOut>(_emptyDbContext, bizInstance, _mapper, _noCachingConfig);
+            var runner = new ActionService<IBizActionValueInOut>(_emptyDbContext, bizInstance, _wrappedConfig);
 
             //ATTEMPT
             var ex = Assert.Throws<InvalidOperationException>(() => runner.RunBizAction<string>());
@@ -178,7 +183,7 @@ namespace Tests.UnitTests.TestActions
         {
             //SETUP 
             var bizInstance = new BizActionValueInOut();
-            var runner = new ActionService<IBizActionValueInOut>(_emptyDbContext, bizInstance, _mapper, _noCachingConfig);
+            var runner = new ActionService<IBizActionValueInOut>(_emptyDbContext, bizInstance, _wrappedConfig);
             var input = "string";
 
             //ATTEMPT
@@ -196,7 +201,7 @@ namespace Tests.UnitTests.TestActions
         {
             //SETUP 
             var bizInstance = new BizActionValueInOut();
-            var runner = new ActionService<IBizActionValueInOut>(_emptyDbContext, bizInstance, _mapper, _noCachingConfig);
+            var runner = new ActionService<IBizActionValueInOut>(_emptyDbContext, bizInstance, _wrappedConfig);
             var input = "string";
 
             //ATTEMPT
@@ -211,7 +216,7 @@ namespace Tests.UnitTests.TestActions
         {
             //SETUP 
             var bizInstance = new BizActionValueInOut();
-            var runner = new ActionService<IBizActionValueInOut>(_emptyDbContext, bizInstance, _mapper, _noCachingConfig);
+            var runner = new ActionService<IBizActionValueInOut>(_emptyDbContext, bizInstance, _wrappedConfig);
             var input = new ServiceLayerBizInDtoAsync();
 
             //ATTEMPT

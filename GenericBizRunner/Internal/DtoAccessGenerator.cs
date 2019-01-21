@@ -1,5 +1,5 @@
 ﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Concurrent;
@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using GenericBizRunner.Configuration;
 using GenericBizRunner.Internal.DtoAccessors;
+using GenericBizRunner.PublicButHidden;
 using Microsoft.EntityFrameworkCore;
 
 [assembly: InternalsVisibleTo("Tests")]
@@ -43,14 +44,14 @@ namespace GenericBizRunner.Internal
         private bool IsDirectCopy => _dtoAccessInstance == null;
 
         public static DtoAccessGenerator BuildCopier(Type fromType, Type toType, bool toBiz, bool asyncAllowed,
-            IGenericBizRunnerConfig config)
+            bool turnOffCaching)
         {
             if (fromType == toType)
                 //simple case - just copy the data as is so do not need to create a copier
                 return new DtoAccessGenerator(false, null);
 
             //else its a complex copier, so we create it
-            if (!config.TurnOffCaching)
+            if (!turnOffCaching)
                 return DtoAccessInstanceCache.GetOrAdd(FormCacheKey(fromType, toType, toBiz, asyncAllowed),
                     key => ActivateCopierInstance(fromType, toType, toBiz, asyncAllowed));
 
@@ -142,7 +143,7 @@ namespace GenericBizRunner.Internal
         //private helpers
 
         /// <summary>
-        /// This must form a unique key for each BuildCoper call. It is used to lookup on the cache
+        /// This must form a unique key for each BuildCopier call. It is used to lookup on the cache
         /// </summary>
         private static string FormCacheKey(Type fromType, Type toType, bool toBiz, bool asyncAllowed)
         {

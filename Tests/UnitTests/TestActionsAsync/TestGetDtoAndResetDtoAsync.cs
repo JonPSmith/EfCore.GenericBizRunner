@@ -1,11 +1,12 @@
 ﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
 using System.Threading.Tasks;
 using AutoMapper;
 using GenericBizRunner;
 using GenericBizRunner.Configuration;
+using GenericBizRunner.PublicButHidden;
 using Microsoft.EntityFrameworkCore;
 using TestBizLayer.Actions;
 using TestBizLayer.Actions.Concrete;
@@ -23,19 +24,23 @@ namespace Tests.UnitTests.TestActionsAsync
 {
     public class TestGetDtoAndResetDtoAsync
     {
-        private readonly IGenericBizRunnerConfig _noCachingConfig = new GenericBizRunnerConfig { TurnOffCaching = true };
-
         //This action does not access the database, but the ActionService checks that the dbContext isn't null
         private readonly DbContext _emptyDbContext = new TestDbContext(SqliteInMemory.CreateOptions<TestDbContext>());
+        //Because this is ValueInOut then there is no need for a mapper, but the ActionService checks that the Mapper isn't null
+        private readonly IWrappedBizRunnerConfigAndMappings _wrappedConfig;
 
-        //Beacause this is ValueInOut then there is no need for a mapper, but the ActionService checks that the Mapper isn't null
-        private readonly IMapper _mapper = SetupHelpers.CreateMapper<ServiceLayerBizInDtoAsync, ServiceLayerBizInDto>();
+        public TestGetDtoAndResetDtoAsync()
+        {
+            var config = new GenericBizRunnerConfig { TurnOffCaching = true };
+            var utData = new NonDiBizSetup(config);
+            _wrappedConfig = utData.WrappedConfig;
+        }
 
         [Fact]
         public async Task TestResetDtoDirectOk()
         {
             //SETUP 
-            var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _mapper, _noCachingConfig);
+            var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _wrappedConfig);
             var data = new BizDataIn {Num = 123};
 
             //ATTEMPT
@@ -50,7 +55,7 @@ namespace Tests.UnitTests.TestActionsAsync
         public async Task TestResetDtoAsyncOk()
         {
             //SETUP 
-            var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _mapper, _noCachingConfig);
+            var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _wrappedConfig);
             var data = new ServiceLayerBizInDtoAsync { Num = 123 };
 
             //ATTEMPT
@@ -66,7 +71,7 @@ namespace Tests.UnitTests.TestActionsAsync
         public async Task Test11ResetDtoGenericActionsOk()
         {
             //SETUP 
-            var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _mapper, _noCachingConfig);
+            var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _wrappedConfig);
             var data = new ServiceLayerBizInDto {Num = 123};
 
             //ATTEMPT
@@ -82,7 +87,7 @@ namespace Tests.UnitTests.TestActionsAsync
         public async Task TestGetDtoDirectOk()
         {
             //SETUP 
-            var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _mapper, _noCachingConfig);
+            var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _wrappedConfig);
 
             //ATTEMPT
             var data = await service.GetDtoAsync<BizDataIn>();
@@ -96,7 +101,7 @@ namespace Tests.UnitTests.TestActionsAsync
         public async Task TestGetDtoGenericActionsDtoAsyncOk()
         {
             //SETUP 
-            var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _mapper, _noCachingConfig);
+            var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _wrappedConfig);
 
             //ATTEMPT
             var data = await service.GetDtoAsync<ServiceLayerBizInDtoAsync>();
@@ -112,7 +117,7 @@ namespace Tests.UnitTests.TestActionsAsync
         public async Task TestGetDtoGenericActionsDtoAsyncOkAithAction()
         {
             //SETUP 
-            var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _mapper, _noCachingConfig);
+            var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _wrappedConfig);
 
             //ATTEMPT
             var data = await service.GetDtoAsync<ServiceLayerBizInDtoAsync>(x => { x.Num = 2;});
@@ -133,7 +138,7 @@ namespace Tests.UnitTests.TestActionsAsync
         public async Task TestGetDtoGenericActionsDtoBad()
         {
             //SETUP 
-            var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _mapper, _noCachingConfig);
+            var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _wrappedConfig);
 
             //ATTEMPT
             var ex = await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.GetDtoAsync<ServiceLayerBizOutDto>());
@@ -146,7 +151,7 @@ namespace Tests.UnitTests.TestActionsAsync
         public async Task TestGetDtoGenericActionsDtoOk()
         {
             //SETUP 
-            var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _mapper, _noCachingConfig);
+            var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _wrappedConfig);
 
             //ATTEMPT
             var data = await service.GetDtoAsync<ServiceLayerBizInDto>();
@@ -161,7 +166,7 @@ namespace Tests.UnitTests.TestActionsAsync
         public async Task TestGetDtoGenericActionsDtoOutOnlyBad()
         {
             //SETUP 
-            var service = new ActionServiceAsync<IBizActionOutOnly>(_emptyDbContext, new BizActionOutOnly(), _mapper, _noCachingConfig);
+            var service = new ActionServiceAsync<IBizActionOutOnly>(_emptyDbContext, new BizActionOutOnly(), _wrappedConfig);
 
             //ATTEMPT
             var ex = await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.GetDtoAsync<ServiceLayerBizInDto>());
@@ -174,7 +179,7 @@ namespace Tests.UnitTests.TestActionsAsync
         public async Task TestResetDtoGenericActionsDtoBad()
         {
             //SETUP 
-            var service = new ActionServiceAsync<IBizActionOutOnly>(_emptyDbContext, new BizActionOutOnly(), _mapper, _noCachingConfig);
+            var service = new ActionServiceAsync<IBizActionOutOnly>(_emptyDbContext, new BizActionOutOnly(), _wrappedConfig);
             var data = new ServiceLayerBizInDto();
 
             //ATTEMPT
@@ -191,7 +196,7 @@ namespace Tests.UnitTests.TestActionsAsync
         public async Task TestResetDtoGenericActionsDtoOutNotInBad()
         {
             //SETUP 
-            var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _mapper, _noCachingConfig);
+            var service = new ActionServiceAsync<IBizActionInOutAsync>(_emptyDbContext, new BizActionInOutAsync(), _wrappedConfig);
             var data = new ServiceLayerBizOutDto();
 
             //ATTEMPT

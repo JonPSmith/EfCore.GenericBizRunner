@@ -1,11 +1,10 @@
 ﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
+// Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
 using System.Threading.Tasks;
-using AutoMapper;
-using GenericBizRunner.Configuration;
 using GenericBizRunner.Internal;
+using GenericBizRunner.PublicButHidden;
 using Microsoft.EntityFrameworkCore;
 
 namespace GenericBizRunner
@@ -18,8 +17,8 @@ namespace GenericBizRunner
         where TBizInstance : class, IBizActionStatus
     {
         /// <inheritdoc />
-        public ActionServiceAsync(DbContext context, TBizInstance bizInstance, IMapper mapper, IGenericBizRunnerConfig config = null)
-            : base(context, bizInstance, mapper, config)
+        public ActionServiceAsync(DbContext context, TBizInstance bizInstance, IWrappedBizRunnerConfigAndMappings wrappedConfig)
+            : base(context, bizInstance, wrappedConfig)
         {
         }
     }
@@ -34,17 +33,17 @@ namespace GenericBizRunner
         where TBizInstance : class, IBizActionStatus
     {
         private readonly TBizInstance _bizInstance;
-        private readonly IGenericBizRunnerConfig _config;
-        private readonly IMapper _mapper;
+        private readonly IWrappedBizRunnerConfigAndMappings _wrappedConfig;
         private readonly TContext _context;
+        private readonly bool _turnOffCaching;
 
         /// <inheritdoc />
-        public ActionServiceAsync(TContext context, TBizInstance bizInstance, IMapper mapper, IGenericBizRunnerConfig config = null)
+        public ActionServiceAsync(TContext context, TBizInstance bizInstance, IWrappedBizRunnerConfigAndMappings wrappedConfig)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _bizInstance = bizInstance ?? throw new ArgumentNullException(nameof(bizInstance));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _config = config ?? new GenericBizRunnerConfig();
+            _wrappedConfig = wrappedConfig ?? throw new ArgumentNullException(nameof(wrappedConfig));
+            _turnOffCaching = _wrappedConfig.Config.TurnOffCaching;
         }
 
         /// <summary>
@@ -60,9 +59,9 @@ namespace GenericBizRunner
         /// <returns>The returned data after the run, or default value is thewre was an error</returns>
         public async Task<TOut> RunBizActionAsync<TOut>(object inputData)
         {
-            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOut | RequestedInOut.Async, _config.TurnOffCaching);
-            return await ((Task<TOut>) decoder.BizInfo.GetServiceInstance(_config)
-                    .RunBizActionDbAndInstanceAsync<TOut>(_context, _bizInstance, _mapper, inputData))
+            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOut | RequestedInOut.Async, _turnOffCaching);
+            return await ((Task<TOut>) decoder.BizInfo.GetServiceInstance(_wrappedConfig)
+                    .RunBizActionDbAndInstanceAsync<TOut>(_context, _bizInstance, inputData))
                 .ConfigureAwait(false);
         }
 
@@ -73,9 +72,9 @@ namespace GenericBizRunner
         /// <returns>The returned data after the run, or default value if there was an error</returns>
         public async Task<TOut> RunBizActionAsync<TOut>()
         {
-            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.Out | RequestedInOut.Async, _config.TurnOffCaching);
-            return await ((Task<TOut>)decoder.BizInfo.GetServiceInstance(_config)
-                    .RunBizActionDbAndInstanceAsync<TOut>(_context, _bizInstance, _mapper))
+            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.Out | RequestedInOut.Async, _turnOffCaching);
+            return await ((Task<TOut>)decoder.BizInfo.GetServiceInstance(_wrappedConfig)
+                    .RunBizActionDbAndInstanceAsync<TOut>(_context, _bizInstance))
                 .ConfigureAwait(false);
         }
 
@@ -86,9 +85,9 @@ namespace GenericBizRunner
         /// <returns>status message with no result part</returns>
         public async Task RunBizActionAsync(object inputData)
         {
-            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.In | RequestedInOut.Async, _config.TurnOffCaching);
-            await ((Task) decoder.BizInfo.GetServiceInstance(_config)
-                .RunBizActionDbAndInstanceAsync(_context, _bizInstance, _mapper, inputData))
+            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.In | RequestedInOut.Async, _turnOffCaching);
+            await ((Task) decoder.BizInfo.GetServiceInstance(_wrappedConfig)
+                .RunBizActionDbAndInstanceAsync(_context, _bizInstance, inputData))
                 .ConfigureAwait(false);
         }
 
@@ -104,8 +103,8 @@ namespace GenericBizRunner
             if (!typeof(TDto).IsClass)
                 throw new InvalidOperationException("You should only call this on a primitive type. Its only useful for Dtos.");
 
-            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOrInOut | RequestedInOut.Async, _config.TurnOffCaching);
-            var toBizCopier = DtoAccessGenerator.BuildCopier(typeof(TDto), decoder.BizInfo.GetBizInType(), true, true, _config);
+            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOrInOut | RequestedInOut.Async, _turnOffCaching);
+            var toBizCopier = DtoAccessGenerator.BuildCopier(typeof(TDto), decoder.BizInfo.GetBizInType(), true, true, _turnOffCaching);
             return await toBizCopier.CreateDataWithPossibleSetupAsync<TDto>(_context, Status, runBeforeSetup).ConfigureAwait(false);
         }
 
@@ -121,8 +120,8 @@ namespace GenericBizRunner
             if (!typeof(TDto).IsClass)
                 throw new InvalidOperationException("You should only call this on a primitive type. Its only useful for Dtos.");
 
-            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOrInOut | RequestedInOut.Async, _config.TurnOffCaching);
-            var toBizCopier = DtoAccessGenerator.BuildCopier(typeof(TDto), decoder.BizInfo.GetBizInType(), true, true, _config);
+            var decoder = new BizDecoder(typeof(TBizInstance), RequestedInOut.InOrInOut | RequestedInOut.Async, _turnOffCaching);
+            var toBizCopier = DtoAccessGenerator.BuildCopier(typeof(TDto), decoder.BizInfo.GetBizInType(), true, true, _turnOffCaching);
             await toBizCopier.SetupSecondaryDataIfRequiredAsync(_context, Status, dto).ConfigureAwait(false);
             return dto;
         }
