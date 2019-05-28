@@ -34,17 +34,17 @@ namespace DataLayer.EfClasses
             IEnumerable<OrderBooksDto> bookOrders)
         {
             var status = new StatusGenericHandler<Order>();
+            byte lineNum = 1;
             var order = new Order
             {
                 CustomerName = customerName,
                 ExpectedDeliveryDate = expectedDeliveryDate,
                 DateOrderedUtc = DateTime.UtcNow,
-                HasBeenDelivered = expectedDeliveryDate < DateTime.Today
+                HasBeenDelivered = expectedDeliveryDate < DateTime.Today,
+                _lineItems = new HashSet<LineItem>(bookOrders
+                    .Select(x => new LineItem(x.numBooks, x.ChosenBook, lineNum++)))
             };
 
-            byte lineNum = 1;
-            order._lineItems = new HashSet<LineItem>(bookOrders
-                .Select(x => new LineItem(x.numBooks, x.ChosenBook, lineNum++)));
             if (!order._lineItems.Any())
                 status.AddError("No items in your basket.");
 
