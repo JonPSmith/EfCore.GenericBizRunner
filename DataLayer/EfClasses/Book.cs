@@ -17,7 +17,7 @@ namespace DataLayer.EfClasses
         public int BookId { get; private set; }          
         public string Title { get; private set; }        
         public string Description { get; private set; }  
-        public DateTime PublishedOn { get; private set; }
+        public DateTime PublishedOn { get; private set; } 
         public string Publisher { get; private set; }
         public decimal OrgPrice { get; private set; } 
         public decimal ActualPrice { get; private set; } 
@@ -101,8 +101,7 @@ namespace DataLayer.EfClasses
             var status = new StatusGenericHandler();
             if (string.IsNullOrWhiteSpace(promotionalText))
             {
-                status.AddError("You must provide some text to go with the promotion.", nameof(PromotionalText));
-                return status;
+                return status.AddError("You must provide some text to go with the promotion.", nameof(PromotionalText));
             }
 
             ActualPrice = newPrice;  

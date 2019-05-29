@@ -33,18 +33,14 @@ namespace BizLogic.Orders.Concrete
                 return null;                          
             }                                         
 
-            var bookOrders = 
-                dto.CheckoutLineItems.Select(  
-                    x => _dbAccess.BuildBooksDto(x.BookId, x.NumBooks)); 
-            var orderStatus = Order.CreateOrderFactory(
-                dto.UserId, DateTime.Today.AddDays(5),
-                bookOrders);
+            var bookOrders = dto.CheckoutLineItems.Select(x => _dbAccess.BuildBooksDto(x.BookId, x.NumBooks)); 
+            var orderStatus = Order.CreateOrderFactory(dto.UserId, DateTime.Today.AddDays(5), bookOrders);
             CombineErrors(orderStatus);
 
             if (!HasErrors)
                 _dbAccess.Add(orderStatus.Result);
 
-            return HasErrors ? null : orderStatus.Result;
+            return orderStatus.Result;
         }
     }
 }

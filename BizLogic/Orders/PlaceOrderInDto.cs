@@ -13,14 +13,5 @@ namespace BizLogic.Orders
         public string UserId { get; set; }
 
         public List<OrderLineItem> CheckoutLineItems { get; set; }
-
-        public PlaceOrderInDto () { }
-
-        public PlaceOrderInDto(bool acceptTAndCs, string userId, List<OrderLineItem> checkoutLineItems)
-        {
-            AcceptTAndCs = acceptTAndCs;
-            UserId = userId;
-            CheckoutLineItems = checkoutLineItems;
-        }
     }
 }
