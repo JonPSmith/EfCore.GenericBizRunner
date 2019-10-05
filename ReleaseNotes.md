@@ -1,8 +1,15 @@
 # Release Notes
 
-## planned changes
+## TODO
 
-- New feature: Once AutoMapper with `MapTo` attribute out, then change DI and NoDi code to support that style of DTO.
+
+- Apply to NetStandard2.0 and NetStandard2.1
+   - Feature: Support AutoMapper `MapTo` mapping approach (AutoMapper >= 8.0)
+   - Bug fix: GetAllErrors() should use Environment.NewLine.
+   - Style fix: Separator only has one E in it
+- Make it a dual NetStandard2.0/NetStandard2.1 NET package:
+   - Select new 3.0 NuGet packages: including TestSupport .
+   - ExampleWebApp: Convert to AspNetCore 3.0
 
 ## 3.0.0
 
