@@ -2,10 +2,10 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 namespace TestBizLayer.BizDTOs
 {
-    public class ComplexBizDataOutChild
+    public class NestedBizDataOut
     {
-        public int ChildInt { get; set; }
+        public string Output { get; set; }
 
-        public string ChildString { get; set; }
+        public NestedBizDataOutChild ChildData { get; set; }
     }
 }

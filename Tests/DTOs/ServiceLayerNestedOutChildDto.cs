@@ -6,10 +6,10 @@ using TestBizLayer.BizDTOs;
 
 namespace Tests.DTOs
 {
-    public class ServiceLayerComplexOutDto : GenericActionFromBizDto<ComplexBizDataOut, ServiceLayerComplexOutDto>
+    public class ServiceLayerNestedOutChildDto : GenericActionFromBizDto<NestedBizDataOutChild, ServiceLayerNestedOutChildDto>
     {
-        public string Output { get; set; }
+        public int ChildInt { get; set; }
 
-        public ServiceLayerComplexOutChildDto ChildData { get; set; }
+        public string ChildString { get; set; }
     }
 }
