@@ -2,14 +2,14 @@
 
 ## TODO
 
+ - Feature: Support AutoMapper `AutoMap` mapping approach (AutoMapper >= 8.0)
 
-- Apply to NetStandard2.0 and NetStandard2.1
-   - Feature: Support AutoMapper `MapTo` mapping approach (AutoMapper >= 8.0)
-   - Bug fix: GetAllErrors() should use Environment.NewLine.
-   - Style fix: Separator only has one E in it
-- Make it a dual NetStandard2.0/NetStandard2.1 NET package:
-   - Select new 3.0 NuGet packages: including TestSupport .
-   - ExampleWebApp: Convert to AspNetCore 3.0
+## 4.0.0
+
+- Support both EF Core >=2.1 and EF Core >=3.0 by supporting NetStandard2.0 and NetStandard2.1.
+- Upgraded to AutoMapper version without static setup.
+- Bug fix: GetAllErrors() should use Environment.NewLine.
+- Style fix: Separator only has one E in it
 
 ## 3.0.0
 

@@ -83,10 +83,17 @@ namespace GenericBizRunner
                 Message = status.Message;
         }
 
-        public string GetAllErrors(string seperator = "\n")
+        /// <summary>
+        /// This is a simple method to output all the errors as a single string - null if no errors
+        /// Useful for feeding back all the errors in a single exception (also nice in unit testing)
+        /// </summary>
+        /// <param name="separator">if null then each errors is separated by Environment.NewLine, otherwise uses the separator you provide</param>
+        /// <returns>a single string with all errors separated by the 'separator' string</returns>
+        public string GetAllErrors(string separator = null)
         {
+            separator = separator ?? Environment.NewLine;
             return _errors.Any()
-                ? string.Join(seperator, Errors)
+                ? string.Join(separator, Errors)
                 : null;
         }
     }
