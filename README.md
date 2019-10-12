@@ -10,7 +10,8 @@ EfCore.GenericBizRunner (shortened to GenericBizRunner) is a framework to help b
 
 EfCore.GenericBizRunner is available as a [NuGet package](https://www.nuget.org/packages/EfCore.GenericBizRunner/), and on the [EfCore.GenericBizRunner](https://github.com/JonPSmith/EfCore.GenericBizRunner) GitHub repo. It is an open-source project under the MIT license.
 
-**NOTE: Version 3 of GenericBizRunner changed the way it handles DTOs to make the library more useful with Web APIs - see [upgrade guide](https://github.com/JonPSmith/EfCore.GenericBizRunner/blob/master/V3UpgradeGuide.md).**
+**NOTE: Version 4 of GenericBizRunner both EF Core >=2.1 and EF Core >=3.0 via NetStandard2.0 and NetStandard2.1 versions.**
+**NOTE: Version 3 of GenericBizRunner changed the way it handles DTOs to make the library more useful in Web APIs - see [upgrade guide](https://github.com/JonPSmith/EfCore.GenericBizRunner/blob/master/V3UpgradeGuide.md).**
 
 ## Example of using GenericBizRunner in ASP.NET Core MVC
 

@@ -75,7 +75,7 @@ namespace GenericBizRunner.Configuration
             if (!bizIn && dtoType.GetInterface(nameof(IGenericActionFromBizDto)) == null)
                 throw new InvalidOperationException($"The class {dtoType.Name} doesn't inherit from one of the Biz Runner Dto classes.");
 
-            SetupDtoMappings.SetupMappingForDto(dtoType, bizIn ? nonDiConf._bizInProfile : nonDiConf._bizOutProfile, bizIn);
+            SetupDtoMappings.SetupGenericActionMappingForDto(dtoType, bizIn ? nonDiConf._bizInProfile : nonDiConf._bizOutProfile, bizIn);
         }
     }
 }

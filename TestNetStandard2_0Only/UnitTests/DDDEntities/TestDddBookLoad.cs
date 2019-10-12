@@ -4,11 +4,11 @@
 using System.IO;
 using System.Linq;
 using ServiceLayer.DatabaseServices.Concrete;
+using TestSupport.Helpers;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
-using TestSupport.Helpers;
 
-namespace Tests.UnitTests.DDDEntities
+namespace TestNetStandard2_0Only.UnitTests.DDDEntities
 {
     public class TestDddBookLoad
     {

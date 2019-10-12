@@ -8,7 +8,7 @@ using DataLayer.Dtos;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
 
-namespace Tests.Helpers
+namespace TestNetStandard2_0Only.Helpers
 {
     public static class DddEfTestData
     {

@@ -51,7 +51,7 @@ namespace Tests.UnitTests.Setup
             //VERIFY
             status.HasErrors.ShouldBeTrue();
             status.Message.ShouldEqual("Failed with 2 errors");
-            status.GetAllErrors().ShouldEqual("This is an error\nThis is another error");
+            status.GetAllErrors().ShouldEqual("This is an error\r\nThis is another error");
         }
 
 

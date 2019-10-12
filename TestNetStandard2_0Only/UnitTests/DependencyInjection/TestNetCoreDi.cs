@@ -2,24 +2,24 @@
 // Licensed under MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using GenericBizRunner;
-using Microsoft.Extensions.DependencyInjection;
-using Xunit;
-using Xunit.Extensions.AssertExtensions;
 using GenericBizRunner.Configuration;
 using GenericBizRunner.PublicButHidden;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using ServiceLayer.OrderServices;
 using TestBizLayer.Actions;
 using TestBizLayer.Actions.Concrete;
 using TestBizLayer.DbForTransactions;
-using Tests.DTOs;
+using TestNetStandard2_0Only.DTOs;
 using TestSupport.EfHelpers;
+using Xunit;
+using Xunit.Extensions.AssertExtensions;
 
-namespace Tests.UnitTests.DependencyInjection
+namespace TestNetStandard2_0Only.UnitTests.DependencyInjection
 {
     public class TestNetCoreDi
     {

@@ -53,7 +53,7 @@ namespace GenericBizRunner.Configuration.Internal
         //------------------------------------------------------
         //internal
 
-        internal static void SetupMappingForDto(Type dtoType, BizRunnerProfile profile, bool bizIn)
+        internal static void SetupGenericActionMappingForDto(Type dtoType, BizRunnerProfile profile, bool bizIn)
         {
             var baseTypeName = (bizIn
                 ? typeof(GenericActionToBizDtoSetup<,>)
@@ -86,11 +86,11 @@ namespace GenericBizRunner.Configuration.Internal
 
             foreach (var bizOutDtoType in allTypesInAssembly.Where(x => x.GetInterface(nameof(IGenericActionFromBizDto)) != null))
             {
-                SetupMappingForDto(bizOutDtoType, _bizOutProfile, false);
+                SetupGenericActionMappingForDto(bizOutDtoType, _bizOutProfile, false);
             }
             foreach (var bizOutDtoType in allTypesInAssembly.Where(x => x.GetInterface(nameof(IGenericActionToBizDto)) != null))
             {
-                SetupMappingForDto(bizOutDtoType, _bizInProfile, true);
+                SetupGenericActionMappingForDto(bizOutDtoType, _bizInProfile, true);
             }
         }
 
