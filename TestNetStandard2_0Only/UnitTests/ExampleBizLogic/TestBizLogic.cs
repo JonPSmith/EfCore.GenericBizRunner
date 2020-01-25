@@ -8,12 +8,12 @@ using BizDbAccess.Orders.Concrete;
 using BizLogic.Orders;
 using BizLogic.Orders.Concrete;
 using DataLayer.EfCode;
-using Tests.Helpers;
+using TestNetStandard2_0Only.Helpers;
 using TestSupport.EfHelpers;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
 
-namespace Tests.UnitTests.ExampleBizLogic
+namespace TestNetStandard2_0Only.UnitTests.ExampleBizLogic
 {
     public class TestBizLogic
     {
@@ -69,7 +69,7 @@ namespace Tests.UnitTests.ExampleBizLogic
 
                 //VERIFY
                 service.HasErrors.ShouldBeTrue();
-                service.Errors.Single().ErrorMessage.ShouldEqual("You must accept the T&Cs to place an order.");
+                service.Errors.Single().ErrorResult.ErrorMessage.ShouldEqual("You must accept the T&Cs to place an order.");
             }
         }
 

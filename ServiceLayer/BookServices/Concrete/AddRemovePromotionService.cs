@@ -6,6 +6,7 @@ using System.Linq;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
 using GenericBizRunner;
+using StatusGeneric;
 
 namespace ServiceLayer.BookServices.Concrete
 {

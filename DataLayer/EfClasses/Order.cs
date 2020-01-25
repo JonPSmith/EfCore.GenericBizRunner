@@ -7,6 +7,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using DataLayer.Dtos;
 using GenericBizRunner;
+using StatusGeneric;
 
 namespace DataLayer.EfClasses
 {
@@ -48,7 +49,7 @@ namespace DataLayer.EfClasses
             if (!order._lineItems.Any())
                 status.AddError("No items in your basket.");
 
-            status.Result = order;
+            status.SetResult(order);
             return status;
         }
 

@@ -4,6 +4,7 @@
 using AutoMapper;
 using GenericBizRunner.PublicButHidden;
 using Microsoft.EntityFrameworkCore;
+using StatusGeneric;
 
 namespace GenericBizRunner
 {
@@ -22,7 +23,7 @@ namespace GenericBizRunner
         /// </summary>
         /// <param name="db"></param>
         /// <param name="status">You can raise an error, which will stop the biz logic from running</param>
-        protected internal virtual void SetupSecondaryData(DbContext db, IBizActionStatus status)
+        protected internal virtual void SetupSecondaryData(DbContext db, IStatusGenericHandler status)
         {
         }
 

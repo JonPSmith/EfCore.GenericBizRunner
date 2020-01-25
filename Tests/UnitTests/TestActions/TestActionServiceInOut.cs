@@ -8,7 +8,6 @@ using GenericBizRunner;
 using GenericBizRunner.Configuration;
 using GenericBizRunner.PublicButHidden;
 using Microsoft.EntityFrameworkCore;
-using ServiceLayer.DatabaseServices.Concrete;
 using TestBizLayer.Actions;
 using TestBizLayer.Actions.Concrete;
 using TestBizLayer.BizDTOs;
@@ -96,7 +95,7 @@ namespace Tests.UnitTests.TestActions
 
             //VERIFY
             bizInstance.HasErrors.ShouldEqual(true);
-            bizInstance.Errors.Single().ErrorMessage.ShouldEqual("Error in SetupSecondaryData");
+            bizInstance.Errors.Single().ErrorResult.ErrorMessage.ShouldEqual("Error in SetupSecondaryData");
         }
 
         [Theory]

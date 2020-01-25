@@ -1,12 +1,37 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="GenericServices.StatusGeneric" Version="1.0.1" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>EfCore.GenericBizRunner</PackageId>
-    <PackageVersion>3.0.0</PackageVersion>
-    <Version>3.0.0</Version>
-    <AssemblyVersion>3.0.0.0</AssemblyVersion>
-    <FileVersion>3.0.0.0</FileVersion>
+    <PackageVersion>4.1.0</PackageVersion>
+    <Version>4.1.0</Version>
+    <AssemblyVersion>4.1.0.0</AssemblyVersion>
+    <FileVersion>4.1.0.0</FileVersion>
     <Authors>Jon P Smith</Authors>
     <Description>Library to run business logic when using Entity Framework Core for database accesses</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
@@ -15,24 +40,20 @@
     <RepositoryUrl>https://github.com/JonPSmith/EfCore.GenericBizRunner</RepositoryUrl>
     <PackageTags>Entity Framework Core, Business Logic, ServiceLayer</PackageTags>
     <PackageReleaseNotes>
-      - BREAKING CHANGE: The way you register GenericBizRunner at startup has changed - see Upgrade Guide on how to do that.
-      - BREAKING CHANGE: Changed the way in which AutoMapper mappings are set up. Please read the Upgrade Guide on how this changes integration tests.
-      - Breaking change: removed AutoFac DI setup - now only provides Net Core setup (you can still use AutoFac for other DI usages).
-      - New Feature: Added `IGenericStatus BeforeSaveChanges(DbContext)` to configuration - allows you to add your own validation, logging etc.
-      - Minor improvement: Sql error handler used if present, even if validation isn't on.
+      - Update: Swapped to using GenericServices.StatusGeneric for status. This provides common status handling across my Generic libraries.
+      NOTE: You will need to install GenericServices.StatusGeneric NuGet packages in your biz logic etc.
     </PackageReleaseNotes>
     <PackageIconUrl>https://raw.githubusercontent.com/JonPSmith/EfCore.GenericBizRunner/master/GenericBizRunnerNuGetIcon128.png</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/JonPSmith/EfCore.GenericBizRunner/blob/master/LICENCE</PackageLicenseUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.0\GenericBizRunner.xml</DocumentationFile>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
+    <DocumentationFile>bin\Release\netcoreapp2.0\GenericBizRunner.xml</DocumentationFile>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="7.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.0" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.1|AnyCPU'">
+    <DocumentationFile>bin\Release\netcoreapp2.1\GenericBizRunner.xml</DocumentationFile>
+  </PropertyGroup>
 
 </Project>

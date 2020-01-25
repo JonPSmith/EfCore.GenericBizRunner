@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.EntityFrameworkCore;
+using StatusGeneric;
 
 namespace GenericBizRunner.Configuration
 {

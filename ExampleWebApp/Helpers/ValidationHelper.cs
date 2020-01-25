@@ -4,8 +4,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using GenericBizRunner;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using StatusGeneric;
 
 namespace ExampleWebApp.Helpers
 {
@@ -25,7 +25,7 @@ namespace ExampleWebApp.Helpers
             if (!status.HasErrors) return;
 
             var namesThatWeShouldInclude = PropertyNamesInDto(displayDto);
-            foreach (var error in status.Errors)
+            foreach (var error in status.Errors.Select(x => x.ErrorResult))
             {
                 if (!error.MemberNames.Any())
                     modelState.AddModelError("", error.ErrorMessage);
@@ -47,7 +47,7 @@ namespace ExampleWebApp.Helpers
             if (!status.HasErrors) return;
 
             foreach (var error in status.Errors)
-                    modelState.AddModelError("", error.ErrorMessage);
+                    modelState.AddModelError("", error.ToString());
         }
 
         //-----------------------------------------------------------------------------------

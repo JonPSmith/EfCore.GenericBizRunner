@@ -9,6 +9,7 @@ using DataLayer.EfClasses;
 using GenericBizRunner;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using StatusGeneric;
 
 namespace ServiceLayer.OrderServices
 {
@@ -45,7 +46,7 @@ namespace ServiceLayer.OrderServices
         /// </summary>
         /// <param name="db">The DbContext to allow access to the database</param>
         /// <param name="status">The BizActionStatus so you can register errors</param>
-        protected override void SetupSecondaryData(DbContext db, IBizActionStatus status)
+        protected override void SetupSecondaryData(DbContext db, IStatusGenericHandler status)
         {
             if (OrderId == 0)
                 throw new InvalidOperationException("You must set the OrderId before you call SetupSecondaryData");

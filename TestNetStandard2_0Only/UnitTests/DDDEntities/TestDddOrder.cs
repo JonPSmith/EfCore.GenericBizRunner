@@ -7,13 +7,12 @@ using System.Linq;
 using DataLayer.Dtos;
 using DataLayer.EfClasses;
 using DataLayer.EfCode;
-using Microsoft.EntityFrameworkCore;
+using TestNetStandard2_0Only.Helpers;
 using TestSupport.EfHelpers;
 using Xunit;
 using Xunit.Extensions.AssertExtensions;
-using Tests.Helpers;
 
-namespace Tests.UnitTests.DDDEntities
+namespace TestNetStandard2_0Only.UnitTests.DDDEntities
 {
     public class TestDddOrder
     {
@@ -62,7 +61,7 @@ namespace Tests.UnitTests.DDDEntities
 
             //VERIFY
             status.HasErrors.ShouldBeTrue();
-            status.Errors.Single().ErrorMessage.ShouldEqual("No items in your basket.");
+            status.Errors.Single().ErrorResult.ErrorMessage.ShouldEqual("No items in your basket.");
         }
 
         [Fact]

@@ -1,5 +1,6 @@
 using DataLayer.EfClasses;
 using GenericBizRunner;
+using StatusGeneric;
 
 namespace ServiceLayer.BookServices
 {

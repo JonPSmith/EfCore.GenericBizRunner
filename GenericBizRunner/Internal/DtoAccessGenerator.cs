@@ -11,6 +11,7 @@ using GenericBizRunner.Configuration;
 using GenericBizRunner.Internal.DtoAccessors;
 using GenericBizRunner.PublicButHidden;
 using Microsoft.EntityFrameworkCore;
+using StatusGeneric;
 
 [assembly: InternalsVisibleTo("Tests")]
 

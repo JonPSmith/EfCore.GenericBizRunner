@@ -7,9 +7,5 @@ namespace GenericBizRunner.Configuration.Internal
 {
     internal class BizRunnerProfile : Profile
     {
-        public BizRunnerProfile()
-        {
-            CreateMissingTypeMaps = true;
-        }
     }
 }

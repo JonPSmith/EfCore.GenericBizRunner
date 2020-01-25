@@ -3,6 +3,7 @@
 
 using System.Diagnostics;
 using GenericBizRunner.Configuration;
+using StatusGeneric;
 
 namespace GenericBizRunner
 {
