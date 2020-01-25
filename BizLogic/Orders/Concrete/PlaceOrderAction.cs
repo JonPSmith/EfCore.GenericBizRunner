@@ -39,7 +39,7 @@ namespace BizLogic.Orders.Concrete
             var orderStatus = Order.CreateOrderFactory(
                 dto.UserId, DateTime.Today.AddDays(5),
                 bookOrders);
-            CombineErrors(orderStatus);
+            CombineStatuses(orderStatus);
 
             if (!HasErrors)
                 _dbAccess.Add(orderStatus.Result);

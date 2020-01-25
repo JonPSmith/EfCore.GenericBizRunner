@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using GenericBizRunner.PublicButHidden;
 using Microsoft.EntityFrameworkCore;
+using StatusGeneric;
 
 namespace GenericBizRunner
 {

@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using GenericBizRunner;
 using Microsoft.EntityFrameworkCore;
+using StatusGeneric;
 
 namespace DataLayer.EfClasses
 {

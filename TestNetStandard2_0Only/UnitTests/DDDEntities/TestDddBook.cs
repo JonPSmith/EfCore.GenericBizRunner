@@ -153,7 +153,7 @@ namespace TestNetStandard2_0Only.UnitTests.DDDEntities
 
                 //VERIFY
                 status.HasErrors.ShouldBeTrue();
-                status.Errors.Single().ErrorMessage.ShouldEqual("You must provide some text to go with the promotion.");
+                status.Errors.Single().ErrorResult.ErrorMessage.ShouldEqual("You must provide some text to go with the promotion.");
             }
         }
 

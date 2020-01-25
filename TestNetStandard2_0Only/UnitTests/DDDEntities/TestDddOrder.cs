@@ -61,7 +61,7 @@ namespace TestNetStandard2_0Only.UnitTests.DDDEntities
 
             //VERIFY
             status.HasErrors.ShouldBeTrue();
-            status.Errors.Single().ErrorMessage.ShouldEqual("No items in your basket.");
+            status.Errors.Single().ErrorResult.ErrorMessage.ShouldEqual("No items in your basket.");
         }
 
         [Fact]

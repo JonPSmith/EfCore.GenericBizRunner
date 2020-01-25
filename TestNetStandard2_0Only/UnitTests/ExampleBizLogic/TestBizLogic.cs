@@ -69,7 +69,7 @@ namespace TestNetStandard2_0Only.UnitTests.ExampleBizLogic
 
                 //VERIFY
                 service.HasErrors.ShouldBeTrue();
-                service.Errors.Single().ErrorMessage.ShouldEqual("You must accept the T&Cs to place an order.");
+                service.Errors.Single().ErrorResult.ErrorMessage.ShouldEqual("You must accept the T&Cs to place an order.");
             }
         }
 

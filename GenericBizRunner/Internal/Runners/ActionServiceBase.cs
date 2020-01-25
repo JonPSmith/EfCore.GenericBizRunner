@@ -35,7 +35,7 @@ namespace GenericBizRunner.Internal.Runners
 
             if (!bizStatus.HasErrors && RequiresSaveChanges)
             {
-                bizStatus.CombineErrors(db.SaveChangesWithOptionalValidation(
+                bizStatus.CombineStatuses(db.SaveChangesWithOptionalValidation(
                     bizStatus.ShouldValidateSaveChanges(WrappedConfig.Config), WrappedConfig.Config));
                 WrappedConfig.Config.UpdateSuccessMessageOnGoodWrite(bizStatus, WrappedConfig.Config);
             }
@@ -52,7 +52,7 @@ namespace GenericBizRunner.Internal.Runners
         {
             if (!bizStatus.HasErrors && RequiresSaveChanges)
             {
-                bizStatus.CombineErrors(await db.SaveChangesWithOptionalValidationAsync(
+                bizStatus.CombineStatuses(await db.SaveChangesWithOptionalValidationAsync(
                     bizStatus.ShouldValidateSaveChanges(WrappedConfig.Config), WrappedConfig.Config)
                         .ConfigureAwait(false));
                 WrappedConfig.Config.UpdateSuccessMessageOnGoodWrite(bizStatus, WrappedConfig.Config);

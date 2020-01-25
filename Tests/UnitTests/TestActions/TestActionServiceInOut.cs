@@ -95,7 +95,7 @@ namespace Tests.UnitTests.TestActions
 
             //VERIFY
             bizInstance.HasErrors.ShouldEqual(true);
-            bizInstance.Errors.Single().ErrorMessage.ShouldEqual("Error in SetupSecondaryData");
+            bizInstance.Errors.Single().ErrorResult.ErrorMessage.ShouldEqual("Error in SetupSecondaryData");
         }
 
         [Theory]

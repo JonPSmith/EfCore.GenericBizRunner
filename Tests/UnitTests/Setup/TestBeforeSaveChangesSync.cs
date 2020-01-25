@@ -6,6 +6,7 @@ using GenericBizRunner;
 using GenericBizRunner.Configuration;
 using GenericBizRunner.Helpers;
 using Microsoft.EntityFrameworkCore;
+using StatusGeneric;
 using TestBizLayer.DbForTransactions;
 using TestSupport.EfHelpers;
 using Xunit;

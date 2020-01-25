@@ -4,6 +4,7 @@
 using AutoMapper;
 using GenericBizRunner;
 using Microsoft.EntityFrameworkCore;
+using StatusGeneric;
 using TestBizLayer.BizDTOs;
 
 namespace Tests.DTOs
@@ -18,7 +19,7 @@ namespace Tests.DTOs
 
         public bool CopyToBizDataCalled { get; private set; }
 
-        protected internal override void SetupSecondaryData(DbContext db, IBizActionStatus status)
+        protected internal override void SetupSecondaryData(DbContext db, IStatusGenericHandler status)
         {
             SetupSecondaryDataCalled = true;
             if (RaiseErrorInSetupSecondaryData)

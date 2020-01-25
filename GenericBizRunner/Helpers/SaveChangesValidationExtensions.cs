@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GenericBizRunner.Configuration;
 using Microsoft.EntityFrameworkCore;
+using StatusGeneric;
 
 namespace GenericBizRunner.Helpers
 {
@@ -105,7 +106,7 @@ namespace GenericBizRunner.Helpers
             {
                 var exStatus = config?.SaveChangesExceptionHandler(e, context);
                 if (exStatus == null) throw;       //error wasn't handled, so rethrow
-                status.CombineErrors(exStatus);
+                status.CombineStatuses(exStatus);
             }
             finally
             {
@@ -134,7 +135,7 @@ namespace GenericBizRunner.Helpers
             {
                 var exStatus = config?.SaveChangesExceptionHandler(e, context);
                 if (exStatus == null) throw;       //error wasn't handled, so rethrow
-                status.CombineErrors(exStatus);
+                status.CombineStatuses(exStatus);
             }
             finally
             {
