@@ -2,6 +2,8 @@
 
 **NOTE: Version 4.1.0 now requires you to install the NuGet package [GenericServices.StatusGeneric](https://www.nuget.org/packages/GenericServices.StatusGeneric/) in any of your assemblies that needs to interact with the GenericBizRunner's status.**
 
+**NOTE: If you are using the NuGet package [EfCore.GenericServices.AspNetCore](https://www.nuget.org/packages/EfCore.GenericServices.AspNetCore/) then DO NOT  update to the 4.1.0 version. There are problems with `EfCore.GenericServices.AspNetCore` with ASP.NET Core 3 which I need to look at.**
+
 EfCore.GenericBizRunner (shortened to GenericBizRunner) is a framework to help build and run business logic when you are using [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/) for database accesses. Its aim is to totally isolate the business logic from other parts of the application, especially the user presentation/UI layers. It provides the following features:
 
 * A standard pattern for writing business logic, including helper classes.
